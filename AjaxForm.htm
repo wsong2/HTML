@@ -1,0 +1,119 @@
+<HTML><HEAD><TITLE>AJAX Form</TITLE>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<SCRIPT type=text/javascript>
+
+function makeQryString(p,v)
+{
+	return "/servlet/HandoverXmlServlet?"+p+"="+v+"&tm="+new Date().getTime();
+}
+
+function deleteDataRows(tbl) {
+	for (var nrows = tbl.rows.length; nrows > 1; nrows--)
+		tbl.deleteRow(-1);
+}
+
+function insertRow(tbl, arr) {
+	var row = tbl.insertRow(-1);
+	for (var c=0; c<arr.length; c++) {
+		row.insertCell().innerHTML = arr[c];
+	}
+}
+
+function changeHeader(tbl, arr) {
+	deleteDataRows(tbl);
+	tbl.deleteRow(-1);	
+	var row = tbl.insertRow(-1);
+	for (var c=0; c<arr.length; c++) {
+		var th = document.createElement("th");
+		th.setAttribute("align", "left");
+		th.innerHTML = arr[c];
+		row.appendChild(th);
+	}
+}
+
+function readRessultsXML(respXml)
+{
+    var rootNode = respXml.getElementsByTagName("ROWSET")[0];
+	if (rootNode) {
+        var rowNodes = rootNode.getElementsByTagName("ROW");
+		var table = document.getElementsByTagName('table')[0];
+		var cols = new Array();
+		for (var n=0; n<rowNodes.length; n++) {
+			var children = rowNodes[n].childNodes;
+			var vals = new Array();
+			for (var k=0; k<children.length; k++) {
+				var node = children[k];
+				if (node.nodeType != 1) {
+					continue;
+				}
+				if (n==0) {
+					cols.push(node.nodeName);
+				}
+				vals.push(node.childNodes[0].nodeValue);
+			}
+			if (n==0) {
+				changeHeader(table, cols);
+			}
+			insertRow(table, vals);
+		}
+	}
+    document.getElementById("btnFind").disabled = false;
+}
+
+function ajaxHttpObject()
+{
+	if (navigator.userAgent.indexOf('Chrome') > -1) {
+		return new XMLHttpRequest();
+	}
+	return new ActiveXObject("MSXML2.XMLHTTP.6.0");
+}
+
+function requestXML(kwd)
+{
+    var xmlhttp = ajaxHttpObject();
+    xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 /* && xmlhttp.status == 200 */)
+			readRessultsXML(xmlhttp.responseXML);
+	}
+    xmlhttp.open("GET", makeQryString("AJ", kwd), true);
+    xmlhttp.send(null);
+}
+
+function loadXML()
+{
+	var xmlDoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+	xmlDoc.async = false;
+	xmlDoc.load("rowset.xml");
+	if (xmlDoc.parseError.errorCode != 0) {
+		alert("You have error " + xmlDoc.parseError.reason);
+	} else {
+		readRessultsXML(xmlDoc);
+	}
+}
+
+function doRequest(btn)
+{
+	if (location.protocol == 'file:') {
+		loadXML();
+	} else {
+		btn.disabled = true;
+		requestXML(btn.form.keywd.value);
+	}
+}
+
+</SCRIPT>
+<STYLE type=text/css>
+DIV.main	{ WIDTH: 52em; }
+DIV.fst 	{ TEXT-ALIGN: center; BORDER: grey 1px solid; }
+</STYLE>
+</HEAD>
+<BODY><DIV class="main">
+<div class="fst"><form>
+	<h2>XML Results</h2>
+	<input maxLength=30 size=30 name="keywd" title="[pfx:]Value">&nbsp;
+	<input id="btnFind" onclick="doRequest(this)" value="Find" type="button">
+	</form></div>
+<table style="width:100%">
+	<tr><th>A</th><th>B</th><th>C</th></tr>
+	</table> 
+</DIV></BODY></HTML>
