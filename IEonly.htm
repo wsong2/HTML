@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+<HTML>
+<HEAD><TITLE>Template</TITLE>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<SCRIPT type="text/javascript">
+var mCN = "";
+var mFuncs = [];
+var mFH;
+var mCounts = {"div":0, "form":0, "table":0 };
+
+// Region toggleTBody()
+function toggleTBody()
+{
+	var bdI	= document.getElementById('dvIndiv');
+	var bdR = document.getElementById('dvRng');
+	
+	var prevDpyR = bdR.style.display;
+	bdR.style.display = (prevDpyR=='none') ? 'block' : 'none';
+	bdI.style.display = prevDpyR;
+	
+	enableDivElts(bdR, (prevDpyR == 'none'));
+	enableDivElts(bdI, (prevDpyR != 'none'));
+}
+
+function enableDivElts(rDiv, vFlag) {
+	var elts = rDiv.getElementsByTagName("input");   
+	for (var i=0; i<elts.length; i++) {
+		elts[i].disabled = !vFlag;
+	} 
+}
+// End of Region
+
+function makeJavaFile(form)
+{
+	if ( ! /\s*(\w+)\.java/.exec(form.jfn.value) ) {
+		alert("Unexpected java file name - " + form.jfn.value);
+		return false;
+	}
+	mCN = RegExp.$1;
+	mFuncs = [];
+
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	var loc = fso.GetParentFolderName(document.URL.substr(7));	// Skip file://
+	
+	// Generating Java File and doRequest(frame) function
+	mFH = fso.OpenTextFile(loc + "\\" + mCN + ".java", 2, true);
+	mFH.WriteLine();
+	mFH.WriteLine("public class " + mCN + " extends qktest.builderBase");
+	mFH.WriteLine("{");
+    mFH.WriteLine("	protected void performRequest() {");
+    mFH.WriteLine('		HtmBuilder page = new HtmBuilder("' + mCN +'");');
+	mFH.WriteLine();
+	mFH.WriteLine("		HtmBodyBuilder body = new HtmBodyBuilder();");
+	mFH.WriteLine("		page.add(body);");
+
+	// nodesDispatcher - increasing mFuncs.length
+	// mFuncs.push takes place in pushFunc()
+	nodesDispatcher("body", document.body.childNodes);	
+	
+	mFH.WriteLine("");
+	mFH.WriteLine("		printPage(page);");
+	mFH.WriteLine("	}");
+	
+	for (var i=0; i<mFuncs.length; i++) {
+		var node = mFuncs[i].node;
+		if (node.tagName == "TABLE") {
+			writeFuncTable(node, mFuncs[i].func);	// calling nodesDispatcher()
+		} else if (node.tagName == "THEAD") {
+			writeFuncHeader(mFuncs[i].func);
+		} else { 
+			mFH.WriteLine("// Unimplemented function - " + node.tagName + "!!!");
+		}
+	}
+
+	mFH.WriteLine("}");
+	mFH.Close();
+	//
+	return true;
+}
+
+function nodesDispatcher(vUppr, vNodes)
+{
+	var arrNodes = [];
+	pushChildren(vUppr, vNodes, arrNodes);
+    for (var i=0, len=arrNodes.length; i<len; i++, len=arrNodes.length) {
+		var uppr = arrNodes[i].uppr;
+		var node = arrNodes[i].node;
+		if (node.nodeName == "DIV") {
+			writeDIV(node, uppr, arrNodes);
+		} else if (node.nodeName == "FORM") {
+			writeFORM(node, uppr, arrNodes);
+		} else if (node.nodeName == "SELECT") {
+			writeSELECT(node, uppr)
+		} else if (node.nodeName == "TABLE") {
+			pushFunc(uppr, node, 'htmlTable' + typeCount("table"));	
+		} else if (node.nodeName == "BR") {
+			printL2(uppr + '.add(new htmlBR());');	
+		} else if (node.nodeName != "#text") {
+			printL2(uppr + '.add(new html' + node.nodeName + '("TODO"));');
+		}
+    }
+}
+
+function writeFuncTable(vNode, vFunc)
+{
+	mFH.WriteLine();
+	mFH.WriteLine("	private HtmlTable " + vFunc + " {");
+	mFH.WriteLine('		HtmlTable tbl = new HtmlTable();');
+		
+	var tbElts = vNode.childNodes;
+	
+	for (var i=0, len=tbElts.length; i<len; i++) {
+		// tbElts[i].tagName (IE8) => tbElts[i].nodeName (IE11)
+		var cn = tbElts[i];
+		var nm = cn.nodeName;
+		if (nm == 'THEAD') {
+			pushFunc('tbl', cn, 'PgHeader');
+		} else if (nm == 'TBODY') {
+			doTBody('tbl', tbElts[i]);
+		} else if (nm != "#text") {
+			printL2('// writeFuncTable: Unimplemented - ' + nm);
+		}
+	}
+	
+	mFH.WriteLine();
+	mFH.WriteLine("		return tbl;");		
+	mFH.WriteLine("	}");
+}
+
+function writeFuncHeader(vFunc)
+{
+	mFH.WriteLine();
+	mFH.WriteLine("	private HtmlElement " + vFunc + "() {");
+	mFH.WriteLine("		return null; // TODO");		
+	mFH.WriteLine("	}");
+}
+
+
+function doTBody(vContainer, vBodyNode)
+{
+	var trNodes = vBodyNode.childNodes;
+	for (var r=0, nrow=trNodes.length; r<nrow; r++) {
+		mFH.WriteLine();
+		printL2(((r==0)?"HtmlTR tr":"tr") + " = new HtmlTR();");
+		var tdNodes = trNodes[r].childNodes;
+		for (var c=0, ncol=tdNodes.length; c<ncol; c++) {
+			mFH.WriteLine();
+			printL2(((r==0 && c==0)?"HtmlTD td":"td") + " = new HtmlTD();");
+			nodesDispatcher("td", tdNodes[c].childNodes);
+			printL2("tr.add(td);");
+		}
+		printL2(vContainer + ".add(tr);");	
+	}		
+}
+
+function writeDIV(vNode, vUppr, vArrNodes) {
+	var step = vNode.getAttribute("wiz.loop");
+	if (!step) {
+		var dn = "div" + typeCount("div");
+		mFH.WriteLine();
+		printL2("HtmlDiv "+dn+" = new HtmlDiv();");
+		printL2(vUppr+".add("+dn+");");
+		pushChildren(dn, vNode.childNodes, vArrNodes);
+	} else {
+		var gn = parseInt(step);
+		if (isNaN(gn) || gn<=0) {
+			printL2('// Wrong step ' + step);
+			return;
+		}
+		var len = vNode.childNodes.length / gn;
+		printL2('for (int i=0; i<' + len +'; i++) { // LOOP');
+		for (var i=0; i<gn; i++) {
+			var node = vNode.childNodes[i];
+			printL2('\t' + vUppr + '.add(new html' + node.nodeName + '("TODO"));');			
+		}		
+		printL2('}');			
+	}
+}
+
+function writeFORM(vNode, vUppr, vArrNodes) {
+	var fmn = "form" + typeCount("form");
+	mFH.WriteLine();
+	printL2('HtmlForm ' + fmn + ' = new HtmlForm("'+mCN+'");');
+	printL2(vUppr+".add("+fmn+");");
+	pushChildren(fmn, vNode.childNodes, vArrNodes);
+}
+
+function writeSELECT(vNode, vUppr) {
+	var nm = vNode.getAttribute("name");
+	var htmDPL = 'htmDropdown("' + nm + '", list_' + nm + ', "hdl_' + nm + '();")';
+	printL2(vUppr+".add("+htmDPL+");");
+}
+
+function pushFunc(vUppr, vNode, vFcn) {
+	printL2(vUppr+".add("+vFcn+"());");
+	var o = new Object();
+	o.func = vFcn;
+	o.node = vNode;
+	mFuncs.push(o);
+}
+
+function pushChildren(vUppr, vNodes, oArr)
+{
+	for (var i=0, len=vNodes.length; i<len; i++) {
+		var node = vNodes[i];
+		if (node.nodeName) {
+			var o = new Object();
+			o.uppr = vUppr;
+			o.node = node;
+			oArr.push(o);
+		}
+	}			
+	return oArr.length;
+}
+
+function typeCount(pTyp)
+{
+	var n = mCounts[pTyp];
+	n = (n==undefined) ? 0 : (n+1);
+	mCounts[pTyp] = n;
+	return n;
+}
+
+function printL2(vMsg)
+{
+	mFH.WriteLine("\t\t" + vMsg);	
+}
+
+</SCRIPT>
+<STYLE type=text/css>
+BODY { MARGIN: 5px; BORDER: 0; }
+
+TABLE { WIDTH: 100%; HEIGHT: 100%; BORDER-COLLAPSE:collapse; }
+
+THEAD { BACKGROUND-COLOR: #eeffff; COLOR: #003f87; }
+THEAD TR { HEIGHT: 38px; }
+
+TH.left { WIDTH: 20em; TEXT-ALIGN: left; }
+
+TD.leftPanel { VERTICAL-ALIGN: text-top; PADDING-TOP: 5px; }
+TD.footer {
+	HEIGHT: 60px;
+	VERTICAL-ALIGN: text-top;
+	BORDER-TOP: 1px cyan solid
+	PADDING-TOP: 5px;
+}
+
+DIV.container { POSITION: relative; LINE-HEIGHT: 26px; HEIGHT: 400px;}
+SELECT { POSITION: absolute; LEFT: 6.5em; }
+DIV.grp INPUT { POSITION: absolute; LEFT: 6.5em; }
+DIV.btm { POSITION: absolute; BOTTOM: 20px; }
+IFRAME { BORDER: 1px cyan solid; HEIGHT: 400px; WIDTH: 800px; POSITION: absolute; TOP: 50px; }
+</STYLE>
+</HEAD>
+<BODY>
+<TABLE>
+ <THEAD><TR>
+	<th class=left>SCREEN<br>Misc Inputs</th>
+	<th>Terms and Conditions<br>Greater London</th>
+	<th></th>
+ </TR></THEAD>	
+ <TBODY>
+	<TR>
+		<TD class=leftPanel><FORM><DIV class=container>
+			Selected by <SELECT name=optionsType>
+							<OPTION selected value=D>Long Order Number</OPTION>
+							<OPTION value=N>Short Order Number</OPTION>
+							<OPTION value=V>SN</OPTION></SELECT><BR>
+			Selected as <SELECT name=optionsMode onchange="toggleTBody();">
+							<OPTION value=I>Individual</OPTION>
+							<OPTION selected value=R>Range</OPTION></SELECT>
+			<DIV class=grp id="dvIndiv" style="display:none;" wiz.loop="2">
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+				<input type="text"><BR>
+			</DIV>
+			<DIV class=grp id="dvRng">
+				From <input type="text"><BR>
+				To <input type="text" name="jfn" value="wrk.java">
+			</DIV>
+			<DIV class=btm>
+				<INPUT value=Submit type=button onClick=makeJavaFile(this.form);>&nbsp;
+				<INPUT value=Reset type=Reset>
+			</DIV>
+		</DIV></FORM></TD>
+		<TD colspan=2 rowspan=2><IFRAME frameborder="0" src="about:blank"></IFRAME></TD>
+	</TR>
+	<TR><TD class=footer><A href="#">Main Menu</A><BR><A href="#">Exit</A></TD></TR>
+ </TBODY>
+</TABLE>
+</BODY>
+</HTML>
