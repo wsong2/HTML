@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="htmText1.xsl"?>
+<Contents>
+ <Items>
+	<item dfn="SUP">17500</item>
+	<item dfn="Label(U8)">红旗</item>
+	<item dfn="Class.XY">cls_Customer</item>
+	<item dfn="Table">ALL_DB_LINKS</item>
+ </Items>
+<Modules>
+ <module name="GENLDAP">
+	<description>Access Control</description>
+ </module>
+ <module name="SQL">
+	<description>prc4.update_xml</description>
+ </module>
+ <module name="versinfo.jsp">
+	<description>Show Version Info</description>
+ </module>
+</Modules>
+</Contents>
