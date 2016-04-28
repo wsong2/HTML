@@ -1,0 +1,81 @@
+<HTML>
+<head><title>JUnit Snippet</title>
+<meta content="text/html; charset=UTF-8;" http-equiv=Content-Type>
+<script type=text/javascript>
+function OnChangeRadio(radio)
+{
+	var table = document.getElementsByTagName("table")[0];
+	for (var i=0, len=table.rows.length; i < len; i++)
+	{
+		var row  = table.rows[i];
+		if (row.cells[0] === radio.parentElement)
+		{
+			var idtxt = row.cells[1].innerText;
+			if ( idtxt === "0" )
+				 preText2(row.cells[2].innerText, row.cells[3].innerText);
+			else preText1(idtxt);
+			break;
+		}
+	}
+}
+
+function preText1(t1)
+{
+	var pre0 = document.getElementsByTagName("pre")[0];
+	var ta1 = document.getElementById("j1");	// <-- j1
+	pre0.innerHTML = ta1.value.replace("$1", t1);
+}
+
+function preText2(t1, t2)
+{
+	var pre0 = document.getElementsByTagName("pre")[0];
+	var ta2 = document.getElementById("j2");	// <-- j2
+	pre0.innerHTML = ta2.value.replace("$1", t1).replace("$2", t2);
+}
+
+function setStyle()
+{
+	var table = document.getElementsByTagName("table")[0];
+	for (var i=0, len=table.rows.length; i < len; i++)
+	{
+		var tds = table.rows[i].cells;
+		if (tds[1].innerText==="0")
+		{
+			for (var c = 0; c < tds.length; c++)
+				tds[c].className="data1";
+		}
+	}
+}
+</script>
+<style type=text/css>
+DIV.main	{ WIDTH: 40em; BORDER: grey 1px solid; }
+TD.data1 	{ background-color: #fcf4de; padding-left: 0.3em; }
+TD			{ padding-left: 0.3em; }
+</style>
+</head>
+<body onload="setStyle();" >
+<div class="main">
+<h3>&nbsp;Select Test Data</h3>
+<form><table>
+	<tr><td><input type="radio" name="selector" onchange="OnChangeRadio(this)" checked></td>
+		<td>0</td><td>Donal</td><td>Donal003</td>
+	</tr>
+	<tr><td><input type="radio" name="selector" onchange="OnChangeRadio(this)"></td>
+		<td>153759</td><td>Donal</td><td>Donal002</td>
+	</tr>
+	<tr><td><input type="radio" name="selector" onchange="OnChangeRadio(this)"></td>
+		<td>153771</td><td>Asset Class</td><td>AC-001</td>
+	</tr>
+</table></form> 
+</div>
+<p><textarea id="j1" rows="3" cols="70">
+	int nInst = $1;
+	wsInstRec.setInstanceNo(nInst);
+</textarea></p>
+<p><textarea id="j2" rows="3" cols="70">
+	wsInstRec.addPrimitive("NodeName", "$1");
+	wsInstRec.setInstanceName("$2");
+</textarea></p>
+<pre></pre>
+</body>
+</HTML>
