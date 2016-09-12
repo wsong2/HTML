@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<HTML>
+<head><title>Code Repeater</title>
+<meta content="text/html; charset=UTF-8;" http-equiv=Content-Type>
+<script type=text/javascript>
+function printCode()
+{
+	var items = document.getElementById("itemList").value;	
+	var wd = items.split(";");
+	
+	var ta0 = document.getElementsByTagName("textarea")[0];
+	var pr0 = document.getElementsByTagName("pre")[0];
+	pr0.innerHTML = "";
+	
+	var re = new RegExp(wd[0], 'g');
+	for (var i=1; i<wd.length; i++)
+	{
+		var txt = ta0.value.replace(new RegExp('\\$1', 'g'), wd[i]);
+		pr0.innerHTML += txt + "\n";
+	}
+}
+</script>
+<style type=text/css>
+div.Main 	{ WIDTH: 40em; BORDER: grey 1px solid; }
+</style>
+</head>
+<body>
+<input maxLength=90 size=90 id="itemList" value="UniqueID;Organization;JobTitle;Address"><br>
+<textarea rows="15" cols="85">
+	boolean bChangeUniqueID = twoDiffentValues(userRec.getUniqueID(), wsUserRec.getUniqueID());
+	String sOldUniqueID = null;
+	if (bChangeUniqueID)
+	{
+		sOldUniqueID = userRec.getUniqueID();
+		userRec.setUniqueID(wsUserRec.getUniqueID());
+	}
+	
+	if (bChangeUniqueID)
+	{
+		audit.processUserAuditTrail("UniqueID", userRec.getUniqueID(), sOldUniqueID);
+	}
+</textarea>
+<p><input onclick="printCode();" value="Generate Code" type="button"></p>
+<p><pre></pre></p>
+</body>
+</HTML>
