@@ -15,7 +15,7 @@ function printCode()
 	var re = new RegExp(wd[0], 'g');
 	for (var i=1; i<wd.length; i++)
 	{
-		var txt = ta0.value.replace(new RegExp('\\$1', 'g'), wd[i]);
+		var txt = ta0.value.replace(re, wd[i]);
 		pr0.innerHTML += txt + "\n";
 	}
 }
