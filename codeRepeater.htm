@@ -3,44 +3,199 @@
 <head><title>Code Repeater</title>
 <meta content="text/html; charset=UTF-8;" http-equiv=Content-Type>
 <script type=text/javascript>
-function printCode()
+function makeDecl(vId)
 {
-	var items = document.getElementById("itemList").value;	
-	var wd = items.split(";");
-	
-	var ta0 = document.getElementsByTagName("textarea")[0];
-	var pr0 = document.getElementsByTagName("pre")[0];
-	pr0.innerHTML = "";
-	
-	var re = new RegExp(wd[0], 'g');
-	for (var i=1; i<wd.length; i++)
+	var wd = document.getElementById("itemList").value.split(/\s+/);
+	var line = document.getElementById(vId).value;
+ 	var txt1 = document.getElementById("txtaDecl");
+	txt1.value = "";
+	for (var i=0; i<wd.length; i++)
 	{
-		var txt = ta0.value.replace(re, wd[i]);
-		pr0.innerHTML += txt + "\n";
+		txt1.value += line.replace("$1", Capitilize(wd[i])) + "\n";
 	}
 }
+
+function makeSetters(vFlag)
+{
+	var decls = document.getElementById("txtaDecl").value.split("\n");
+	var pr1 = document.getElementById("pre1");
+	pr1.innerHTML = "";
+	for (var i=0; i<decls.length; i++)
+	{
+		pr1.innerHTML += setterCode(decls[i].trim(), vFlag) + "\n";
+	}
+}
+
+function setterCode(vLine, vFlag)
+{
+	// Optional '='
+	var len = vLine.indexOf("=");
+	if (len >= 0)
+	{
+		vLine = vLine.substr(0,len);
+	}
+	
+	var ss = vLine.split(/\s+/);
+	var idx = (ss.length>2) ? 1 : 0;
+	var typ = ss[idx];
+	var nm  = ss[idx+1].substr(1);
+	
+	var pfx = 'x';
+	var pmn = 'xxx';
+	if (typ==="boolean" || typ==="Boolean")
+	{
+		typ = 'boolean';
+		pfx = 'b';
+		pmn = 'b';
+	}
+	else if (typ==="int" || typ==="Integer")
+	{
+		typ = 'int';
+		pfx = 'i';
+		pmn = 'val';		
+	}
+	else if (typ==="String")
+	{
+		pfx = 's';
+		pmn = 's';		
+	}
+	else if (typ==="GregorianCalendar")
+	{
+		nm = nm.substr(2);
+		pfx = 'cal';
+		pmn = 'cal';		
+	}
+
+	nm = nm.slice(0,-1);	// remove ';'
+
+	var ret;
+	if (vFlag)
+	{
+		ret = "public void set" + nm + "(" + typ + " " + pmn + ")\n{\n";
+		ret += "\tthis." + pfx + nm + " = " + pmn + ";\n";		
+	}
+	else
+	{
+		ret = "public typ get" + nm + "()\n{\n";
+		ret += "\treturn this." + pfx + nm + ";\n";		
+	}
+	return (ret + "}\n");	
+}
+
+function printCode(vFlag)
+{
+	var wd = document.getElementById("itemList").value.split(/\s+/);	
+	var decl = document.getElementById("d4").value.replace("$1", wd[0]);
+	
+	var ta0 = document.getElementById("txt");
+	var pr2 = document.getElementById("pre2");
+	pr2.innerHTML = "";	
+	var re = new RegExp("\\$1", 'g');
+	var r2 = new RegExp("\\$@");
+	for (var i=0; i<wd.length; i++)
+	{
+		var txt = ta0.value.replace(re, wd[i]);
+		if (vFlag ===1)
+		{
+			txt = txt.replace(r2, sepDeclWord(wd[i]));
+		}
+		pr2.innerHTML += txt + "\n";
+	}
+}
+
+function encloseTxt()
+{
+	var ta0 = document.getElementById("txt");
+	var pr2 = document.getElementById("pre2");
+	pr2.innerHTML = "";
+	
+	var re = new RegExp('"', 'g');	
+	var ss = ta0.value.split(/\n/);
+	for (var i=0; i<ss.length; i++)
+	{
+		var txt = ss[i].replace(re, '\\"');
+		pr2.innerHTML += 'sb.append("' + txt + '");<br>';
+	}	
+}
+
+function resetForm()
+{
+	document.getElementsByTagName("form")[0].reset();
+	document.getElementById("pre1").innerHTML = "";
+	document.getElementById("pre2").innerHTML = "";
+}
+
+function Capitilize(vWord)
+{
+	var ch0 = vWord.substr(0,1).toUpperCase();
+	var ss1 = vWord.substr(1);
+	var ss2 = ss1.toUpperCase();
+	var ret = (ss1===ss2) ? ss1.toLowerCase() : ss1;
+	return ch0 + ret;
+}
+
+function sepDeclWord(vWord)
+{
+	var arrPos = [];
+	var wordLc = vWord.toLowerCase();
+	for (var i=0; i<vWord.length; i++)
+	{
+		if (vWord.substr(i,1) !== wordLc.substr(i,1))
+		{
+			arrPos.push(i);
+		}
+	}
+	
+	var ret = "";
+	if (arrPos.length > 0 && arrPos.length < vWord.length)
+	{
+		arrPos.push(vWord.length);
+		for (var i=0; i<(arrPos.length-1); i++)
+		{
+			var pos = arrPos[i];
+			var len = arrPos[i+1] - pos;
+			ret += " " + vWord.substr(pos, len);
+		}
+	}
+	return (ret.length>0) ? ret.substr(1) : ret;
+}
+
 </script>
 <style type=text/css>
-div.Main 	{ WIDTH: 40em; BORDER: grey 1px solid; }
+div.Main { WIDTH: 40em; BORDER: grey 1px solid; }
+fieldset { border: 1px solid cyan; }
 </style>
 </head>
 <body>
-<input maxLength=90 size=90 id="itemList" value="UniqueID;Organization;JobTitle;Address"><br>
-<textarea rows="15" cols="85">
-	boolean bChangeUniqueID = twoDiffentValues(userRec.getUniqueID(), wsUserRec.getUniqueID());
-	String sOldUniqueID = null;
-	if (bChangeUniqueID)
-	{
-		sOldUniqueID = userRec.getUniqueID();
-		userRec.setUniqueID(wsUserRec.getUniqueID());
-	}
-	
-	if (bChangeUniqueID)
-	{
-		audit.processUserAuditTrail("UniqueID", userRec.getUniqueID(), sOldUniqueID);
-	}
-</textarea>
-<p><input onclick="printCode();" value="Generate Code" type="button"></p>
-<p><pre></pre></p>
+<form>
+ <fieldset>
+    <legend><b>Item List</b></legend>
+    <input maxLength=360 size=90 id="itemList" value="UniqueId Organization JobTitle Address">
+	<p><input maxLength=30 size=30 id="d1" value="private boolean b$1;">
+	<input onclick="makeDecl('d1');" value="Make Declaration" type="button"></p>
+	<input maxLength=30 size=30 id="d2" value="private int i$1;"> 
+	<input onclick="makeDecl('d2');" value="Make Declaration" type="button">
+	<p><input maxLength=30 size=30 id="d3" value="private String s$1;"> 
+	<input onclick="makeDecl('d3');" value="Make Declaration" type="button"></p>
+	<input maxLength=30 size=30 id="d4" value="private GregorianCalendar cal$1;"> 
+	<input onclick="makeDecl('d4')" value="Make Declaration" type="button">
+ </fieldset>
+<p><textarea id="txtaDecl" rows="6" cols="60">
+private boolean bChangeUniqueID;
+private String sDescription;
+private int iTypeNo;
+</textarea></p>
+<input onclick="makeSetters(false);" value="Make Getter" type="button"> <input onclick="makeSetters(true);" value="Make Setter" type="button"> 
+<p><textarea id="txt" rows="8" cols="85">
+	sOldValue = (existing==null) ? null : existing.get$1();
+	addPreviewField(sb, "$@", this.s$1, sOldValue);		
+</textarea></p>
+<input onclick="printCode(0);" value="Replace $1" type="button"> 
+<input onclick="printCode(1);" value="Replace Also $@" type="button"> 
+<input onclick="encloseTxt();" value="Enclose Contents" type="button"> 
+<input onclick="resetForm();" value="Reset" type="button">
+</form>
+<p><pre id="pre1"></pre></p>
+<pre id="pre2"></pre>
 </body>
 </HTML>
