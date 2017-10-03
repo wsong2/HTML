@@ -76,7 +76,7 @@ function setterCode(vLine, vFlag)
 	}
 	else
 	{
-		ret = "public typ get" + nm + "()\n{\n";
+		ret = "public " + typ + " get" + nm + "()\n{\n";
 		ret += "\treturn this." + pfx + nm + ";\n";		
 	}
 	return (ret + "}\n");	
