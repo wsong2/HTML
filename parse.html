@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<title>jQuery Test</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+<style>
+.ui-autocomplete {
+    background: white;
+}
+</style>
+</head> 
+<body>
+
+<script language="Javascript">
+<!--
+
+$('a').bind("click.myDisable", function() { 
+	alert ('Links and buttons on page are not enabled until load is complete');
+	return false; 
+});
+
+function doJson()
+{
+	var obj = JSON.parse('{ "name":"John", "age":30, "city":"New York"}');
+	document.getElementById("jsonOutput").innerHTML = obj.name + ", " + obj.age + ", " + obj.city;
+}
+
+// -->
+</script>
+	
+<form name="fmEdit" action="submit" method="post">
+
+<table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
+<tr>
+	<td class="TableItemLeft" style="background-image: none;">Instance&nbsp;</td>
+	<td class="ListData">
+		<input type='text' name="ShortName" class="Mandatory" value="1322"><input type="hidden" name="InstanceName" value="">&nbsp;</td>
+</tr>
+<tr><td height="5px"/><td height="5px"/></tr>
+
+<tr>
+	<td class="TableItemLeft" style="background-image: none;">Comment</td>
+	<td class="ListData">							
+		<textarea id="CommentTF" name="Desc" rows="6" cols="90" class="wysiwyg" wysiwyg="true">
+&lt;rss version='2.0'&gt;&lt;channel&gt;&lt;title&gt;RSS Title&lt;/title>&lt;/channel&gt;&lt;/rss&gt;
+		</textarea></td>
+</tr>
+<tr><td height="5px"/><td height="5px"/></tr>
+
+<tr>
+	<td class="TableItemLeft" style="background-image: none;">Description&nbsp;</td>
+	<td class="ListData">							
+		<textarea id="Description" rows="5" cols="120" class="wysiwyg" wysiwyg="true"></textarea></td>
+</tr>
+</table>
+
+<div>
+<a href="javascript:doParse();">Parse</a>&nbsp;&nbsp;
+<a href="javascript:doJson();">JSON</a>
+</div>
+
+</form>
+
+<script type="text/javascript">
+function doParse()
+{
+	var xml = $("#CommentTF").text();
+	var xmlDoc = $.parseXML(xml);
+	$xml = $(xmlDoc);
+	$title = $xml.find("title");
+	$("#Description").text($title.text());
+}
+</script>
+
+<script type="text/javascript">
+//$('#CommentTF').toggleClass('wysiwyg', 'wysiwygCF');
+
+$( document ).ready(function() {
+	var allJSfunctionsLoaded = setInterval(function() {
+		if (/loaded|complete/.test(document.readyState))
+		{
+			// TODO
+		}
+	}, 10);
+});
+</script>
+<p id="jsonOutput"></p>
+</body> 
+</html>
