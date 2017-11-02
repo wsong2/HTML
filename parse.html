@@ -22,8 +22,21 @@ $('a').bind("click.myDisable", function() {
 
 function doJson()
 {
-	var obj = JSON.parse('{ "name":"John", "age":30, "city":"New York"}');
-	document.getElementById("jsonOutput").innerHTML = obj.name + ", " + obj.age + ", " + obj.city;
+	var txt = '{"name":"John", "age":30, "city":"New York", "employees":['
+		+ '{"firstName":"John","lastName":"Doe" },' 
+		+ '{"firstName":"Anna","lastName":"Smith" },'
+		+ '{"firstName":"Peter","lastName":"Jones" }'
+		+ ']}';
+	var obj = JSON.parse(txt);
+	var otxt = obj.name + ", " + obj.age + ", " + obj.city;
+	
+	var arr = obj.employees;
+	for (var i = 0; i < arr.length; i++) 
+	{
+		otxt += '<br>' + (i+1) + ': ' + arr[i].firstName + ', ' + arr[i].lastName;
+	}
+	
+	document.getElementById("jsonOutput").innerHTML = otxt;
 }
 
 // -->
