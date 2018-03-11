@@ -20,10 +20,10 @@ DIV.fst p { padding-left: 1em; }
 </HEAD><BODY><DIV class="container">
 <div class="fst">
 <form>
-<p><input type="file" id="files" name="files[]" accept=".txt" multiple /></p>
+<p><input type="file" id="files" name="files[]" accept=".txt,.xml" multiple /></p>
 <form>
 </div>
-<textarea id="ta01" rows="5" cols="50">
+<textarea id="ta01" rows="15" cols="75">
 </textarea> 
 </DIV>
 <script>
@@ -98,17 +98,17 @@ function convOracleU8AsciiStr(str)
 		else if ((hx1 & 0xF0) == 0xE0)	// 1110 0000
 		{	
 			hx2 = next3();
-			hx3 = (hx2 > 0) ? next3() : 0;
-			if (hx3 <= 0)
+			hx3 = (hx2 >= 0) ? next3() : -3;
+			if (hx3 < 0)
 				break;
 			val = ((hx1 & 0x0F) << 12) | (hx2 << 6) | hx3;
 		}
 		else if ((hx1 & 0xF8) == 0xF0)	// 1111 0000
 		{	
 			hx2 = next3();
-			hx3 = (hx2 > 0) ? next3() : 0;
-			hx4 = (hx3 > 0) ? next3() : 0;
-			if (hx4 <= 0)
+			hx3 = (hx2 >= 0) ? next3() : -3;
+			hx4 = (hx3 >= 0) ? next3() : -3;
+			if (hx4 < 0)
 				break;			
 			val = ((hx1 & 0x07) << 18) | (hx2 << 12) | (hx3 << 6) | hx4;
 		}
