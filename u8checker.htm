@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<HTML><HEAD><TITLE>AJAX Form</TITLE>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<SCRIPT type=text/javascript>
+function checkAPI()
+{
+	if (!(window.File && window.FileReader && window.FileList && window.Blob))
+		document.getElementById("files").disabled = true;
+}
+</SCRIPT>
+<STYLE type="text/css">
+DIV.container { WIDTH: 52em; }
+DIV.fst {
+	WIDTH: 52em;
+	BORDER: grey 1px solid;
+	margin-bottom: 10px;
+}
+DIV.fst p { padding-left: 1em; }
+</STYLE>
+</HEAD><BODY><DIV class="container">
+<div class="fst">
+<form>
+<p><input type="file" id="files" name="files[]" accept=".txt" multiple /></p>
+<form>
+</div>
+<textarea id="ta01" rows="5" cols="50">
+</textarea> 
+</DIV>
+<script>
+//
+document.getElementById("files").addEventListener('change', loadFile, false);
+//
+function loadFile(evt)
+{
+	var files = evt.target.files;
+	var reader = new FileReader();
+    for (var i=0, f; f = files[i]; i++)
+	{
+		// f.type, f.size, f.lastModifiedDate, escape(f.name)
+		reader.onload = function (e) { 
+			var conv = convOracleU8AsciiStr(e.target.result);
+			document.getElementById("ta01").value += conv + '\r\n -----\r\n';
+		};
+		reader.readAsText(f);
+    }
+}
+
+function convOracleU8AsciiStr(str)
+{
+	var reHex4 = /\\([0-9a-f]{2})/i;
+	var reLen = 3;
+	
+	function next3()
+	{
+		if (str.length < reLen)
+			return -1;
+		
+		var arrRe = reHex4.exec(str.substr(0,reLen));
+		str = str.substr(reLen);
+		
+		if ( arrRe != null)
+		{
+			var cp = parseInt(arrRe[1], 16);
+			if ((cp & 0xC0) == 0x80)	// 1100 0000 -> 1000 0000
+				return (cp & 0x3F);		// 0x3F ~ 0011 1111
+		}
+		
+		return -2;
+	}
+
+	var ret = "";
+	var arr;
+	var error = false;
+	while ((arr = reHex4.exec(str)) != null)
+	{
+		error = true;
+		
+		ret += str.substring(0, arr.index);
+		
+		var code = arr[1];
+		
+		str = str.substr(arr.index + reLen);
+		
+		var val, hx2, hx3, hx4;
+		
+		var hx1 = parseInt(code, 16);
+		if (hx1 <= 127)
+		{
+			ret += decodeURIComponent("%"+code);
+		}
+		else if ((hx1 & 0xE0) == 0xC0)	// 1100 0000
+		{
+			hx2 = next3();
+			if (hx2 < 0)
+				break;
+			val = ((hx1 & 0x1F) << 6) | hx2;
+		}		
+		else if ((hx1 & 0xF0) == 0xE0)	// 1110 0000
+		{	
+			hx2 = next3();
+			hx3 = (hx2 > 0) ? next3() : 0;
+			if (hx3 <= 0)
+				break;
+			val = ((hx1 & 0x0F) << 12) | (hx2 << 6) | hx3;
+		}
+		else if ((hx1 & 0xF8) == 0xF0)	// 1111 0000
+		{	
+			hx2 = next3();
+			hx3 = (hx2 > 0) ? next3() : 0;
+			hx4 = (hx3 > 0) ? next3() : 0;
+			if (hx4 <= 0)
+				break;			
+			val = ((hx1 & 0x07) << 18) | (hx2 << 12) | (hx3 << 6) | hx4;
+		}
+		else
+		{
+			break;
+		}
+		
+		error = false;
+		if (val >= 0x10000 && val <= 0x10FFFF)
+		{
+			var hi = Math.floor((val - 0x10000) / 0x400) + 0xD800;
+			var lo = ((val - 0x10000) % 0x400) + 0xDC00;
+			ret += unescape("%u"+hi.toString(16)+"%u"+lo.toString(16));
+		}
+		else
+		{
+			var hc = "0000" + val.toString(16);
+			ret += unescape("%u" + hc.substr(hc.length-4));
+		}
+	}
+	
+	if (error)
+	{
+		return ret + " [ERR] " + str;
+	}
+	return ret+str;
+}
+</script>
+</BODY></HTML>
