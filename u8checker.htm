@@ -47,8 +47,8 @@ function loadFile(evt)
 
 function convOracleU8AsciiStr(str)
 {
-	var reHex4 = /\\00([0-9a-f]{2})/i;
-	var reLen = 5;
+	var reHex4 = /\\x([0-9a-f]{2})/i;
+	var reLen = 4;
 	var seg5s = "";
 	
 	function next5()
