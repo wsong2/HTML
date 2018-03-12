@@ -1,0 +1,63 @@
+<HTML><HEAD><TITLE>XML to Table</TITLE>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<STYLE type=text/css>
+DIV.main	{ WIDTH: 30em; }
+DIV.fst 	{ TEXT-ALIGN: center; BORDER: grey 1px solid; }
+td 	{ padding-right: 1em; }
+</STYLE>
+</HEAD>
+<BODY><DIV class="main">
+<div class="fst">
+<form>
+<p><input type="file" id="files" name="files[]" accept=".xml" multiple /></p>
+</form>
+</div>
+<table id="tbl_01">
+ <tr><th>First Column</th><th>Column B</th><th>Last Column</th></tr>
+</table>
+<input onclick="rmRows()" value="Delete Rows" type="button">
+</DIV>
+<script>
+//
+document.getElementById("files").addEventListener('change', readRessultsXML, false);
+//
+function readRessultsXML(evt)
+{
+	var files = evt.target.files;
+	var reader = new FileReader();
+
+    for (var i=0, f; f = files[i]; i++)
+	{
+		reader.onload = function (e) {
+			xmlDoc = $.parseXML( e.target.result ),
+			$xml = $( xmlDoc ),
+			$xml.find("Ticker").each(function(){
+				var buyPrice = $(this).find("BuyPrice").attr("Value");
+				var volume = $(this).find("Volume").attr("Value");
+				var tmval = $(this).find("Time").attr("Value");
+				var cols = [buyPrice, volume, tmval];
+				insertRow(cols);
+			});
+		};
+		reader.readAsText(f);
+    }
+}
+
+function rmRows()
+{
+	var tbl = document.getElementsByTagName('table')[0];
+	for (var nrows = tbl.rows.length; nrows > 1; nrows--)
+		tbl.deleteRow(-1);
+}
+
+function insertRow(arr) {
+	var tbl = document.getElementsByTagName('table')[0];
+	var row = tbl.insertRow(-1);
+	for (var c=0; c<arr.length; c++) {
+		row.insertCell().innerHTML = arr[c];
+	}
+}
+
+</script>
+</BODY></HTML>
