@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
 
+  const uvals = o => {
+	var lv = '';
+	Object.keys(o).forEach( function(k) {
+		if (k != 'id')
+			lv += ' ' + o[k];
+	} );
+	return lv.substring(1);
+  };
+
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -15,10 +24,12 @@ class MyComponent extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            users: result.users
-          });
+			var key1 = Object.keys(result)[0];
+			var val1 = result[key1];
+			this.setState({
+				isLoaded: true,
+				users: val1
+			});
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -31,24 +42,24 @@ class MyComponent extends React.Component {
         }
       )
   }
-
+  
   render() {
     const { error, isLoaded, users } = this.state;
     if (error) {
       return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
+    }
+	if (!isLoaded) {
       return <div>Loading...</div>;
-    } else {
-      return (
+    }
+    return (
         <ul>
           {users.map(user => (
             <li key={user.id}>
-              {user.name} {user.profession}
+              {uvals(user)}
             </li>
           ))}
         </ul>
       );
-    }
   }
 }
 
