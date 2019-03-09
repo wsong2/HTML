@@ -1,9 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import "./app.css";
 
-const title = 'My Minimal React Webpack Babel Setup';
+const MenuBar = function MenuBar(props) {
+	let items = ['File', 'Search', 'Options'];
+	
+	return (
+		<div><ul>
+			{items.map(mi => (<li className="menuitem">{mi}</li>))}
+		</ul></div>
+	);
+}
 
 ReactDOM.render(
-  <div>{title}</div>,
-  document.getElementById('app')
+  <MenuBar />,
+  document.getElementById('root')
 );
