@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import "./app.css";
 
+import MyGrid from './components/mygrid.js';
+
+
 const MenuBar = function MenuBar(props) {
 	let items = ['File', 'Search', 'Options'];
 	
@@ -13,6 +16,9 @@ const MenuBar = function MenuBar(props) {
 }
 
 ReactDOM.render(
-  <MenuBar />,
+  <div>
+	<MenuBar />
+	<div><MyGrid /></div>
+  </div>,
   document.getElementById('root')
 );

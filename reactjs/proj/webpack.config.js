@@ -1,4 +1,5 @@
 const path = require('path');
+
 module.exports = {
   entry: {
 	  bundle: path.join(__dirname, '/src/bundle.js'),
@@ -17,6 +18,11 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       }
     ]
+  },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
   },
   output: {
     path: path.join(__dirname, '/dist'),
