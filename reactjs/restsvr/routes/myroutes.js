@@ -4,4 +4,6 @@ module.exports = function(app) {
 
 	app.get('/listUsers', mycontroller.listUsers);
 
+	app.get('/gridview', mycontroller.gridView);
+
 }

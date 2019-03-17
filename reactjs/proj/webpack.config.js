@@ -1,8 +1,8 @@
 const path = require('path');
 module.exports = {
   entry: {
-	  bundle: path.join(__dirname, '/src/index.js'),
-	  snd: path.join(__dirname, '/src/snd.js')
+	  bundle: path.join(__dirname, '/src/bundle.js'),
+	  index: path.join(__dirname, '/src/index.js')
   },
   module: {
     rules: [
