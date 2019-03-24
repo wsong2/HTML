@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 
-  const uvals = o => {
-	var lv = '';
+const uvals = o => {
+	let lv = '';
 	Object.keys(o).forEach( function(k) {
 		if (k != 'id')
 			lv += ' ' + o[k];
 	} );
 	return lv.substring(1);
-  };
+};
 
-class MyComponent extends React.Component {
+class MyComponent extends React.Component
+{
   constructor(props) {
     super(props);
     this.state = {
@@ -53,11 +54,7 @@ class MyComponent extends React.Component {
     }
     return (
         <ul>
-          {users.map(user => (
-            <li key={user.id}>
-              {uvals(user)}
-            </li>
-          ))}
+          {users.map(user => (<li key={user.id}>{uvals(user)}</li>))}
         </ul>
       );
   }
