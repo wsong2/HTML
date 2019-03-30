@@ -1,11 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  entry: {
+ entry: {
 	  bundle: path.join(__dirname, '/src/bundle.js'),
 	  index: path.join(__dirname, '/src/index.js')
-  },
-  module: {
+ },
+ module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
@@ -18,14 +18,14 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       }
     ]
-  },
-  performance: {
+ },
+ performance: {
     hints: false,
     maxEntrypointSize: 512000,
     maxAssetSize: 512000
-  },
-  output: {
+ },
+ output: {
     path: path.join(__dirname, '/dist'),
     filename: '[name].js'
-  }
+ }
 };
