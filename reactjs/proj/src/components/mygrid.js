@@ -2,24 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactDataGrid from "react-data-grid";
 
-const columns = [
-  { key: "id", name: "ID", editable: true },
-  { key: "title", name: "Title", editable: true },
-  { key: "complete", name: "Complete", editable: true }
-];
-
-const rows = [
-  { id: 0, title: "Task 1", complete: 20 },
-  { id: 1, title: "Task 2", complete: 40 },
-  { id: 2, title: "Task 3", complete: 60 }
-];
-
 class MyGrid extends React.Component
 {	
   constructor(props) {
 	super(props);
 	this.state = {
-		rows
+		columns: props.data.columns,
+		rows: props.data.rows
 	};
   }
 	
@@ -36,9 +25,9 @@ class MyGrid extends React.Component
   render() {
     return (
       <ReactDataGrid
-        columns={columns}
+        columns={this.state.columns}
         rowGetter={i => this.state.rows[i]}
-        rowsCount={3}
+        rowsCount={this.state.rows.length}
         onGridRowsUpdated={this.onGridRowsUpdated}
         enableCellSelect={true}
       />

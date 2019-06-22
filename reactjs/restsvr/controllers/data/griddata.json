@@ -14,14 +14,21 @@
 		"id": 3,
 		"name" : "ramesh",
 		"profession" : "clerk"
+	},
+	{
+		"id": 4,
+		"name" : "Andy",
+		"profession" : "manager"
+	},   
+	{
+		"id": 5,
+		"name" : "sally",
+		"profession" : "sollicitor"
 	}
  ],
-  "format" : {
-	"id": {
-		"display": "Group Id"
-	},
-	"selected": {
-		"checkbox": "true"
-	}
- }
+ "columns" : [
+	{ "key": "id", "name": "ID" },
+	{ "key": "name", "name": "Name", "editable": true },
+	{ "key": "profession", "name": "Profession", "editable": true }
+ ]
 }

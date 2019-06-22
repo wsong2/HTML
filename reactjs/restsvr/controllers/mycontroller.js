@@ -23,5 +23,12 @@ function gridView(req, res)
    });
 }
 
+function chargingPoints(req, res)
+{
+	console.log(req.query);
+	res.json({ status: 'OK', "charging-point-id": '7:7 (dummy)' });
+}
+
 module.exports.listUsers = listUsers;
 module.exports.gridView = gridView;
+module.exports.chargingPoints = chargingPoints;
