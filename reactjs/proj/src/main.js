@@ -25,7 +25,9 @@ ReactDOM.render(
 );
 */
 
-const LOC = (location.protocol == 'file:') ? 'http://localhost:3000/' : '/';
+const LOC = (location.protocol == 'file:') 
+			? 'http://localhost:3000/chargePts'
+			: '/chargingpoint/nearest/';
 
 class MyComponent extends React.Component {
   constructor(props) {
@@ -59,7 +61,7 @@ class MyComponent extends React.Component {
 	this.setState({ btnEabled: false });
 
 	var queryString = Object.keys(params).map(key => key + '=' + params[key]).join('&');
-	fetch(LOC + "chargePts?"+queryString)
+	fetch(LOC + "?"+queryString)
       .then(res => res.json())
       .then(
         (result) => {

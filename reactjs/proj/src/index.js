@@ -52,12 +52,10 @@ class DataComponent extends React.Component
   render()
   {
     const {error, isLoaded} = this.state;
-    if (error)
-	{
+    if (error) {
       return <div>Error: {error.message}</div>;
     }
-	if (!isLoaded)
-	{
+	if (!isLoaded) {
       return <div>Loading...</div>;
     }
     return (

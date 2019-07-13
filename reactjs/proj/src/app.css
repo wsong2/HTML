@@ -10,3 +10,8 @@ table.noborder {
 table.noborder td {
 	border: none;
 }
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
