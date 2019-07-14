@@ -16,12 +16,11 @@ class Example extends React.Component {
       rows
     };
 	this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
-	this.getRow = this.getRow.bind(this);
   }
 
   onGridRowsUpdated({fromRow, toRow, updated}) {
     this.setState(state => {
-      const rows = state.rows.slice();
+      const rows = state.rows.slice(0);
       for (let i = fromRow; i <= toRow; i++) {
         rows[i] = { ...rows[i], ...updated };
       }
@@ -29,15 +28,11 @@ class Example extends React.Component {
     });
   };
   
-  getRow(i) {
-    return this.state.rows[i];
-  };
-  
   render() {
     return (
       <ReactDataGrid
         columns={this.props.columns}
-        rowGetter={this.getRow}
+        rowGetter={i => this.state.rows[i]}
         rowsCount={rows.length}
         onGridRowsUpdated={this.onGridRowsUpdated}
         enableCellSelect={true}
