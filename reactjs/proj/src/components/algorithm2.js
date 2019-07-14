@@ -49,19 +49,6 @@ const arrRows = [
 			}
 	];
 
-function prRecs(arr)
-{
-	function toShortText(r)
-	{
-		return '[' + r["id"] + ", " + r["date"] + ']'
-	}
-	var txt = "";
-	for (var n=0; n<arr.length; n++) {
-		txt += toShortText(arr[n]) + "  ";
-	}
-	return txt;
-}
-
 const RE = /(\d+)-(\d+)-(\d+)/;
 function convDMY(dmy)
 {
@@ -71,17 +58,25 @@ function convDMY(dmy)
 	return dtval;
 }
 
-export function process_group(arrRecs)
-{	
+function processGroupNo(arrRecs)
+{
+	function arraySN(vLen)
+	{
+		var ret = [];
+		for (var i=0; i<vLen; i++)
+			ret.push(i);
+		return ret;
+	}
+	
 	function hashMask(mask)
 	{
-		var hasNo = mask[0].toString(36);
+		var hashNo = mask[0].toString(36);
 		for (var i=1; i<mask.length; i++)
 		{
-			hasNo += ".";
-			hasNo += mask[i].toString(36);
+			hashNo += ".";
+			hashNo += mask[i].toString(36);
 		}
-		return hasNo;
+		return hashNo;
 	}
 
 	function diffMask(vObj1, vObj2)
@@ -106,30 +101,30 @@ export function process_group(arrRecs)
 				iMask++;
 			}
 		}
-		return eqObjs ? null : hashMask(mask);
+		return (eqObjs===true) ? null : hashMask(mask);
 	}
 	
-	var arrGroups = [];	
-	
-	var queueWorkList = Array.of(arrRecs);
+	var arrGroups = [];		// array of List of indexes		
+
+	var queueWorkList = Array.of( arraySN(arrRecs.length) );	
 	for (var loopId = 0; queueWorkList.length > 0; loopId++)
 	{
-		var arrRecs = queueWorkList.shift();
-		var rec0 = arrRecs[0];
-		var grp0 = Array.of(rec0);
+		var currPointerArr = queueWorkList.shift(); 		
+		var ptr0 = currPointerArr[0];		
+		var grp0 = [ptr0];
 		
 		var mapList = {};
-		for (var iRec=1; iRec<arrRecs.length; iRec++)
+		for (var ptrRec=1; ptrRec<currPointerArr.length; ptrRec++)
 		{
-			var currRec = arrRecs[iRec];
-			var hm = diffMask(rec0, currRec);
+			var currPtr = currPointerArr[ptrRec];
+			var hm = diffMask(arrRecs[ptr0], arrRecs[currPtr]);
 			if (hm == null) {
-				grp0.push(currRec);
+				grp0.push(currPtr);
 			} else if (mapList[hm]) {
-				mapList[hm].push(currRec);
+				mapList[hm].push(currPtr);
 			} else {
-				mapList[hm] = Array.of(currRec);
-			}
+				mapList[hm] = Array.of(currPtr);
+			}			
 		}
 		
 		arrGroups.push(grp0);
@@ -144,32 +139,20 @@ export function process_group(arrRecs)
 	}
 	
 	arrGroups.sort(function(a1, a2) {
-		return convDMY(a1[0]["date"]) - convDMY(a2[0]["date"]);
+		return convDMY(arrRecs[a1[0]]["date"]) - convDMY(arrRecs[a2[0]]["date"]);
 	});
 	
-	var sortedRows = [];
 	for (var i=0; i<arrGroups.length; i++)
 	{
 		var arr = arrGroups[i];
 		for (var n=0, gn=(i+1); n<arr.length; n++) {
-			//console.log(gn + ": " + arr[n]["id"] + ", " + arr[n]["date"]);
-			arr[n]["group"] = gn;
-			sortedRows.push(arr[n]);
+			var idxRec = arr[n];
+			var rec = arrRecs[idxRec];
+			rec["group"] = gn;
+			console.log(gn + ": " + rec["id"] + ", " + rec["date"]);
 		}
 	}
-	return sortedRows;
 }
 
-export function grid_data() {
-    return {
-		columns: [
-		  { key: "group", name: "Group", editable: false },
-		  { key: "id", name: "ID", editable: false },
-		  { key: "unit", name: "Unit", editable: true },
-		  { key: "price", name: "Price", editable: true },
-		  { key: "categ", name: "Category", editable: true },
-		  { key: "date", name: "Date", editable: true }
-		],
-		rows: process_group(arrRows)
-	};
-}
+processGroupNo(arrRows);
+

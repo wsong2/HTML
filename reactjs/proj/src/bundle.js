@@ -19,6 +19,7 @@ class Example extends React.Component {
   }
 
   onGridRowsUpdated({fromRow, toRow, updated}) {
+	
     this.setState(state => {
       const rows = state.rows.slice(0);
       for (let i = fromRow; i <= toRow; i++) {
