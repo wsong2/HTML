@@ -1,48 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactDataGrid from "react-data-grid";
 
-import { grid_data }  from './components/algorithm.js';
+import { grid_columns, grid_rows, process_group }  from './components/algorithm.js';
 import "./app.css";
 
-const datadef = grid_data();
-const rows = datadef.rows;
+const columnDefs = grid_columns();
+const rowsG0 = grid_rows();
 	
-class Example extends React.Component {
- 
- constructor(props) {
-    super(props);
-    this.state = {
-      rows
-    };
-	this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
-  }
+const TdList = function(rec)
+{
+	return Object.keys(rec).map( function(k) {
+		return (<td>{rec[k]}</td>)
+	});
+}
 
-  onGridRowsUpdated({fromRow, toRow, updated}) {
-	
-    this.setState(state => {
-      const rows = state.rows.slice(0);
-      for (let i = fromRow; i <= toRow; i++) {
-        rows[i] = { ...rows[i], ...updated };
-      }
-      return { rows };
+const HeaderRow = function(props)
+{
+	return (
+		<tr>{columnDefs.map( hd => (<th>{hd.name}</th>) )}</tr>
+	);
+}
+
+const GridRows = function(props)
+{
+	var rows = process_group(rowsG0);
+	return rows.map( function(rec) {
+		var data = TdList(rec);
+        return (<tr>{data}</tr>)
     });
-  };
-  
-  render() {
-    return (
-      <ReactDataGrid
-        columns={this.props.columns}
-        rowGetter={i => this.state.rows[i]}
-        rowsCount={rows.length}
-        onGridRowsUpdated={this.onGridRowsUpdated}
-        enableCellSelect={true}
-      />
-    );
-  }
+}
+
+const DataGrid = function(props)
+{
+    return (<table className="noborder">
+		<HeaderRow />
+		<GridRows />
+     </table>);
 }
 
 ReactDOM.render(
-  <Example columns={datadef.columns} />,
-  document.getElementById('root')
+	<DataGrid />,
+	document.getElementById('root')
 );

@@ -59,7 +59,7 @@ class DataComponent extends React.Component
       return <div>Loading...</div>;
     }
     return (
-        <div><MyGrid data={this.state.griddata} /></div>
+        <div><MenuBar /><MyGrid data={this.state.griddata} /></div>
     );
   }
 }
@@ -67,10 +67,7 @@ class DataComponent extends React.Component
 //
 ReactDOM.render
 (
-  <div>
-	<MenuBar />
-	<DataComponent />
-  </div>,
+  <DataComponent />,
   document.getElementById('root')
 );
 
