@@ -2,29 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import "./app.css";
 
-/*
-function ActionLink() {
-  function handleClick(e) {
-    e.preventDefault();
-    //console.log('The link was clicked.');
-    alert('The link was clicked.');
-  }
-
-  return (
-    <a href="#" onClick={handleClick}>
-      Click me
-    </a>
-  );
-}
-
-const element = <ActionLink />;
-
-ReactDOM.render(
-  element,
-  document.getElementById('root')
-);
-*/
-
 const LOC = (location.protocol == 'file:') 
 			? 'http://localhost:3000/chargePts'
 			: '/chargingpoint/nearest/';
