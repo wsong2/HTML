@@ -27,8 +27,6 @@ class DataGrid extends React.Component
 	}
 
 	notifyChange(rowIndex, cn, value) {
-		//var rows = this.state.rows.slice(0);
-		//rows[rowIndex][cn] = value;
 		this.state.rows[rowIndex][cn] = value;
 	};
   
@@ -37,11 +35,12 @@ class DataGrid extends React.Component
 		var TdList = function(props)
 		{
 			var rec = props.rowData;
-			var idx = props.rowIndex;
 			return Object.keys(rec).map( function(k) {
-				if (k==="price") {
+				if (k==="price" || k==="date") {
+					var inpType = (k==="price") ? "text" : "date";
 					return (<td><CellInput 
-									rowIndex={idx}
+									type={inpType}
+									rowIndex={props.rowIndex}
 									cn={k}
 									value={rec[k]}
 									notifyChange={props.onChange}

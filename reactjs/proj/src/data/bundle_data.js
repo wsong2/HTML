@@ -1,21 +1,21 @@
 const arrRows = [
 	{"group":0, "id":"Soup-x1", 
-	"unit":"tin", "price":0.65, "categ": "A", "date": "01-05-2001"},
+	"unit":"tin", "price":0.65, "categ": "A", "date": "2001-05-01"},
 	
 	{"group":0, "id":"Bread-y0",
-	"unit":"loaf", "price":0.80, "categ": "B", "date": "15-05-2001"},
+	"unit":"loaf", "price":0.80, "categ": "B", "date": "2001-05-01"},
 			
 	{"group":0, "id":"Milk",
-	"unit":"bottle", "price":1.30, "categ": "A", "date": "01-07-2001"},
+	"unit":"bottle", "price":1.30, "categ": "A", "date": "2001-07-01"},
 			
 	{"group":0, "id":"Apples",
-	"unit":"bag", "price":1.10, "categ": "B", "date": "01-04-2001"},
+	"unit":"bag", "price":1.10, "categ": "B", "date": "2001-04-01"},
 			
 	{"group":0, "id":"Pepsi-1",
-	"unit":"bottle", "price":1.05, "categ": "A", "date": "01-05-2001"},
+	"unit":"bottle", "price":1.05, "categ": "A", "date": "2001-05-01"},
 	
 	{"group":0, "id":"Pepsi-2",
-	"unit":"bottle", "price":1.05, "categ": "A", "date": "01-05-2001"}
+	"unit":"bottle", "price":1.05, "categ": "A", "date": "2001-05-01"}
 ];
 
 const arrColumns = [

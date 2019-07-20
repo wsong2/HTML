@@ -20,9 +20,8 @@ class CellInput extends React.Component
   
 	render() {
 		return (
-			<input type="text" 
+			<input type={this.props.type} 
 				value={this.state.value} 
-				//onChange={evt => this.onUpdateValue(evt)}
 				onChange={this.onUpdateValue}
 				required />
 		);

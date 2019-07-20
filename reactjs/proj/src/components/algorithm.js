@@ -1,11 +1,3 @@
-const RE = /(\d+)-(\d+)-(\d+)/;
-function convDMY(dmy)
-{
-	var arr = RE.exec(dmy);
-	var dtval = parseInt(arr[3])*10000 + parseInt(arr[2])*100 + parseInt(arr[1]);
-	return dtval;
-}
-
 export function process_group(arrRecs)
 {	
 	function hashMask(mask)
@@ -79,7 +71,7 @@ export function process_group(arrRecs)
 	}
 	
 	arrGroups.sort(function(a1, a2) {
-		return convDMY(a1[0]["date"]) - convDMY(a2[0]["date"]);
+		return a1[0]["date"].localeCompare(a2[0]["date"]);
 	});
 	
 	var sortedRows = [];
@@ -87,7 +79,6 @@ export function process_group(arrRecs)
 	{
 		var arr = arrGroups[i];
 		for (var n=0, gn=(i+1); n<arr.length; n++) {
-			//console.log(gn + ": " + arr[n]["id"] + ", " + arr[n]["date"]);
 			arr[n]["group"] = gn;
 			sortedRows.push(arr[n]);
 		}
@@ -96,6 +87,14 @@ export function process_group(arrRecs)
 }
 
 /*
+const RE = /(\d+)-(\d+)-(\d+)/;
+function convDMY(dmy)
+{
+	var arr = RE.exec(dmy);
+	var dtval = parseInt(arr[3])*10000 + parseInt(arr[2])*100 + parseInt(arr[1]);
+	return dtval;
+}
+
 function processGroupNo(arrRecs)
 {
 	function arraySN(vLen)
