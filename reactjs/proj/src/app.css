@@ -11,6 +11,14 @@ table.noborder td {
 	border: none;
 }
 
+table.noborder tr:nth-child(odd) { 
+	background: #F0F8FF; 
+}
+
+table.noborder tr:nth-child(even) {
+	background: #FFFFF0;
+}
+
 .App {
   font-family: sans-serif;
   text-align: center;
@@ -24,5 +32,9 @@ input {
 input[type="text"]
 {
     background: transparent;
-    border: none;
+}
+
+input[type="date"]
+{
+    background: transparent;
 }
