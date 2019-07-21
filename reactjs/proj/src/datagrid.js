@@ -13,6 +13,15 @@ const HeaderRow = function(props)
 	return (<tr>{columnDefs.map( hd => (<th>{hd.name}</th>) )}</tr>);
 }
 
+function ActionLink(props)
+{
+	function handleClick(e) {
+		e.preventDefault();
+		props.doRefresh();
+	}
+	return (<a href="#" onClick={handleClick}>{props.text}</a>);
+}
+
 class DataGrid extends React.Component
 {
 	constructor(props)
@@ -24,10 +33,18 @@ class DataGrid extends React.Component
 			rows
 		};
 		this.notifyChange = this.notifyChange.bind(this);
+		this.doRefresh = this.doRefresh.bind(this);
 	}
 
 	notifyChange(rowIndex, cn, value) {
 		this.state.rows[rowIndex][cn] = value;
+	};
+  
+	doRefresh() {
+		let rows = process_group(this.state.rows);
+		this.setState({
+			rows
+		});
 	};
   
 	render()
@@ -57,10 +74,13 @@ class DataGrid extends React.Component
 			});
 		}
 
-		return (<table className="noborder">
-			<HeaderRow />
-			<GridRows rows={this.state.rows} onChange={this.notifyChange} />
-		</table>);
+		return (<div>
+			<table className="noborder">
+				<HeaderRow />
+				<GridRows rows={this.state.rows} onChange={this.notifyChange} />
+			</table>
+			<br/><ActionLink text="Refresh" doRefresh={this.doRefresh} /></div>
+		);
 	}
 }
 
