@@ -22,6 +22,16 @@ function ActionLink(props)
 	return (<a href="#" onClick={handleClick}>{props.text}</a>);
 }
 
+function getTypeBycolumnName(cn)
+{
+	var dfn = columnDefs.find(function(element) {
+		return element.key === cn;
+	});	
+	if (!dfn || !dfn["editable"])
+		return null;
+	return (cn==="date") ? "date" : "text";
+}
+
 class DataGrid extends React.Component
 {
 	constructor(props)
@@ -53,17 +63,17 @@ class DataGrid extends React.Component
 		{
 			var rec = props.rowData;
 			return Object.keys(rec).map( function(k) {
-				if (k==="price" || k==="date") {
-					var inpType = (k==="price") ? "text" : "date";
-					return (<td><CellInput 
-									type={inpType}
-									rowIndex={props.rowIndex}
-									cn={k}
-									value={rec[k]}
-									notifyChange={props.onChange}
-							/></td>)
+				let inpType = getTypeBycolumnName(k);
+				if (inpType == null) {
+					return (<td>{rec[k]}</td>)
 				}
-				return (<td>{rec[k]}</td>)
+				return (<td><CellInput 
+								type={inpType}
+								rowIndex={props.rowIndex}
+								cn={k}
+								value={rec[k]}
+								notifyChange={props.onChange}
+						/></td>)
 			});
 		}
 
