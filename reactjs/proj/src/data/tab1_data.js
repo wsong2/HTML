@@ -39,10 +39,10 @@ const gridData =
 	}
  ],
  columns : [
-	{ "key": "id", "name": "ID" },
-	{ "key": "name", "name": "Name", "editable": true },
-	{ "key": "start-date", "name": "Start Date", "editable": true },
-	{ "key": "profession", "name": "Profession", "editable": true }
+	{ "colId": "id", "name": "ID" },
+	{ "colId": "name", "name": "Name", "editable": true },
+	{ "colId": "start-date", "name": "Start Date", "editable": true, "fmt":  "date" },
+	{ "colId": "profession", "name": "Profession", "editable": true }
  ]
 };
 

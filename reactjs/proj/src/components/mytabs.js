@@ -2,7 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import MyGrid from './mygrid.js';
+import TabGrid from './tabgrid.js';
+
+const spanStyle = {
+	display: 'block'
+};
+	
+const MenuBar = function MenuBar(props)
+{
+	let items = ['File', 'Search', 'Options'];
+	return (<div>{
+		items.map((mi, i) => (<span key={i} style={spanStyle}>{mi}</span>))
+	}</div>
+ );
+};
 
 class MyTabs extends React.Component {
   constructor(props) {
@@ -16,8 +29,8 @@ class MyTabs extends React.Component {
     return (
 	<Tabs>
 		<TabList><Tab>Grid</Tab><Tab>Changes</Tab></TabList>
-		<TabPanel><MyGrid data={this.state.griddata} /></TabPanel>
-		<TabPanel>Panel 2</TabPanel>
+		<TabPanel><TabGrid griddata={this.state.griddata} /></TabPanel>
+		<TabPanel><MenuBar /></TabPanel>
 	</Tabs>
 	);
   }
