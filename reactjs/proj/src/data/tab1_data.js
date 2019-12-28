@@ -1,5 +1,6 @@
+const gridData = 
 {
- "rows" : [ 
+ rows : [ 
 	{
 		"id": 1,
 		"name" : "mahesh",
@@ -37,10 +38,12 @@
 		"profession" : "actress"
 	}
  ],
- "columns" : [
+ columns : [
 	{ "key": "id", "name": "ID" },
 	{ "key": "name", "name": "Name", "editable": true },
 	{ "key": "start-date", "name": "Start Date", "editable": true },
 	{ "key": "profession", "name": "Profession", "editable": true }
  ]
-}
+};
+
+export function grid_data() { return(gridData); }

@@ -1,17 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import MyTabs from './components/mytabs.js';
 
-const App = () => (
-  <Tabs>
-    <TabList><Tab>Custom Tab 1</Tab><Tab>Custom Tab 2</Tab></TabList>
-    <TabPanel>Panel 1</TabPanel>
-    <TabPanel>Panel 2</TabPanel>
-  </Tabs>
-);
+import { grid_data } from './data/tab1_data.js';
+
+const appGridData = grid_data();
 
 ReactDOM.render(
-  <App />,
+  <MyTabs griddata={appGridData} />,
   document.getElementById('tabs')
 );
