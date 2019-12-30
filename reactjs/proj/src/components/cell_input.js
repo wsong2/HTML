@@ -12,10 +12,10 @@ class CellInput extends React.Component
 	}
 	
 	onUpdateValue_impl(evt) {
-		this.props.notifyChange(this.props.rowIndex, this.props.cn, evt.target.value);
 		this.setState({
 			value: evt.target.value
 		});
+		this.props.notifyChange(this.props.rowIndex, this.props.cn, evt.target.value);
 	};
   
 	render() {
