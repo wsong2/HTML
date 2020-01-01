@@ -16,23 +16,22 @@ class MyComponent extends React.Component {
 		inputText: "",
 		resultText: ""
     };
-	this.updateLatitude = this.updateLatitude.bind(this);
-	this.updateLongitude = this.updateLongitude.bind(this);
+	this.updateInputs = this.updateInputs.bind(this);
 	this.handleClick = this.handleClick.bind(this);
   }
 
-  updateLatitude(evt) {
-    this.setState({
-      latitude: evt.target.value
-    });
+  updateInputs(evt) {
+	  if (evt.target.id === 'latitude') {
+		this.setState({
+		  latitude: evt.target.value
+		});
+	  } else {
+		this.setState({
+		  longitude: evt.target.value
+		});
+	  }
   }
-  
-  updateLongitude(evt) {
-    this.setState({
-      longitude: evt.target.value
-    });
-  }
-  
+
   handleClick(evt) {
 	var params = { latitude: this.state.latitude, longitude: this.state.longitude };
 	this.setState({ btnEabled: false });
@@ -68,10 +67,10 @@ class MyComponent extends React.Component {
   render() {
     return (<table className="noborder">
 	  <tr><td>Latitude</td><td>
-		<input name="latitude" type="text" value={this.state.latitude} onChange={evt => this.updateLatitude(evt)} required />
+		<input name="latitude" id="latitude" type="text" value={this.state.latitude} onChange={evt => this.updateInputs(evt)} required />
 		</td></tr>
 	  <tr><td>Longitute</td><td>
-		<input name="longitude" type="text" value={this.state.longitude} onChange={evt => this.updateLongitude(evt)} required/>
+		<input name="longitude" id="longitude" type="text" value={this.state.longitude} onChange={evt => this.updateInputs(evt)} required/>
 		</td></tr>
 	  <tr><td /><td>
 		<button onClick={evt => this.handleClick(evt)} disabled={!this.state.btnEabled} >Find Nearest Point</button>
