@@ -23,6 +23,7 @@ class MyTabs extends React.Component {
 			loglines: []
 		};
 		this.notifyChange = this.notifyChange.bind(this);
+		//console.log(">> " + this.props.griddata.options('select1').goldfish);
 	}
 
 	notifyChange(lines) {

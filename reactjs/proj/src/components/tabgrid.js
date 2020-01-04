@@ -4,11 +4,7 @@ import TdList from './tdlist.js';
 import "./tabgrid.css";
 
 const hlper = require('./helper.js');
-/*
-const HeaderRow = (props) => {
-	return (<tr key="1" >{props.columns.forEach( (hd, idx) => (<th>{hd.name}</th>) )}</tr>);
-}
-*/
+
 function ActionLink(props)
 {
 	function handleClick(e) {
@@ -27,6 +23,7 @@ class TabGrid extends React.Component
 		};
 		this.notifyChange = this.notifyChange.bind(this);
 		this.sendLogs = this.sendLogs.bind(this);
+		//console.log("!> " + props.griddata.options('select1').goldfish);
 	}
 
 	notifyChange(rowId, cn, value) {
@@ -43,12 +40,13 @@ class TabGrid extends React.Component
 	render() {
 		var GridRows = function (props) {
 			return props.rows.map( function(r, idx) {
-				return <TdList key={idx} row={r} notifyChange={props.notifyChange} />
+				return <TdList key={idx} row={r} options={props.options} notifyChange={props.notifyChange} />
 			});
 		}
 
 		let griddata = this.props.griddata;
 		let rows = griddata.rows();
+		let options = griddata.options('select1');
 		return (<div>
 			<table className="noborder">
 				<thead><tr>
@@ -56,9 +54,10 @@ class TabGrid extends React.Component
 					<th>{griddata.caption('name')}</th>
 					<th>{griddata.caption('start-date')}</th>
 					<th>{griddata.caption('profession')}</th>
+					<th>{griddata.caption('select1')}</th>
 				</tr></thead>
 				<tbody>
-					<GridRows rows={rows} notifyChange={this.notifyChange} />
+					<GridRows rows={rows} options={options} notifyChange={this.notifyChange} />
 				</tbody>
 			</table>
 			<br/><ActionLink text="Change Logs" sendLogs={this.sendLogs} />

@@ -19,6 +19,12 @@ table.noborder tr:nth-child(even) {
   text-align: center;
 }
 
+select {
+	border-width:0px;
+	border:none;
+    background: transparent;
+}
+
 input {
 	border-width:0px;
 	border:none;
