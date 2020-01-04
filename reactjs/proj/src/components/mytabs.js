@@ -33,15 +33,15 @@ class MyTabs extends React.Component {
   	
 	render() {
 		return (
-		<Tabs>
-			<TabList><Tab>Grid</Tab><Tab>Changes</Tab></TabList>
-			<TabPanel>
-				<TabGrid columns={this.props.griddata['columns']} rows={this.props.griddata['rows']} onCellChange={this.notifyChange} />
-			</TabPanel>
-			<TabPanel>
-				<LogLines lines={this.state.loglines} />
-			</TabPanel>
-		</Tabs>
+			<Tabs>
+				<TabList><Tab>Grid</Tab><Tab>Changes</Tab></TabList>
+				<TabPanel>
+					<TabGrid griddata={this.props.griddata} onCellChange={this.notifyChange} />
+				</TabPanel>
+				<TabPanel>
+					<LogLines lines={this.state.loglines} />
+				</TabPanel>
+			</Tabs>
 		);
 	}
 }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import MyTabs from './components/mytabs.js';
 
-import { grid_data } from './data/tab1_data.js';
+import { grid_data } from './data/tab_data.js';
 
 const appGridData = grid_data();
 
