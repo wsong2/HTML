@@ -70,11 +70,9 @@ function processXML(vXmlString)
 		}
 		return objs;
 	}
-	
-	return (function(xmlString) {
-		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
-		return processDOM(xmlDoc);
-	})(vXmlString);
+
+	var xmlDoc = parser.parseFromString(vXmlString, "text/xml");
+	return processDOM(xmlDoc);
 }
 
 function loadFile(evt)
