@@ -1,0 +1,11 @@
+> mkdir tutorial
+> cd tutorial
+> mkdir src
+
+> npm init -y
+> npm i webpack webpack-cli --save-dev
+
+> npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
+
+> npm i react react-dom
+> npm i css-loader
