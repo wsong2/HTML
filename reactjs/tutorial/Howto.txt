@@ -9,3 +9,9 @@
 
 > npm i react react-dom
 > npm i css-loader
+
+> npm run build 	// npm run prod
+
+# initial App.jsx example
+
+> npm install react-tabs --save-dev

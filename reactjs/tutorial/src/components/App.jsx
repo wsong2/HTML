@@ -1,5 +1,11 @@
 import React from 'react';
 
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+
+const SimpleMsg = (props) => {
+	return (<div><h2>Hello, {props.text}!</h2></div>);
+};
+
 class App extends React.Component {
    constructor(props) {
       super(props);
@@ -13,14 +19,22 @@ class App extends React.Component {
       this.setState({data: 'Data updated from the child component...'})
    }
    render() {
-      return (
-         <div>
-            <Content myDataProp = {this.state.data} 
-               updateStateProp = {this.updateState}></Content>
-         </div>
-      );
+	  return (
+		<Tabs>
+			<TabList><Tab>Welcome</Tab><Tab>Changes</Tab></TabList>
+			<TabPanel>
+				<SimpleMsg text="World" />
+			</TabPanel>
+			<TabPanel>
+				<div>
+					<Content myDataProp = {this.state.data} updateStateProp = {this.updateState}></Content>
+				</div>
+			</TabPanel>
+		</Tabs>
+	);
    }
 }
+
 class Content extends React.Component {
    render() {
       return (
@@ -31,4 +45,5 @@ class Content extends React.Component {
       );
    }
 }
+
 export default App;
