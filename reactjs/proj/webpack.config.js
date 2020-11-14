@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
  entry: {
-	  tabs: path.join(__dirname, '/src/tabs.js')
+	//pageOne: './src/main',
+	main: './src/main.js'
  },
  module: {
     rules: [
@@ -14,7 +15,7 @@ module.exports = {
       {
         test: /\.(css)$/,
         exclude: /node_modules/,
-        use: ['style-loader', 'css-loader']
+        use: ['css-loader']
       }
     ]
  },
