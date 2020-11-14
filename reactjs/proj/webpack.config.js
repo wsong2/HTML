@@ -2,7 +2,6 @@ const path = require('path');
 
 module.exports = {
  entry: {
-	  index: path.join(__dirname, '/src/index.js'),
 	  tabs: path.join(__dirname, '/src/tabs.js')
  },
  module: {

@@ -5,5 +5,6 @@ module.exports = function(app) {
 	app.get('/gridview', mycontroller.gridView);
 	
 	app.get('/chargePts', mycontroller.chargingPoints);
-
+	
+	app.post('/simjson', mycontroller.postResp);
 }
