@@ -11,7 +11,8 @@ class SimContent extends React.Component
       
 		this.state = {
 			status: 'init',
-			data: ''
+			data: '',
+			doQry: true
 		}
 		this.handleChange = this.handleChangeImpl.bind(this);
 		this.updateState = this.updateState.bind(this);
@@ -19,9 +20,9 @@ class SimContent extends React.Component
    
    	handleChangeImpl(e) {
 		if (e.target.name == "fstatus") {
-			this.setState({status: e.target.value});			
+			this.setState({status: e.target.value, doQry: true});			
 		} else {
-			this.setState({data: e.target.value});			
+			this.setState({data: e.target.value, doQry: true});		
 		}
 	}
 	
@@ -53,12 +54,15 @@ class SimContent extends React.Component
 	}
    
 	componentDidMount() {
+		if (!this.state.doQry)	return;
+		
 		fetch("http://localhost:3000/chargePts").then(res => res.json())
 		.then(
 			(result) => {
 				this.setState({
 					status: result.status,
-					data: result['charging-point-id']
+					data: result['charging-point-id'],
+					doQry: false
 				});
 			},
 			(error) => {

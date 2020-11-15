@@ -1,12 +1,14 @@
 var fs = require("fs");
-var dateFMT = require("dateformat");
+var dtFmt = require("dateformat");
+
+const cache = {};
 
 function gridView(req, res)
 {
 	const jfn = "griddata.json";
 	
     fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-      console.log('--- ' + dateFMT(Date.now(), 'isoTime') + ' ---' );
+      console.log('--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
       console.log('from ' + jfn);
       res.end( data );
    });
@@ -18,22 +20,35 @@ function chargingPoints(req, res)
 	
 	const jfn = "chargepts.json";
 	
-	fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-		console.log('--- ' + dateFMT(Date.now(), 'isoTime') + ' ---' );
-		console.log('from ' + jfn);
-		console.log('--- ' + JSON.stringify(data));		
-		res.end(data);
-	});
+	console.log('--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
+	if (cache.hasOwnProperty(jfn)) {
+		console.log('--- ' + jfn + ' (cached)');
+		res.end(cache[jfn]);
+	} else {
+		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
+			console.log('from ' + jfn);
+			console.log('--- ' + JSON.stringify(data));
+			cache[jfn] = data;
+			res.end(data);
+		});
+	}	
 	//res.json({ status: 'OK', "charging-point-id": '7:7 (dummy)' });
 }
 
 function postResp(req, res)
 {
-    console.log('--- Req ---' );
-	//console.log(req.body);
-	for (var key in req.body) {
-		parseMultiPartFormData(key+'='+req.body[key]);
-	}
+	console.log('--- Req ---' );
+
+	// let cont_type = req.headers['content-type'];	
+	//if ('application/x-www-form-urlencoded' == cont_type) {
+		for (let key in req.body) {
+			if (req.body[key] == '') {
+				console.log(key);
+			} else {
+				parseMultiPartFormData(key+'='+req.body[key]);
+			}
+		}
+	//} 
 		
 	const jfn = "ack.json";	
     fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {

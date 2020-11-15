@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8">
+ <title>Pure JS Data Grid</title>
+ <link rel="stylesheet" href="datagrid.css" />
+</head>
+<body>
+ <table id="gridtbl" class="noborder">
+ <thead><tr>
+   <th>Group</th><th>ID</th><th>Unit</th><th>Price</th><th>Category</th><th>Date</th>
+ </tr></thead>
+ <tbody>
+  <tr><td>1</td><td>Apples</td>
+		<td><input type=text value="bag" required /></td>
+		<td><input type=text value="1.1" required /></td>
+		<td><input type=text value="B" required /></td>
+		<td><input type=date value="2001-04-01" required /></td>
+  </tr>
+  <tr><td>2</td><td>Soup-x1</td>
+		<td><input type=text value="tin" required /></td>
+		<td><input type=text value="0.65" required /></td>
+		<td><input type=text value="A" required /></td>
+		<td><input type=date value="2001-05-01" required /></td>
+  </tr>
+  <tr><td>3</td><td>Bread-y0</td>
+		<td><input type=text value="load" required /></td>
+		<td><input type=text value="0.8" required /></td>
+		<td><input type=text value="B" required /></td>
+		<td><input type=date value="2001-06-01" required /></td>
+  </tr>
+  <tr><td>4</td><td>Pepsi-1</td>
+		<td><input type=text value="bottle" required /></td>
+		<td><input type=text value="1.05" required /></td>
+		<td><input type=text value="A" required /></td>
+		<td><input type=date value="2001-05-01" required /></td>
+  </tr>
+  <tr><td>4</td><td>Pepsi-2</td>
+		<td><input type=text value="bottle" required /></td>
+		<td><input type=text value="1.05" required /></td>
+		<td><input type=text value="A" required /></td>
+		<td><input type=date value="2001-05-01" required /></td>
+  </tr>
+  <tr><td>5</td><td>Milk</td>
+		<td><input type=text value="bottle" required /></td>
+		<td><input type=text value="1.3" required /></td>
+		<td><input type=text value="A" required /></td>
+		<td><input type=date value="2001-07-01" required /></td>
+  </tr>
+ </tbody>
+ </table>
+ <br/><a href="#" onClick="clickReNumering()" >Re-numering</a>
+<script src="js/algorithm.js" ></script>
+<script>
+function clickReNumering()
+{
+  //event.preventDefault();
+  let table = document.getElementById ("gridtbl");
+  let rows = table.rows;
+  let arrRec = [];
+  for (let iRow = 1; iRow < rows.length; iRow++) {
+	let row = rows[iRow];
+	let rec = rowToRec(row);
+	arrRec.push(rec);
+  }
+  
+  if (arrRec.length == 0) {
+	return;
+  }
+
+  for (let iRow = rows.length-1; iRow > 0; iRow--) {
+	table.deleteRow (iRow);
+  }	
+  
+  let groupedRecs = processGroup(arrRec);
+  
+  for (let iRec = 0; iRec < groupedRecs.length; iRec++) {
+    let rec = groupedRecs[iRec];
+	let row = table.insertRow(iRec+1);
+	insertCell(row, 0, rec.group.toString());
+	insertCell(row, 1, rec.id);
+	insertCell(row, 2, rec.unit);
+	insertCell(row, 3, rec.price.toString());
+	insertCell(row, 4, rec.categ);
+	//insertCell(row, 5, rec.date);
+	let cell = row.insertCell(5);
+	cell.innerHTML = "<input type=date value='" + rec.date + "' required />";
+  }
+}
+
+function rowToRec(vRow)
+{
+	let obj = {};
+	obj.group = parseInt(vRow.cells[0].innerHTML);
+	obj.id = vRow.cells[1].innerHTML;
+	obj.unit = vRow.cells[2].children[0].value;
+	obj.price = parseFloat(vRow.cells[3].children[0].value);
+	obj.categ = vRow.cells[4].children[0].value;
+	obj.date = vRow.cells[5].children[0].value;
+	return obj;
+}
+
+function insertCell(vRow, vIdx, vInnerText)
+{
+	let cell = vRow.insertCell(vIdx);
+	cell.innerHTML = vInnerText;
+}
+ </script>
+</body>
+</html>
