@@ -12,7 +12,8 @@ import { grid_data } from './data/tab_data.js';
 const appGridData = grid_data();
 // 
 
-class Content extends React.Component {
+class Content extends React.Component
+{
    render() {
       return (
          <div>
@@ -23,10 +24,10 @@ class Content extends React.Component {
    }
 }
 
-class App extends React.Component {
+class App extends React.Component
+{
    constructor(props) {
-      super(props);
-      
+      super(props);    
       this.state = {
          data: 'Initial data...'
       }
@@ -43,9 +44,7 @@ class App extends React.Component {
 				<SimContent msg="World" />
 			</TabPanel>
 			<TabPanel>
-				<div>
-					<Content myDataProp = {this.state.data} updateStateProp = {this.updateState}></Content>
-				</div>
+				<div><Content myDataProp = {this.state.data} updateStateProp = {this.updateState}></Content></div>
 			</TabPanel>
 			<TabPanel>
 				<WorkForm msg="Folk" />

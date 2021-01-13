@@ -50,10 +50,15 @@ function postResp(req, res)
 		}
 	//} 
 		
-	const jfn = "ack.json";	
-    fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-      res.end( data );
-   }); 
+	const jfn = "ack.json";		
+	if (cache.hasOwnProperty(jfn)) {
+		res.end(cache[jfn]);
+	} else {
+		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
+			cache[jfn] = data;
+			res.end(data);
+		});
+	}	
 }
 
 function parseMultiPartFormData(bodyText)

@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
  entry: {
-	//pageOne: './src/main',
+	index: './src/index',
 	main: './src/main.js'
  },
  module: {
