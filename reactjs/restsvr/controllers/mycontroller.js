@@ -14,25 +14,23 @@ function gridView(req, res)
    });
 }
 
-function chargingPoints(req, res)
+function allItems(req, res)
 {
-	console.log(req.query);
+	//console.log(req.query);
 	
-	const jfn = "chargepts.json";
+	const jfn = "db_prolog_sim11.json";
 	
 	console.log('--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
-	if (cache.hasOwnProperty(jfn)) {
+	
+	if (Reflect.has(cache, jfn)) {
 		console.log('--- ' + jfn + ' (cached)');
 		res.end(cache[jfn]);
 	} else {
 		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-			console.log('from ' + jfn);
-			console.log('--- ' + JSON.stringify(data));
 			cache[jfn] = data;
 			res.end(data);
 		});
 	}	
-	//res.json({ status: 'OK', "charging-point-id": '7:7 (dummy)' });
 }
 
 function postResp(req, res)
@@ -91,7 +89,7 @@ function attName(att)
 	return arr ? arr[1] : att;
 }
 
+module.exports.allItems = allItems;
 module.exports.gridView = gridView;
-module.exports.chargingPoints = chargingPoints;
 module.exports.postResp = postResp;
  

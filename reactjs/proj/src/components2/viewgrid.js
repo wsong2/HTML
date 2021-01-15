@@ -44,29 +44,30 @@ class ViewGrid extends React.Component
 		})
 		this.props.onRowSelected(rowIndex);
 	};
-  	
+ 
 	render() {
-		var GridRows = function (props) {
+		let GridRows = function (props) {
 			return props.rows.map( function(r, idx) {
 				let selected = (idx==props.selected);
 				return <TdList key={idx} rowIndex={idx} row={r} checked={selected} notifyChange={props.notifyChange} />
 			});
 		}
 
-		let griddata = this.props.griddata;
-		let rows = griddata.rows();
+		let caption = this.props.caption;
+		let rows = this.props.rows;
 		return (<div>
 			<table className="noborder">
 				<thead><tr>
 					<th/>
-					<th>{griddata.caption('id')}</th>
-					<th>{griddata.caption('simName')}</th>
-					<th>{griddata.caption('simDate')}</th>
-					<th>{griddata.caption('descr')}</th>
-					<th>{griddata.caption('dttm')}</th>
+					<th>{caption('id')}</th>
+					<th>{caption('simName')}</th>
+					<th>{caption('simDate')}</th>
+					<th>{caption('descr')}</th>
+					<th>{caption('dttm')}</th>
 				</tr></thead>
 				<tbody>
 					<GridRows rows={rows} selected={this.state.selectedRow} notifyChange={this.notifyChange} />
+					<tr><td/><td/><td colSpan="4"><button onClick={this.props.reload}>Load</button></td></tr>
 				</tbody>
 			</table>
 		</div>);
