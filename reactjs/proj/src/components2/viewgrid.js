@@ -36,6 +36,7 @@ class ViewGrid extends React.Component
 			selectedRow: props.rowIndex
 		}
 		this.notifyChange = this.notifyChange.bind(this);
+		this.btnClick = this.btnClick.bind(this);
 	}
 
 	notifyChange(rowIndex) {
@@ -43,6 +44,11 @@ class ViewGrid extends React.Component
 			selectedRow: rowIndex
 		})
 		this.props.onRowSelected(rowIndex);
+	};
+ 
+	btnClick(evt) {
+		this.props.btnAction(evt.target.value);
+		//console.log('Button ' + evt.target.value);
 	};
  
 	render() {
@@ -67,7 +73,10 @@ class ViewGrid extends React.Component
 				</tr></thead>
 				<tbody>
 					<GridRows rows={rows} selected={this.state.selectedRow} notifyChange={this.notifyChange} />
-					<tr><td/><td/><td colSpan="4"><button onClick={this.props.reload}>Load</button></td></tr>
+					<tr><td/><td/><td colSpan="4">
+						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
+						<input type="button" value="Delete" onClick={this.btnClick} />
+					</td></tr>
 				</tbody>
 			</table>
 		</div>);

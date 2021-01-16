@@ -29,7 +29,7 @@ class App extends React.Component
 	}
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
-	this.doReload = this.doReload.bind(this);
+	this.btnAction = this.btnAction.bind(this);
  };
 	
  notifyChange(rIndex) {
@@ -38,31 +38,56 @@ class App extends React.Component
 	})
  };
 
- doReload() {
+ btnAction(btnValue) {
+	 
 	if (this.expectResponse) {
 		return;
 	}
 	this.expectResponse = true;
 	
-	let myUrl = constants.HOST1 + "/rec/list";
+	if (btnValue == 'Load')
+	{
+		let myUrl = constants.HOST1 + "/api/rec/list";
 	
-	fetch(myUrl).then(
-		(response) => response.json()
-	).then(
-		(data) => {
-			this.expectResponse = false;
-			this.setState({
-				rowIndex: -1,
-				rows: data
-			});
-			//console.log(data);
-		}
-	).catch(
-		(err) => {
-			this.expectResponse = false;
-			console.log(err);
-		}
-	);
+		fetch(myUrl).then(
+			(response) => response.json()
+		).then(
+			(data) => {
+				this.expectResponse = false;
+				this.setState({
+					rowIndex: -1,
+					rows: data
+				});
+				//console.log(data);
+			}
+		).catch(
+			(err) => {
+				this.expectResponse = false;
+				console.log(err);
+			}
+		);
+	}
+	else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
+	{
+		let rec = this.state.rows[this.state.rowIndex];
+		let urlDel = constants.HOST1 + "/api/rec/:" + rec['id'];
+	
+		fetch(urlDel, {method: 'DELETE'}).then(
+			(response) => response.text()
+		).then(
+			(data) => {
+				this.expectResponse = false;
+				this.setState({
+					rowIndex: -1,
+				});
+			}
+		).catch(
+			(err) => {
+				this.expectResponse = false;
+				console.log(err);
+			}
+		);		
+	}
  };
   
  render() {
@@ -76,7 +101,7 @@ class App extends React.Component
 		<Tabs>
 			<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
 			<TabPanel>
-				<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={this.state.rowIndex} onRowSelected={this.notifyChange} reload={this.doReload} />
+				<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={this.state.rowIndex} onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 			</TabPanel>
 			<TabPanel>
 				<FormUpdate data={rec} />

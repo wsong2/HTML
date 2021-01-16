@@ -33,6 +33,16 @@ function allItems(req, res)
 	}	
 }
 
+function deleteItem(req, res)
+{
+	let id = req.params.id;
+	
+	console.log('> Deleted ' + id);
+	
+	return res.status(200);	
+}
+
+
 function postResp(req, res)
 {
 	console.log('--- Req ---' );
@@ -90,6 +100,8 @@ function attName(att)
 }
 
 module.exports.allItems = allItems;
+module.exports.deleteItem = deleteItem;
+
 module.exports.gridView = gridView;
 module.exports.postResp = postResp;
  

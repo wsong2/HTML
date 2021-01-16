@@ -4,7 +4,8 @@ module.exports = function(app) {
 
 	app.get('/gridview', mycontroller.gridView);
 	
-	app.get('/rec/list', mycontroller.allItems);	//
+	app.get('/api/rec/list', mycontroller.allItems);
+	app.delete('/api/rec/:id', mycontroller.deleteItem);
 	
 	app.post('/simjson', mycontroller.postResp);
 	

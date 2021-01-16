@@ -30,12 +30,12 @@ input {
 	border:none;
 }
 
-input[type="text"]
-{
+input[type="text"], input[type="date"] {
     background: transparent;
 }
 
-input[type="date"]
+input[type="button"]
 {
+	border: 1px solid blue;
     background: transparent;
 }
