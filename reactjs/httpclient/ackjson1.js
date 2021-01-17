@@ -3,7 +3,7 @@ const http = require('http')
 const options = {
   hostname: 'localhost',
   port: 3000,
-  path: '/chargePts?dummy=DEMO_KEY'
+  path: '/ackjson?tagId=DEMO_KEY'
 }
 
 http.get(options, (resp) => {

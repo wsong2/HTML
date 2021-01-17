@@ -21,8 +21,8 @@ class FormAdd extends React.Component
 	}
 	formBody = formBody.join("&");
 
-	fetch('http://localhost:3000/api/rec/addnew', {
-	//fetch('/api/rec/addnew', {
+	//fetch('http://localhost:3000/api/rec/addnew', {
+	fetch('/api/rec/addnew', {
 		method: "post",
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'

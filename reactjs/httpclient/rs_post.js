@@ -11,14 +11,13 @@ const data = JSON.stringify({
 const options = {
   hostname: 'localhost',
   port: 3000,
-  path: '/simjson',
+  path: '/ackjson',
   method: 'POST',
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Content-Length': data.length
   }
 }
-//    'Content-Type': 'application/json',
 
 const req = http.request(options, (res) => {
     console.log('Status Code:', res.statusCode);
@@ -30,13 +29,10 @@ const req = http.request(options, (res) => {
     });
 
     res.on('end', () => {
-        console.log('Body: end');
-        //console.log('Body: ', JSON.parse(data));
+        //console.log('Body: end');
+        console.log('-- Body --');
+        console.log(JSON.parse(data));
     });
-/*	
-  res.on('data', (d) => {
-    process.stdout.write(d)
-  }) */
 })
 
 req.on('error', (error) => {

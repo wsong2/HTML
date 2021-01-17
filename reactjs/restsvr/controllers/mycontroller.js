@@ -1,5 +1,6 @@
 var fs = require("fs");
 var dtFmt = require("dateformat");
+var path = require('path');
 
 const cache = {};
 
@@ -14,59 +15,45 @@ function gridView(req, res)
    });
 }
 
-function allItems(req, res)
+function htmlPost(req, res)
 {
-	//console.log(req.query);
-	
-	const jfn = "db_prolog_sim11.json";
-	
-	console.log('--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
-	
-	if (Reflect.has(cache, jfn)) {
-		console.log('--- ' + jfn + ' (cached)');
-		res.end(cache[jfn]);
-	} else {
-		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-			cache[jfn] = data;
-			res.end(data);
-		});
-	}	
+	console.log("> HTML post");
+	//console.log(req.body);
+	for (let key in req.body) {
+		console.log("> " + key + ": " + req.body[key]);
+	}
+	res.sendFile(path.join(__dirname + '/data/response.html'));
 }
 
-function deleteItem(req, res)
+function getPathParam(req, res)
 {
-	let id = req.params.id;
-	
-	console.log('> Deleted ' + id);
-	
-	return res.status(200);	
+    console.log('> getPathParam: ' + req.params.tagId + ' at ' + dtFmt(Date.now(), 'isoTime'));
+	let json = '{"status": "OK", "details": "' + req.params.tagId + '"}';
+	res.end(json);
 }
 
+function getQryParam(req, res)
+{
+    console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt(Date.now(), 'isoTime'));
+	let json = '{"status": "OK", "details": "' + req.query.tagId + '"}';
+	res.end(json);
+}
 
 function postResp(req, res)
 {
-	console.log('--- Req ---' );
+	console.log('> postResp' );
 
-	// let cont_type = req.headers['content-type'];	
-	//if ('application/x-www-form-urlencoded' == cont_type) {
-		for (let key in req.body) {
-			if (req.body[key] == '') {
-				console.log(key);
-			} else {
-				parseMultiPartFormData(key+'='+req.body[key]);
-			}
+	for (let key in req.body) {
+		if (req.body[key] == '') {
+			console.log("> Key");
+			console.log(key);
+		} else {
+			console.log("> Multi-Part");
+			parseMultiPartFormData(key+'='+req.body[key]);
 		}
-	//} 
-		
-	const jfn = "ack.json";		
-	if (cache.hasOwnProperty(jfn)) {
-		res.end(cache[jfn]);
-	} else {
-		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-			cache[jfn] = data;
-			res.end(data);
-		});
-	}	
+	}
+	let json = '{"status": "OK", "details": "None"}';
+	res.end(json);
 }
 
 function parseMultiPartFormData(bodyText)
@@ -99,9 +86,10 @@ function attName(att)
 	return arr ? arr[1] : att;
 }
 
-module.exports.allItems = allItems;
-module.exports.deleteItem = deleteItem;
-
+module.exports.htmlPost = htmlPost;
 module.exports.gridView = gridView;
+
+module.exports.getPathParam = getPathParam;
+module.exports.getQryParam = getQryParam;
 module.exports.postResp = postResp;
  

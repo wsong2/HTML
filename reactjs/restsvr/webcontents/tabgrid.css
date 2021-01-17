@@ -1,0 +1,46 @@
+table.noborder {
+	border: none;
+}
+
+table.noborder td {
+	border: none;
+}
+
+table.noborder tr:nth-child(odd) { 
+	background: #F0F8FF; 
+}
+
+table.noborder tr:nth-child(even) {
+	background: #FFFFF0;
+}
+
+select {
+	border-width:0px;
+	border:none;
+    background: transparent;
+}
+
+input {
+	border-width:0px;
+	border:none;
+}
+
+input[type="text"], input[type="date"] {
+    background: transparent;
+}
+
+input[type="button"], input[type="submit"]
+{
+	border: 1px solid blue;
+    background: transparent;
+}
+
+li.menuitem {
+	display: inline;
+	padding-left: 2em;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
