@@ -10,8 +10,6 @@ import viewdata from './data/viewdata.js';
 
 const appGridData = viewdata();
 
-const constants = require("./constants");
-
 const spanStyle = {
 	display: 'block'
 };
@@ -48,8 +46,6 @@ class App extends React.Component
 	
 	if (btnValue == 'Load')
 	{
-		let myUrl = constants.HOST1 + "/api/rec/list";
-	
 		fetch("/api/rec/list").then(
 			(response) => response.json()
 		).then(
@@ -71,7 +67,6 @@ class App extends React.Component
 	else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 	{
 		let rec = this.state.rows[this.state.rowIndex];
-		//let urlDel = constants.HOST1 + "/api/rec/:" + rec['id'];
 		let urlDel = "/api/rec/:" + rec['id'];
 	
 		fetch(urlDel, {method: 'DELETE'}).then(

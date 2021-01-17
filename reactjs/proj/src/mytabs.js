@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import TabGrid from './tabgrid.js';
+import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
+
+import TabGrid from './components/tabgrid.js';
+
+import grid_data from './data/tab_data.js';
+const appGridData = grid_data();
 
 const spanStyle = {
 	display: 'block'
@@ -37,7 +41,7 @@ class MyTabs extends React.Component {
 			<Tabs>
 				<TabList><Tab>Grid</Tab><Tab>Changes</Tab></TabList>
 				<TabPanel>
-					<TabGrid griddata={this.props.griddata} onCellChange={this.notifyChange} />
+					<TabGrid griddata={appGridData} onCellChange={this.notifyChange} />
 				</TabPanel>
 				<TabPanel>
 					<LogLines lines={this.state.loglines} />
@@ -47,4 +51,4 @@ class MyTabs extends React.Component {
 	}
 }
 
-export default MyTabs;
+ReactDOM.render(<MyTabs/>, document.getElementById('root'));

@@ -62,8 +62,7 @@ const gridData = {
  } 
 };
 
-export function grid_data()
-//function grid_data()
+export default function grid_data()
 {
 	function getColumn(cn) {
 		let col = gridData.columns;

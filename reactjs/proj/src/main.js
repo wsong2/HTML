@@ -1,16 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 
 import SimContent from './components/SimContent.js';
-import WorkForm from './components/WorkForm.js';
 
-// Tab Grid
-import MyTabs from './components/mytabs.js';
-import { grid_data } from './data/tab_data.js';
-const appGridData = grid_data();
-// 
+const HiMsg = (props) => (<div><h2>Hi, {props.msg}!</h2></div>);
 
 class Content extends React.Component
 {
@@ -39,7 +34,7 @@ class App extends React.Component
    render() {
 	  return (
 		<Tabs>
-			<TabList><Tab>Welcome</Tab><Tab>Changes</Tab><Tab>Work</Tab><Tab>Grid</Tab></TabList>
+			<TabList><Tab>Welcome</Tab><Tab>Changes</Tab><Tab>Work</Tab></TabList>
 			<TabPanel>
 				<SimContent msg="World" />
 			</TabPanel>
@@ -47,10 +42,7 @@ class App extends React.Component
 				<div><Content myDataProp = {this.state.data} updateStateProp = {this.updateState}></Content></div>
 			</TabPanel>
 			<TabPanel>
-				<WorkForm msg="Folk" />
-			</TabPanel>
-			<TabPanel>
-				<MyTabs griddata={appGridData} />
+				<HiMsg msg="Folks" />
 			</TabPanel>
 		</Tabs>
 	);
