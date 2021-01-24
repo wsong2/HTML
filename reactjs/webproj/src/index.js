@@ -70,12 +70,15 @@ class App extends React.Component
 		let urlDel = "/api/rec/:" + rec['id'];
 	
 		fetch(urlDel, {method: 'DELETE'}).then(
-			(response) => response.text()
+			(response) => response.json()
 		).then(
 			(data) => {
+				//console.log('> ' + JSON.stringify(data));
+				let rowsM1 = this.state.rows.filter(obj => obj.id != data.rowId);
 				this.expectResponse = false;
 				this.setState({
 					rowIndex: -1,
+					rows: rowsM1
 				});
 			}
 		).catch(
@@ -94,20 +97,19 @@ class App extends React.Component
 		rec = this.state.rows[this.state.rowIndex]; 
 		updateText = "Update " + rec['id'];
 	}
-	return (
-		<Tabs>
-			<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
-			<TabPanel>
-				<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={this.state.rowIndex} onRowSelected={this.notifyChange} btnAction={this.btnAction} />
-			</TabPanel>
-			<TabPanel>
-				<FormUpdate data={rec} />
-			</TabPanel>
-			<TabPanel>
-				<FormAdd/>
-			</TabPanel>
-		</Tabs>
-	);
+	return (<Tabs>
+		<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
+		<TabPanel>
+			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={this.state.rowIndex} 
+				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
+		</TabPanel>
+		<TabPanel>
+			<FormUpdate data={rec} />
+		</TabPanel>
+		<TabPanel>
+			<FormAdd/>
+		</TabPanel>
+	</Tabs>);
  }
 }
 

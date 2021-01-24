@@ -30,11 +30,13 @@ function allItems(req, res)
 
 function deleteItem(req, res)
 {
-	let id = req.params.id;
-	
+	let idStr = req.params.id;
+	let id = idStr.substr(1);
 	console.log('> Deleted ' + id);
 	
-	return res.status(200);	
+	let ack = {status: 'OK'};
+	ack.rowId = id;
+	res.status(200).send(ack);
 }
 
 module.exports.allItems = allItems;
