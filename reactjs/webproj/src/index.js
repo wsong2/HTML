@@ -93,14 +93,16 @@ class App extends React.Component
  render() {
 	let rec = {};
 	let updateText = "Update";
+	let rIndex = -1;
 	if (this.state.rowIndex >= 0) {
 		rec = this.state.rows[this.state.rowIndex]; 
 		updateText = "Update " + rec['id'];
+		rIndex = this.state.rowIndex;
 	}
 	return (<Tabs>
 		<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
 		<TabPanel>
-			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={this.state.rowIndex} 
+			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 		</TabPanel>
 		<TabPanel>

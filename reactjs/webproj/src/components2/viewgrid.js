@@ -33,7 +33,7 @@ class ViewGrid extends React.Component
   	constructor(props) {
 		super(props);
 		this.state = {
-			selectedRow: props.rowIndex
+			selectedRow: this.props.rowIndex
 		}
 		this.notifyChange = this.notifyChange.bind(this);
 		this.btnClick = this.btnClick.bind(this);
@@ -61,6 +61,7 @@ class ViewGrid extends React.Component
 
 		let caption = this.props.caption;
 		let rows = this.props.rows;
+		let rIndex = this.props.rowIndex;
 		return (<div>
 			<table className="noborder">
 				<thead><tr>
@@ -72,7 +73,7 @@ class ViewGrid extends React.Component
 					<th>{caption('dttm')}</th>
 				</tr></thead>
 				<tbody>
-					<GridRows rows={rows} selected={this.state.selectedRow} notifyChange={this.notifyChange} />
+					<GridRows rows={rows} selected={rIndex} notifyChange={this.notifyChange} />
 					<tr><td/><td/><td colSpan="4">
 						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
 						<input type="button" value="Delete" onClick={this.btnClick} />
