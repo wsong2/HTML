@@ -1,7 +1,8 @@
 var fs = require("fs");
 var dtFmt = require("dateformat");
 
-const cache = {};
+var originalData = null;
+var arrItems = null;
 
 function newItem(req, res)
 {
@@ -17,12 +18,13 @@ function allItems(req, res)
 	const jfn = "db_prolog_sim11.json";
 	
 	console.log('> allItems at ' + dtFmt(Date.now(), 'isoTime'));	
-	if (Reflect.has(cache, jfn)) {
-		res.end(cache[jfn]);
+	if (originalData) {
+		res.end(originalData);
 	} else {
 		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-			cache[jfn] = data;
-			console.log('> ' + jfn + ' (cached)');
+			originalData = data;
+			arrItems = JSON.parse(originalData);
+			console.log('> ' + jfn + ' loaded');
 			res.end(data);
 		});
 	}	
@@ -30,9 +32,11 @@ function allItems(req, res)
 
 function deleteItem(req, res)
 {
-	let idStr = req.params.id;
+	let idStr = req.params.id;	// :id
 	let id = idStr.substr(1);
 	console.log('> Deleted ' + id);
+	
+	arrItems = arrItems.filter(rec => rec.id != id);
 	
 	let ack = {status: 'OK'};
 	ack.rowId = id;
