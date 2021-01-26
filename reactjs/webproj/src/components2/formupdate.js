@@ -25,19 +25,19 @@ class FormUpdate extends React.Component
  };
 
  render() {
-	return (<div>
-		<table className="noborder">
+	return (<div><table className="noborder">
 		<tr><td><input type="checkbox" onClick={this.onUpdateValue} checked="true" /></td>
 			<td>Name</td><td><input name="simName" type="text" value={this.state.data['simName']} /></td></tr>
 		<tr><td><input type="checkbox" onClick={this.onUpdateValue} checked="true" /></td>
 			<td>Date</td><td><input name="simDate" type="date" value={this.state.data['simDate']} /></td></tr>
 		<tr><td><input type="checkbox" onClick={this.onUpdateValue} checked="true" /></td>
-			<td>Category</td><td><input name="descr" type="text" value={this.state.data['descr']} /></td></tr>
+			<td>Category</td><td><input name="categ" type="text" value={this.state.data['categ']} /></td></tr>
+		<tr><td><input type="checkbox" onClick={this.onUpdateValue} checked="true" /></td>
+			<td>Description</td><td><input name="descr" type="text" value={this.state.data['descr']} /></td></tr>
 		<tr><td><input type="checkbox" onClick={this.onUpdateValue} /></td>
 			<td>Date Time</td><td><input name="dttm" type="datetime-local" value={this.state.data['dttm']} /></td></tr>
 		<tr><td/><td><button onClick={this.handleClick}>Update</button></td></tr>
-		</table>
-	</div>);
+	</table></div>);
  }
 }
 

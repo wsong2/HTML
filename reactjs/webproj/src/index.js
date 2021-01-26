@@ -28,12 +28,24 @@ class App extends React.Component
 	}
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
+	this.notifyNew = this.notifyNew.bind(this);
 	this.btnAction = this.btnAction.bind(this);
  };
 	
  notifyChange(rIndex) {
 	this.setState({
 		rowIndex: rIndex
+	})
+ };
+
+ notifyNew(row) {
+	console.log('new> ' + JSON.stringify(row));
+	//console.log('R0> ' + JSON.stringify(this.state.rows[0]));
+	this.state.rows.push(row);
+	let rowsP1 = this.state.rows;
+	this.setState({
+		rowIndex: -1,
+		rows: rowsP1
 	})
  };
 
@@ -105,12 +117,8 @@ class App extends React.Component
 			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 		</TabPanel>
-		<TabPanel>
-			<FormUpdate data={rec} />
-		</TabPanel>
-		<TabPanel>
-			<FormAdd/>
-		</TabPanel>
+		<TabPanel><FormUpdate data={rec} /></TabPanel>
+		<TabPanel><FormAdd notifyNew={this.notifyNew} /></TabPanel>
 	</Tabs>);
  }
 }

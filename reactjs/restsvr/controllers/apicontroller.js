@@ -2,14 +2,18 @@ var fs = require("fs");
 var dtFmt = require("dateformat");
 
 var originalData = null;
-var arrItems = null;
+var nextId = 11;
 
 function newItem(req, res)
 {
-	for (let key in req.body) {
-		console.log("> " + key + ": " + req.body[key]);
+	let item = {id: nextId++, dttm: "2021-01-25T20:21:05"};
+	//Object.entries(obj).forEach(([key, value]) => console.log(`${key}: ${value}`)); 
+	for (const [key, val] of Object.entries(req.body)) {
+		console.log("> " + key + ": " + val);
+		//item[key] = key.toLowerCase().endsWith('date') ? Date.parse(val) : val;
+		item[key] = val;
 	}
-	let json = '{"status": "OK", "details": "Json Response"}';
+	let json = JSON.stringify(item);
 	res.end(json);
 }
 
@@ -23,7 +27,6 @@ function allItems(req, res)
 	} else {
 		fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
 			originalData = data;
-			arrItems = JSON.parse(originalData);
 			console.log('> ' + jfn + ' loaded');
 			res.end(data);
 		});
@@ -35,8 +38,6 @@ function deleteItem(req, res)
 	let idStr = req.params.id;	// :id
 	let id = idStr.substr(1);
 	console.log('> Deleted ' + id);
-	
-	arrItems = arrItems.filter(rec => rec.id != id);
 	
 	let ack = {status: 'OK'};
 	ack.rowId = id;
