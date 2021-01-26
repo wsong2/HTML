@@ -7,7 +7,6 @@ var nextId = 11;
 function newItem(req, res)
 {
 	let item = {id: nextId++, dttm: "2021-01-25T20:21:05"};
-	//Object.entries(obj).forEach(([key, value]) => console.log(`${key}: ${value}`)); 
 	for (const [key, val] of Object.entries(req.body)) {
 		console.log("> " + key + ": " + val);
 		//item[key] = key.toLowerCase().endsWith('date') ? Date.parse(val) : val;
@@ -44,7 +43,14 @@ function deleteItem(req, res)
 	res.status(200).send(ack);
 }
 
+function updateItem(req, res)
+{
+	Object.entries(req.body).forEach(([key, value]) => console.log(`U> ${key}: ${value}`)); 
+	res.status(200).send('Update OK');
+}
+
 module.exports.allItems = allItems;
 module.exports.deleteItem = deleteItem;
 module.exports.newItem = newItem;
+module.exports.updateItem = updateItem;
  

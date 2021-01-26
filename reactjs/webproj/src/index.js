@@ -29,7 +29,7 @@ class App extends React.Component
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
 	this.notifyNew = this.notifyNew.bind(this);
-	this.notifyUpdate = this.notifyUpdate.bind(this);
+	this.notifyUpd = this.notifyUpd.bind(this);
 	this.btnAction = this.btnAction.bind(this);
  };
 	
@@ -45,7 +45,7 @@ class App extends React.Component
 	})
  };
 
- notifyUpdate(rec) {
+ notifyUpd(rec) {
 	let currRows = this.state.rows;
 	const ix = currRows.findIndex((el) => el.id === rec.id);
 	if (ix >= 0) {
@@ -122,7 +122,7 @@ class App extends React.Component
 			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 		</TabPanel>
-		<TabPanel><FormUpdate rec={rec} notifyUpdate={this.notifyUpdate} /></TabPanel>
+		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>
 		<TabPanel><FormAdd notifyNew={this.notifyNew} /></TabPanel>
 	</Tabs>);
  }

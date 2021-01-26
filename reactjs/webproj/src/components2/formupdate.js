@@ -1,10 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+var expectResponse = false;
+var doNotifyUpdate;
+
+function notifyUpdate(data) {
+	doNotifyUpdate(data);
+}
+
 class FormUpdate extends React.Component
 {	
  constructor(props) {
 	super(props);
+	doNotifyUpdate = this.props.notifyUpd;
 	
 	let data0 = {simName:'', simDate:'', categ: '', descr:'', dttm:''};
     this.state = {
@@ -42,20 +50,45 @@ class FormUpdate extends React.Component
 	})
  };
 
+
  handleClick_impl() {
 	let recSrc = this.state.rec;
 	if (!recSrc.hasOwnProperty('id')) {
 		return;
 	}
-	let rec = {};
-	rec.id = recSrc.id;
+	
+	if (expectResponse) {
+		return;
+	}
+	expectResponse = true;
+	
+	let formBody = [];
+	const rec = {};
 	for (let key in recSrc) {
-		if (this.state[key]) {
-			//console.log('U> ' + key);
+		if (key == 'id' || this.state[key]) {
+			let encodedKey = encodeURIComponent(key);
+			let encodedValue = encodeURIComponent(recSrc[key]);
+			formBody.push(encodedKey + "=" + encodedValue);
 			rec[key] = recSrc[key];
 		}
 	}
-	this.props.notifyUpdate(rec);
+	formBody = formBody.join("&");
+
+	fetch('/api/rec/update', {
+		method: "post",
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: formBody	   
+	}).then(function(response) { 
+		return response.text();
+	}).then(function(data) {
+		expectResponse = false;
+		notifyUpdate(rec);
+	}).catch(function(err) {
+		expectResponse = false;
+		console.log(err);
+	});	
  };
 
  render() {

@@ -4,6 +4,7 @@ module.exports = function(app) {
 	var mycontroller = require('../controllers/mycontroller.js');
 
 	app.post('/api/rec/addnew', apicontroller.newItem);
+	app.post('/api/rec/update', apicontroller.updateItem);
 	app.get('/api/rec/list', apicontroller.allItems);
 	app.delete('/api/rec/:id', apicontroller.deleteItem);
 	
