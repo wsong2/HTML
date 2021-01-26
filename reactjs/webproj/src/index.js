@@ -29,24 +29,29 @@ class App extends React.Component
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
 	this.notifyNew = this.notifyNew.bind(this);
+	this.notifyUpdate = this.notifyUpdate.bind(this);
 	this.btnAction = this.btnAction.bind(this);
  };
 	
- notifyChange(rIndex) {
-	this.setState({
-		rowIndex: rIndex
-	})
- };
+ notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
 
  notifyNew(row) {
-	console.log('new> ' + JSON.stringify(row));
-	//console.log('R0> ' + JSON.stringify(this.state.rows[0]));
+	//console.log('new> ' + JSON.stringify(row));
 	this.state.rows.push(row);
 	let rowsP1 = this.state.rows;
 	this.setState({
 		rowIndex: -1,
 		rows: rowsP1
 	})
+ };
+
+ notifyUpdate(rec) {
+	let currRows = this.state.rows;
+	const ix = currRows.findIndex((el) => el.id === rec.id);
+	if (ix >= 0) {
+		currRows[ix] = Object.assign(currRows[ix], rec);
+		this.setState({ rows: currRows });
+	}
  };
 
  btnAction(btnValue) {
@@ -117,7 +122,7 @@ class App extends React.Component
 			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 		</TabPanel>
-		<TabPanel><FormUpdate data={rec} /></TabPanel>
+		<TabPanel><FormUpdate rec={rec} notifyUpdate={this.notifyUpdate} /></TabPanel>
 		<TabPanel><FormAdd notifyNew={this.notifyNew} /></TabPanel>
 	</Tabs>);
  }

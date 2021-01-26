@@ -22,6 +22,7 @@ class TdList extends React.Component
 			<td>{row['id']}</td>
 			<td>{row['simName']}</td>
 			<td>{row['simDate']}</td>
+			<td>{row['categ']}</td>
 			<td>{row['descr']}</td>
 			<td>{row['dttm']}</td>
 		</tr>;
@@ -69,6 +70,7 @@ class ViewGrid extends React.Component
 					<th>{caption('id')}</th>
 					<th>{caption('simName')}</th>
 					<th>{caption('simDate')}</th>
+					<th>{caption('categ')}</th>
 					<th>{caption('descr')}</th>
 					<th>{caption('dttm')}</th>
 				</tr></thead>

@@ -2,19 +2,22 @@
   {
     "id": 2,
     "simName": "Client-2",
+    "categ": "A",
     "descr": "Rest client PUT",
     "dttm": "2019-08-26T00:00:00"
   },
   {
     "id": 5,
     "simName": "ClientN3",
-    "descr": "Rest client loader",
+     "categ": "B",
+	 "descr": "Rest client loader",
     "dttm": "2020-08-06T00:00:00"
   },
   {
     "id": 7,
     "simName": "Asus ZenBook ux315",
     "simDate": "2020-12-26",
+    "categ": "C",
     "descr": "900 GBP",
     "dttm": "2020-12-26T00:00:00"
   },
@@ -22,6 +25,7 @@
     "id": 8,
     "simName": "Sim00",
     "simDate": "2021-01-05",
+    "categ": "D",
     "descr": "Through Web Form",
     "dttm": "2021-01-05T19:30:41.02"
   },
@@ -29,6 +33,7 @@
     "id": 9,
     "simName": "Seiko",
     "simDate": "2020-04-01",
+    "categ": "E",
     "descr": "£7.99",
     "dttm": "2021-01-07T18:46:13.787"
   }
