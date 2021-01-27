@@ -1,20 +1,20 @@
 [ 
   {
-    "id": 2,
+    "simId": 2,
     "simName": "Client-2",
     "categ": "A",
     "descr": "Rest client PUT",
     "dttm": "2019-08-26T00:00:00"
   },
   {
-    "id": 5,
+    "simId": 5,
     "simName": "ClientN3",
      "categ": "B",
 	 "descr": "Rest client loader",
     "dttm": "2020-08-06T00:00:00"
   },
   {
-    "id": 7,
+    "simId": 7,
     "simName": "Asus ZenBook ux315",
     "simDate": "2020-12-26",
     "categ": "C",
@@ -22,7 +22,7 @@
     "dttm": "2020-12-26T00:00:00"
   },
   {
-    "id": 8,
+    "simId": 8,
     "simName": "Sim00",
     "simDate": "2021-01-05",
     "categ": "D",
@@ -30,7 +30,7 @@
     "dttm": "2021-01-05T19:30:41.02"
   },
   {
-    "id": 9,
+    "simId": 9,
     "simName": "Seiko",
     "simDate": "2020-04-01",
     "categ": "E",

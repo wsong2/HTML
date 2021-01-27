@@ -53,7 +53,7 @@ class FormUpdate extends React.Component
 
  handleClick_impl() {
 	let recSrc = this.state.rec;
-	if (!recSrc.hasOwnProperty('id')) {
+	if (!recSrc.hasOwnProperty('simId')) {
 		return;
 	}
 	
@@ -65,7 +65,7 @@ class FormUpdate extends React.Component
 	let formBody = [];
 	const rec = {};
 	for (let key in recSrc) {
-		if (key == 'id' || this.state[key]) {
+		if (key == 'simId' || this.state[key]) {
 			let encodedKey = encodeURIComponent(key);
 			let encodedValue = encodeURIComponent(recSrc[key]);
 			formBody.push(encodedKey + "=" + encodedValue);

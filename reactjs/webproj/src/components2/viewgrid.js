@@ -19,7 +19,7 @@ class TdList extends React.Component
 		let row = this.props.row;
 		return <tr>
 			<td><input type='radio' id={this.props.rowIndex} onChange={this.onUpdateValue} checked={this.props.checked} /></td>
-			<td>{row['id']}</td>
+			<td>{row['simId']}</td>
 			<td>{row['simName']}</td>
 			<td>{row['simDate']}</td>
 			<td>{row['categ']}</td>
@@ -67,7 +67,7 @@ class ViewGrid extends React.Component
 			<table className="noborder">
 				<thead><tr>
 					<th/>
-					<th>{caption('id')}</th>
+					<th>{caption('simId')}</th>
 					<th>{caption('simName')}</th>
 					<th>{caption('simDate')}</th>
 					<th>{caption('categ')}</th>

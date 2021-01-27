@@ -47,7 +47,7 @@ class App extends React.Component
 
  notifyUpd(rec) {
 	let currRows = this.state.rows;
-	const ix = currRows.findIndex((el) => el.id === rec.id);
+	const ix = currRows.findIndex((el) => el.simId === rec.simId);
 	if (ix >= 0) {
 		currRows[ix] = Object.assign(currRows[ix], rec);
 		this.setState({ rows: currRows });
@@ -84,14 +84,14 @@ class App extends React.Component
 	else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 	{
 		let rec = this.state.rows[this.state.rowIndex];
-		let urlDel = "/api/rec/:" + rec['id'];
+		let urlDel = "/api/rec/:" + rec['simId'];
 	
 		fetch(urlDel, {method: 'DELETE'}).then(
 			(response) => response.json()
 		).then(
 			(data) => {
 				//console.log('> ' + JSON.stringify(data));
-				let rowsM1 = this.state.rows.filter(obj => obj.id != data.rowId);
+				let rowsM1 = this.state.rows.filter(obj => obj.simId != data.rowId);
 				this.expectResponse = false;
 				this.setState({
 					rowIndex: -1,
@@ -113,7 +113,7 @@ class App extends React.Component
 	let rIndex = -1;
 	if (this.state.rowIndex >= 0) {
 		rec = this.state.rows[this.state.rowIndex]; 
-		updateText = "Update " + rec['id'];
+		updateText = "Update " + rec['simId'];
 		rIndex = this.state.rowIndex;
 	}
 	return (<Tabs>

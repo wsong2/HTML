@@ -6,7 +6,7 @@ var nextId = 11;
 
 function newItem(req, res)
 {
-	let item = {id: nextId++, dttm: "2021-01-25T20:21:05"};
+	let item = {simId: nextId++, dttm: "2021-01-25T20:21:05"};
 	for (const [key, val] of Object.entries(req.body)) {
 		console.log("> " + key + ": " + val);
 		//item[key] = key.toLowerCase().endsWith('date') ? Date.parse(val) : val;

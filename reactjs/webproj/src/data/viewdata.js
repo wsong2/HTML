@@ -1,6 +1,6 @@
 const gridData = {
  columns : {
-	"id": { "caption": "Id" },
+	"simId": { "caption": "Id" },
 	"simName": { "caption": "Name" },
 	"simDate": { "caption": "Date" },
 	"categ": { "caption": "Category" },
@@ -9,7 +9,7 @@ const gridData = {
  },
  rows : [
    {
-    "id": 1,
+    "simId": 1,
     "simName": "Accessory",
     "simDate": "2020-04-01",
     "categ": "DIY",
