@@ -36,12 +36,10 @@ class App extends React.Component
  notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
 
  notifyNew(row) {
-	//console.log('new> ' + JSON.stringify(row));
 	this.state.rows.push(row);
-	let rowsP1 = this.state.rows;
 	this.setState({
 		rowIndex: -1,
-		rows: rowsP1
+		rows: this.state.rows
 	})
  };
 
@@ -54,8 +52,8 @@ class App extends React.Component
 	}
  };
 
- btnAction(btnValue) {
-	 
+ btnAction(btnValue)
+ {	 
 	if (this.expectResponse) {
 		return;
 	}
@@ -72,7 +70,6 @@ class App extends React.Component
 					rowIndex: -1,
 					rows: data
 				});
-				//console.log(data);
 			}
 		).catch(
 			(err) => {
@@ -80,8 +77,9 @@ class App extends React.Component
 				console.log(err);
 			}
 		);
+		return;
 	}
-	else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
+	if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 	{
 		let rec = this.state.rows[this.state.rowIndex];
 		let urlDel = "/api/rec/:" + rec['simId'];
