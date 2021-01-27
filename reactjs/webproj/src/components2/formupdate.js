@@ -26,20 +26,8 @@ class FormUpdate extends React.Component
 	this.handleClick = this.handleClick_impl.bind(this);
  }
 
-  onClickName() {
-    this.setState({ simName: !this.state.simName });
-  }
-  onClickDate() {
-    this.setState({ simDate: !this.state.simDate });
-  }
-  onClickCateg() {
-    this.setState({ categ: !this.state.categ });
-  }
-  onClickDescr() {
-    this.setState({ descr: !this.state.descr });
-  }
-  onClickDttm() {
-    this.setState({ dttm: !this.state.dttm });
+  onClickCbx(key) {
+    this.setState({ [key]: !this.state[key] });
   }
 
  onUpdateValue(evt) {
@@ -94,15 +82,15 @@ class FormUpdate extends React.Component
  render() {
 	 let rec = this.state.rec;
 	 return (<div><table className="noborder"><tbody>
-		<tr><td><input type="checkbox" onChange={e => this.onClickName()} checked={this.state.simName} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simName')} checked={this.state.simName} /></td>
 			<td>Name</td><td><input id="simName" type="text" value={rec.simName} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickDate()} checked={this.state.simDate} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simDate')} checked={this.state.simDate} /></td>
 			<td>Date</td><td><input id="simDate" type="date" value={rec.simDate} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCateg()} checked={this.state.categ} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('categ')} checked={this.state.categ} /></td>
 			<td>Category</td><td><input id="categ" type="text" value={rec.categ} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickDescr()} checked={this.state.descr} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('descr')} checked={this.state.descr} /></td>
 			<td>Description</td><td><input id="descr" type="text" value={rec.descr} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickDttm() } checked={this.state.dttm} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('dttm') } checked={this.state.dttm} /></td>
 			<td>Date Time</td><td><input id="dttm" type="datetime-local" value={rec.dttm} onChange={e => this.onUpdateValue(e)} /></td></tr>
 		<tr><td/><td><button onClick={this.handleClick}>Update</button></td></tr>
 	 </tbody></table></div>);
