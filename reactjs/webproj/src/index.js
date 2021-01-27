@@ -10,13 +10,13 @@ import viewdata from './data/viewdata.js';
 
 const appGridData = viewdata();
 
+/*
 const spanStyle = {
 	display: 'block'
 };
 	
 const LogLines = (props) => (<div>{props.lines.map((mi, i) => (<span key={i} style={spanStyle}>{mi}</span>))}</div>);
-
-const Content  = (props) => (<div><h3>{props.myText}</h3></div>);
+*/
 
 class App extends React.Component
 {

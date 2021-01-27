@@ -49,16 +49,13 @@ class ViewGrid extends React.Component
  
 	btnClick(evt) {
 		this.props.btnAction(evt.target.value);
-		//console.log('Button ' + evt.target.value);
 	};
  
 	render() {
-		let GridRows = function (props) {
-			return props.rows.map( function(r, idx) {
+		const GridRows = (props) => props.rows.map( function(r, idx) {
 				let selected = (idx==props.selected);
 				return <TdList key={idx} rowIndex={idx} row={r} checked={selected} notifyChange={props.notifyChange} />
 			});
-		}
 
 		let caption = this.props.caption;
 		let rows = this.props.rows;
