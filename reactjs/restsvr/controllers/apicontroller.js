@@ -40,7 +40,7 @@ function deleteItem(req, res)
 	
 	let ack = {status: 'OK'};
 	ack.rowId = id;
-	res.status(200).send(ack);
+	res.status(202).send(ack);
 }
 
 function updateItem(req, res)
@@ -49,8 +49,15 @@ function updateItem(req, res)
 	res.status(200).send('Update OK');
 }
 
+function runTask(req, res)
+{
+	console.log('> dbexec ' + dtFmt(Date.now(), 'isoTime'));	
+	res.status(200).send('OK');
+}
+
 module.exports.allItems = allItems;
 module.exports.deleteItem = deleteItem;
 module.exports.newItem = newItem;
 module.exports.updateItem = updateItem;
+module.exports.runTask = runTask;
  

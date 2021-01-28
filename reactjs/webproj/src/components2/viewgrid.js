@@ -73,10 +73,11 @@ class ViewGrid extends React.Component
 				</tr></thead>
 				<tbody>
 					<GridRows rows={rows} selected={rIndex} notifyChange={this.notifyChange} />
-					<tr><td/><td/><td colSpan="4">
+					<tr><td/><td/><td colSpan="3">
 						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
-						<input type="button" value="Delete" onClick={this.btnClick} />
-					</td></tr>
+						<input type="button" value="Delete" onClick={this.btnClick} /></td>
+						<td colSpan="2"><input type="button" value="Save" onClick={this.btnClick} /></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>);

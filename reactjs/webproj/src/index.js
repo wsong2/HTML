@@ -79,6 +79,22 @@ class App extends React.Component
 		);
 		return;
 	}
+	if (btnValue == 'Save')
+	{
+		fetch("/api/task/dbexec").then(
+			(response) => response.json()
+		).then(
+			(data) => {
+				this.expectResponse = false;
+			}
+		).catch(
+			(err) => {
+				this.expectResponse = false;
+				console.log(err);
+			}
+		);
+		return;
+	}
 	if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 	{
 		let rec = this.state.rows[this.state.rowIndex];

@@ -5,8 +5,9 @@ module.exports = function(app) {
 
 	app.post('/api/rec/addnew', apicontroller.newItem);
 	app.post('/api/rec/update', apicontroller.updateItem);
-	app.get('/api/rec/list', apicontroller.allItems);
 	app.delete('/api/rec/:id', apicontroller.deleteItem);
+	app.get('/api/rec/list', apicontroller.allItems);
+	app.get('/api/task/dbexec', apicontroller.runTask);
 	
 	//
 	app.post('/form/addnew', mycontroller.htmlPost);

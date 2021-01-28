@@ -44,7 +44,6 @@ class FormAdd extends React.Component
 		return response.json();
 	}).then(function(data) {
 		expectResponse = false;
-		console.log('Add> ' + JSON.stringify(data));
 		notifyNew(data);
 	}).catch(function(err) {
 		expectResponse = false;
