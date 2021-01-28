@@ -8,9 +8,9 @@ function newItem(req, res)
 {
 	let item = {simId: nextId++, dttm: "2021-01-25T20:21:05"};
 	for (const [key, val] of Object.entries(req.body)) {
-		console.log("> " + key + ": " + val);
+		console.log("+ " + key + ": " + val);
 		//item[key] = key.toLowerCase().endsWith('date') ? Date.parse(val) : val;
-		item[key] = val;
+		//item[key] = val;
 	}
 	let json = JSON.stringify(item);
 	res.end(json);

@@ -27,9 +27,11 @@ class FormAdd extends React.Component
 	
 	const formData = new FormData(event.target);	
 	let formBody = [];
-	for (let pair of formData.entries()) {
-		let encodedKey = encodeURIComponent(pair[0]);
-		let encodedValue = encodeURIComponent(pair[1]);
+	let rec = {};
+	for (let [key,val] of formData.entries()) {
+		rec[key] = val;
+		let encodedKey = encodeURIComponent(key);
+		let encodedValue = encodeURIComponent(val);
 		formBody.push(encodedKey + "=" + encodedValue);
 	}
 	formBody = formBody.join("&");
@@ -44,7 +46,7 @@ class FormAdd extends React.Component
 		return response.json();
 	}).then(function(data) {
 		expectResponse = false;
-		notifyNew(data);
+		notifyNew(Object.assign(data, rec));
 	}).catch(function(err) {
 		expectResponse = false;
 		console.log(err);
