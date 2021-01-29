@@ -97,16 +97,16 @@ notifySortOrder(sortorder) {
 	}
 	if (sortorder == 'origin') {
 		this.setState({
-			rowIndex: -1,
-			rows: this.state.unsortedrows,
+			//rowIndex: -1,
+			//rows: this.state.unsortedrows,
 			order: sortorder
 		});
 		return;
 	}
-	this.state.rows = sortRows(this.state.unsortedrows, this.state.order);
+	//this.state.rows = sortRows(this.state.unsortedrows, this.state.order);
 	this.setState({
-		rowIndex: -1,
-		rows: this.state.rows,
+		//rowIndex: -1,
+		//rows: this.state.rows,
 		order: sortorder
 	});
 };
@@ -195,7 +195,7 @@ btnAction(btnValue)
 	return (<Tabs>
 		<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
 		<TabPanel>
-			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
+			<ViewGrid caption={appGridData.caption} sortOrder={this.state.order} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} notifySortOrder={this.notifySortOrder}  />
 		</TabPanel>
 		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>

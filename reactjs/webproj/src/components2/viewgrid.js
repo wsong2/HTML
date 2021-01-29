@@ -59,7 +59,7 @@ class ViewGrid extends React.Component
 	};
  
 selChange(evt) {
-	this.prop.notifySortOrder(evt.target.value);
+	this.props.notifySortOrder(evt.target.value);
 };
 
 	render() {
@@ -88,7 +88,7 @@ selChange(evt) {
 						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
 						<input type="button" value="Delete" onClick={this.btnClick} /></td>
 						<td colSpan="2"><span style={spanStyle}>Sort by</span> 
-						<select value="origin" onChange={e => this.selChange(e)} >
+						<select value={this.props.sortOrder} onChange={e => this.selChange(e)} >
 							<option value="simName">Name</option>
 							<option value="simDate">Date</option>
 							<option value="origin">none</option>
