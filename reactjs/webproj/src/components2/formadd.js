@@ -46,7 +46,11 @@ class FormAdd extends React.Component
 		return response.json();
 	}).then(function(data) {
 		expectResponse = false;
-		notifyNew(Object.assign(data, rec));
+		if (Reflect.has(data,'simId')) {
+			notifyNew(Object.assign(data, rec));
+		} else {
+			console.log(data);
+		}
 	}).catch(function(err) {
 		expectResponse = false;
 		console.log(err);

@@ -10,14 +10,6 @@ import viewdata from './data/viewdata.js';
 
 const appGridData = viewdata();
 
-/*
-const spanStyle = {
-	display: 'block'
-};
-	
-const LogLines = (props) => (<div>{props.lines.map((mi, i) => (<span key={i} style={spanStyle}>{mi}</span>))}</div>);
-*/
-
 class App extends React.Component
 {
  constructor(props) {
@@ -98,13 +90,12 @@ class App extends React.Component
 	if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 	{
 		let rec = this.state.rows[this.state.rowIndex];
-		let urlDel = "/api/rec/:" + rec['simId'];
+		let urlDel = "/api/rec/" + rec['simId'];
 	
 		fetch(urlDel, {method: 'DELETE'}).then(
 			(response) => response.json()
 		).then(
 			(data) => {
-				//console.log('> ' + JSON.stringify(data));
 				let rowsM1 = this.state.rows.filter(obj => obj.simId != data.rowId);
 				this.expectResponse = false;
 				this.setState({

@@ -34,8 +34,7 @@ function allItems(req, res)
 
 function deleteItem(req, res)
 {
-	let idStr = req.params.id;	// :id
-	let id = idStr.substr(1);
+	let id = req.params.id;	// :id
 	console.log('> Deleted ' + id);
 	
 	let ack = {status: 'OK'};

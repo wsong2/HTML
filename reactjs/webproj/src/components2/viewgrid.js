@@ -29,6 +29,13 @@ class TdList extends React.Component
 	}
 }
 
+const spanStyle = {
+	fontStyle: 'italic'
+};
+const tdStyle = {
+	textAlign: 'center'
+};
+
 class ViewGrid extends React.Component
 {	
   	constructor(props) {
@@ -73,10 +80,15 @@ class ViewGrid extends React.Component
 				</tr></thead>
 				<tbody>
 					<GridRows rows={rows} selected={rIndex} notifyChange={this.notifyChange} />
-					<tr><td/><td/><td colSpan="3">
+					<tr><td/><td/><td colSpan="2">
 						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
 						<input type="button" value="Delete" onClick={this.btnClick} /></td>
-						<td colSpan="2"><input type="button" value="Save" onClick={this.btnClick} /></td>
+						<td colSpan="2"><span style={spanStyle}>Sort by</span> <select>
+							<option value="name">Name</option>
+							<option value="date">Date</option>
+							<option value="none" selected="selected">Loading Order</option>
+						</select></td>
+						<td style={tdStyle}><input type="button" value="Save" onClick={this.btnClick} /></td>
 					</tr>
 				</tbody>
 			</table>
