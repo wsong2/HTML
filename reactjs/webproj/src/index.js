@@ -10,9 +10,12 @@ import viewdata from './data/viewdata.js';
 
 const appGridData = viewdata();
 
+var warningOnClosing = false;
+
 class App extends React.Component
 {
- constructor(props) {
+ 
+constructor(props) {
 	super(props);    
     this.state = {
 		rowIndex: -1,
@@ -25,11 +28,26 @@ class App extends React.Component
 	this.notifyUpd = this.notifyUpd.bind(this);
 	this.notifyField = this.notifyField.bind(this);
 	this.btnAction = this.btnAction.bind(this);
- };
+	this.handleUnload = this.handleUnload.bind(this);
+};
+
+componentDidMount() { window.addEventListener('beforeunload', this.handleUnload); }
+
+componentWillUnmount() { window.removeEventListener('beforeunload', this.handleUnload); }
+
+handleUnload(e) {
+	if (warningOnClosing) {
+		//e.preventDefault();
+		let message = "\o/";
+		(e || window.event).returnValue = message;
+		return message;
+	}
+}
 	
  notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
 
  notifyNew(row) {
+	warningOnClosing = true;
 	this.state.rows.push(row);
 	this.setState({
 		rowIndex: -1,
@@ -38,6 +56,7 @@ class App extends React.Component
  };
 
  notifyUpd(rec) {
+	warningOnClosing = true;
 	let currRows = this.state.rows;
 	const ix = currRows.findIndex((el) => el.simId === rec.simId);
 	if (ix >= 0) {
@@ -87,6 +106,7 @@ class App extends React.Component
 		).then(
 			(data) => {
 				this.expectResponse = false;
+				warningOnClosing = false;
 			}
 		).catch(
 			(err) => {
@@ -105,6 +125,7 @@ class App extends React.Component
 			(response) => response.json()
 		).then(
 			(data) => {
+				warningOnClosing = true;
 				let rowsM1 = this.state.rows.filter(obj => obj.simId != data.rowId);
 				this.expectResponse = false;
 				this.setState({
