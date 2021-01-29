@@ -16,12 +16,14 @@ class App extends React.Component
 	super(props);    
     this.state = {
 		rowIndex: -1,
-		rows: appGridData.rows()
+		rows: appGridData.rows(),
+		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''}
 	}
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
 	this.notifyNew = this.notifyNew.bind(this);
 	this.notifyUpd = this.notifyUpd.bind(this);
+	this.notifyField = this.notifyField.bind(this);
 	this.btnAction = this.btnAction.bind(this);
  };
 	
@@ -42,6 +44,13 @@ class App extends React.Component
 		currRows[ix] = Object.assign(currRows[ix], rec);
 		this.setState({ rows: currRows });
 	}
+ };
+
+ notifyField(key, val) {
+	this.state.rec[key] = val;
+	this.setState({
+		rec: this.state.rec
+	})
  };
 
  btnAction(btnValue)
@@ -128,7 +137,7 @@ class App extends React.Component
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
 		</TabPanel>
 		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>
-		<TabPanel><FormAdd notifyNew={this.notifyNew} /></TabPanel>
+		<TabPanel><FormAdd rec={this.state.rec} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>
 	</Tabs>);
  }
 }

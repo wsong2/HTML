@@ -58,6 +58,10 @@ class ViewGrid extends React.Component
 		this.props.btnAction(evt.target.value);
 	};
  
+ 	selChange(evt) {
+		// TODO
+	};
+
 	render() {
 		const GridRows = (props) => props.rows.map( function(r, idx) {
 				let selected = (idx==props.selected);
@@ -83,10 +87,10 @@ class ViewGrid extends React.Component
 					<tr><td/><td/><td colSpan="2">
 						<input type="button" value="Load" onClick={this.btnClick} />&nbsp;&nbsp;
 						<input type="button" value="Delete" onClick={this.btnClick} /></td>
-						<td colSpan="2"><span style={spanStyle}>Sort by</span> <select>
+						<td colSpan="2"><span style={spanStyle}>Sort by</span> <select value="none" onChange={e => this.selChange(e)} >
 							<option value="name">Name</option>
 							<option value="date">Date</option>
-							<option value="none" selected="selected">Loading Order</option>
+							<option value="none">Loading Order</option>
 						</select></td>
 						<td style={tdStyle}><input type="button" value="Save" onClick={this.btnClick} /></td>
 					</tr>

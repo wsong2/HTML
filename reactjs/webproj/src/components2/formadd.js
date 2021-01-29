@@ -12,9 +12,14 @@ class FormAdd extends React.Component
 {	
   constructor(props) {
 	super(props);
-	doNotifyNew = this.props.notifyNew;
+	doNotifyNew = this.props.notifyNew;	
  	this.handleSubmit = this.handleSubmit.bind(this);
+ 	this.onUpdateValue = this.onUpdateValue.bind(this);
   }
+
+  onUpdateValue(evt) {
+	this.props.notifyField(evt.target.name, evt.target.value);
+  };
 
   handleSubmit(event)
   {
@@ -57,15 +62,17 @@ class FormAdd extends React.Component
 	});
   }
 
- render() {
+render() {
+	let rec = this.props.rec;
 	return (<form onSubmit={this.handleSubmit}><table className="noborder"><tbody>
-		<tr><td>Name</td><td><input name="simName" type="text" required={true} /></td></tr>
-		<tr><td>Category</td><td><input name="categ" type="text" required={true} /></td></tr>
-		<tr><td>Description</td><td><input name="descr" type="text" required={true} /></td></tr>
-		<tr><td>Date</td><td><input name="simDate" type="date" required={true} /></td></tr>
+		<tr><td>Name</td><td><input name="simName" type="text" value={rec.simName} onChange={this.onUpdateValue} /></td></tr>
+		<tr><td>Category</td><td><input name="categ" type="text" value={rec.categ} onChange={this.onUpdateValue} /></td></tr>
+		<tr><td>Description</td><td><input name="descr" type="text" value={rec.descr} onChange={this.onUpdateValue} /></td></tr>
+		<tr><td>Date</td><td><input name="simDate" type="date" value={rec.simDate} onChange={this.onUpdateValue} /></td></tr>
 		<tr><td /><td><input type="submit" value="Submit"/></td></tr>
 	</tbody></table></form>);
- }
+}
+ 
 }
 
 export default FormAdd;
