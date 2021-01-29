@@ -12,6 +12,19 @@ const appGridData = viewdata();
 
 var warningOnClosing = false;
 
+function sortRows(rows, sortKey) {
+	/*
+	if (sortKey == 'origin') {
+		return rows;
+	}
+	let rows2 = [...rows];
+	appGridData.sortRows(rows2, sortKey);
+	return rows2;
+	*/
+	return rows;
+}
+
+
 class App extends React.Component
 {
  
@@ -20,14 +33,19 @@ constructor(props) {
     this.state = {
 		rowIndex: -1,
 		rows: appGridData.rows(),
-		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''}
+		unsortedrows: appGridData.rows(),
+		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''},
+		order: 'origin'
 	}
 	this.expectResponse = false;
 	this.notifyChange = this.notifyChange.bind(this);
 	this.notifyNew = this.notifyNew.bind(this);
 	this.notifyUpd = this.notifyUpd.bind(this);
 	this.notifyField = this.notifyField.bind(this);
+	this.notifySortOrder = this.notifySortOrder.bind(this);
+	
 	this.btnAction = this.btnAction.bind(this);
+	
 	this.handleUnload = this.handleUnload.bind(this);
 };
 
@@ -44,18 +62,19 @@ handleUnload(e) {
 	}
 }
 	
- notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
+notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
 
- notifyNew(row) {
+notifyNew(row) {
 	warningOnClosing = true;
-	this.state.rows.push(row);
+	this.state.unsortedrows.push(row);
+	this.state.rows = this.sortedRows(this.state.unsortedrows, this.state.order);
 	this.setState({
 		rowIndex: -1,
 		rows: this.state.rows
 	})
- };
+};
 
- notifyUpd(rec) {
+notifyUpd(rec) {
 	warningOnClosing = true;
 	let currRows = this.state.rows;
 	const ix = currRows.findIndex((el) => el.simId === rec.simId);
@@ -63,17 +82,37 @@ handleUnload(e) {
 		currRows[ix] = Object.assign(currRows[ix], rec);
 		this.setState({ rows: currRows });
 	}
- };
+};
 
- notifyField(key, val) {
+notifyField(key, val) {
 	this.state.rec[key] = val;
 	this.setState({
 		rec: this.state.rec
 	})
- };
+};
 
- btnAction(btnValue)
- {	 
+notifySortOrder(sortorder) {
+	if (this.state.order == sortorder) {
+		return;
+	}
+	if (sortorder == 'origin') {
+		this.setState({
+			rowIndex: -1,
+			rows: this.state.unsortedrows,
+			order: sortorder
+		});
+		return;
+	}
+	this.state.rows = sortRows(this.state.unsortedrows, this.state.order);
+	this.setState({
+		rowIndex: -1,
+		rows: this.state.rows,
+		order: sortorder
+	});
+};
+
+btnAction(btnValue)
+{	 
 	if (this.expectResponse) {
 		return;
 	}
@@ -86,9 +125,11 @@ handleUnload(e) {
 		).then(
 			(data) => {
 				this.expectResponse = false;
+				let sortedRows = sortRows(data, this.state.order);
 				this.setState({
 					rowIndex: -1,
-					rows: data
+					unsortedrows: data,
+					rows: sortedRows
 				});
 			}
 		).catch(
@@ -140,7 +181,7 @@ handleUnload(e) {
 			}
 		);		
 	}
- };
+};
   
  render() {
 	let rec = {};
@@ -155,7 +196,7 @@ handleUnload(e) {
 		<TabList><Tab>Grid</Tab><Tab>{updateText}</Tab><Tab>Add New</Tab></TabList>
 		<TabPanel>
 			<ViewGrid caption={appGridData.caption} rows={this.state.rows} rowIndex={rIndex}
-				onRowSelected={this.notifyChange} btnAction={this.btnAction} />
+				onRowSelected={this.notifyChange} btnAction={this.btnAction} notifySortOrder={this.notifySortOrder}  />
 		</TabPanel>
 		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>
 		<TabPanel><FormAdd rec={this.state.rec} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>

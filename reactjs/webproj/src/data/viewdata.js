@@ -29,8 +29,19 @@ export default function viewdata()
 		return cols[cn]['caption'];
 	}
 	
+	function fieldCmp(a, b) {
+		let aVal = a ? a : '';
+		let bVal = b ? b : '';
+		return aVal.localeCompare(bVal);
+	}
+	
+	function sortRows(rows, col) {
+		rows.sort((a,b) => fieldCmp(a[col], b[col]))
+	}
+	
 	return {
 		caption: getCaption,
-		rows: () => gridData.rows
+		rows: () => gridData.rows,
+		sortRows: sortRows
 	};
 }
