@@ -2,52 +2,47 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 var expectResponse = false;
+//var doNotifyFlag;
 var doNotifyUpdate;
 
-function notifyUpdate(data) {
-	doNotifyUpdate(data);
-}
+//const notifyFlag = (data) => doNotifyFlag(data);
+const notifyUpdate = (data) => doNotifyUpdate(data);
 
 class FormUpdate extends React.Component
 {	
- constructor(props) {
+constructor(props) {
 	super(props);
+	//doNotifyFlag = this.props.notifyFlag;
 	doNotifyUpdate = this.props.notifyUpd;
 	
 	let data0 = {simName:'', simDate:'', categ: '', descr:'', dttm:''};
     this.state = {
-		simName: true,
-		simDate: true,
-		categ: true,
-		descr: true,
-		dttm: false,
-		rec: Object.assign(data0, props.rec)
+		rec: Object.assign(data0, props.rec)	// Make sure no missing field
 	}
 	this.handleClick = this.handleClick_impl.bind(this);
- }
+}
 
-  onClickCbx(key) {
-    this.setState({ [key]: !this.state[key] });
-  }
+onClickCbx(key) {
+    //this.setState({ [key]: !this.state[key] });
+	this.props.notifyFlag(key);
+}
 
- onUpdateValue(evt) {
+onUpdateValue(evt) {
 	let fields = this.state.rec;
 	fields[evt.target.id] = evt.target.value;
 	this.setState({
 		rec: fields
 	})
- };
+};
 
-
- handleClick_impl() {
+handleClick_impl() {
 	let recSrc = this.state.rec;
 	if (!recSrc.hasOwnProperty('simId')) {
 		return;
 	}
 	
-	if (expectResponse) {
+	if (expectResponse)
 		return;
-	}
 	expectResponse = true;
 	
 	let formBody = [];
@@ -77,24 +72,26 @@ class FormUpdate extends React.Component
 		expectResponse = false;
 		console.log(err);
 	});	
- };
+};
 
- render() {
+render() {
+	 let flags = this.props.flags;
 	 let rec = this.state.rec;
 	 return (<div><table className="noborder"><tbody>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simName')} checked={this.state.simName} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simName')} checked={flags.simName} /></td>
 			<td>Name</td><td><input id="simName" type="text" value={rec.simName} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simDate')} checked={this.state.simDate} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('simDate')} checked={flags.simDate} /></td>
 			<td>Date</td><td><input id="simDate" type="date" value={rec.simDate} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('categ')} checked={this.state.categ} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('categ')} checked={flags.categ} /></td>
 			<td>Category</td><td><input id="categ" type="text" value={rec.categ} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('descr')} checked={this.state.descr} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('descr')} checked={flags.descr} /></td>
 			<td>Description</td><td><input id="descr" type="text" value={rec.descr} onChange={e => this.onUpdateValue(e)} /></td></tr>
-		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('dttm') } checked={this.state.dttm} /></td>
+		<tr><td><input type="checkbox" onChange={e => this.onClickCbx('dttm') } checked={flags.dttm} /></td>
 			<td>Date Time</td><td><input id="dttm" type="datetime-local" value={rec.dttm} onChange={e => this.onUpdateValue(e)} /></td></tr>
 		<tr><td/><td><button onClick={this.handleClick}>Update</button></td></tr>
 	 </tbody></table></div>);
- }
+}
+//
 }
 
 export default FormUpdate;

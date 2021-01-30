@@ -4,30 +4,27 @@ import ReactDOM from "react-dom";
 var expectResponse = false;
 var doNotifyNew;
 
-function notifyNew(data) {
-	doNotifyNew(data);
-}
+const notifyNew = (data) => doNotifyNew(data);
   
 class FormAdd extends React.Component
 {	
-  constructor(props) {
+constructor(props) {
 	super(props);
 	doNotifyNew = this.props.notifyNew;	
  	this.handleSubmit = this.handleSubmit.bind(this);
  	this.onUpdateValue = this.onUpdateValue.bind(this);
-  }
+}
 
-  onUpdateValue(evt) {
+onUpdateValue(evt) {
 	this.props.notifyField(evt.target.name, evt.target.value);
-  };
+};
 
-  handleSubmit(event)
-  {
+handleSubmit(event)
+{
     event.preventDefault();
 	
-	if (expectResponse) {
+	if (expectResponse)
 		return;
-	}
 	expectResponse = true;
 	
 	const formData = new FormData(event.target);	
@@ -60,7 +57,7 @@ class FormAdd extends React.Component
 		expectResponse = false;
 		console.log(err);
 	});
-  }
+}
 
 render() {
 	let rec = this.props.rec;
@@ -72,7 +69,7 @@ render() {
 		<tr><td /><td><input type="submit" value="Submit"/></td></tr>
 	</tbody></table></form>);
 }
- 
+// 
 }
 
 export default FormAdd;

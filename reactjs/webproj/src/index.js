@@ -21,18 +21,19 @@ constructor(props) {
     this.state = {
 		rowIndex: -1,
 		rows: appGridData.rows(),
-		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''},
-		order: 'origin'
+		order: 'origin',
+		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''},			// for FormAdd
+		flags: {simName:true, simDate:true, categ:true, descr:true, dttm:false}	// for FormUpdate
 	}
 	this.expectResponse = false;
+	
 	this.notifyChange = this.notifyChange.bind(this);
 	this.notifyNew = this.notifyNew.bind(this);
+	this.notifyFlag = this.notifyFlag.bind(this);
 	this.notifyUpd = this.notifyUpd.bind(this);
 	this.notifyField = this.notifyField.bind(this);
-	this.notifySortOrder = this.notifySortOrder.bind(this);
-	
+	this.notifySortOrder = this.notifySortOrder.bind(this);	
 	this.btnAction = this.btnAction.bind(this);
-	
 	this.handleUnload = this.handleUnload.bind(this);
 };
 
@@ -59,6 +60,11 @@ notifyNew(row) {
 		rows: this.state.rows,
 		order: 'origin'
 	})
+};
+
+notifyFlag(key) {
+	this.state.flags[key] = !this.state.flags[key];
+	this.setState({flags: this.state.flags});
 };
 
 notifyUpd(rec) {
@@ -180,7 +186,7 @@ render() {
 			<ViewGrid caption={appGridData.caption} sortOrder={this.state.order} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} notifySortOrder={this.notifySortOrder}  />
 		</TabPanel>
-		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>
+		<TabPanel><FormUpdate rec={rec} flags={this.state.flags} notifyFlag={this.notifyFlag} notifyUpd={this.notifyUpd} /></TabPanel>
 		<TabPanel><FormAdd rec={this.state.rec} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>
 	</Tabs>);
 }
