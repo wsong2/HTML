@@ -2,18 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 var expectResponse = false;
-//var doNotifyFlag;
-var doNotifyUpdate;
-
-//const notifyFlag = (data) => doNotifyFlag(data);
-const notifyUpdate = (data) => doNotifyUpdate(data);
 
 class FormUpdate extends React.Component
 {	
 constructor(props) {
 	super(props);
-	//doNotifyFlag = this.props.notifyFlag;
-	doNotifyUpdate = this.props.notifyUpd;
 	
 	let data0 = {simName:'', simDate:'', categ: '', descr:'', dttm:''};
     this.state = {
@@ -23,7 +16,6 @@ constructor(props) {
 }
 
 onClickCbx(key) {
-    //this.setState({ [key]: !this.state[key] });
 	this.props.notifyFlag(key);
 }
 
@@ -47,16 +39,21 @@ handleClick_impl() {
 	
 	let formBody = [];
 	const rec = {};
+	//console.log("> flags " + JSON.stringify(this.props.flags));
+	//console.log("> recS " + JSON.stringify(recSrc));
+
 	for (let key in recSrc) {
-		if (key == 'simId' || this.state[key]) {
+		let val = recSrc[key];
+		if (key == 'simId' || this.props.flags[key]) {
 			let encodedKey = encodeURIComponent(key);
-			let encodedValue = encodeURIComponent(recSrc[key]);
+			let encodedValue = encodeURIComponent(val);
 			formBody.push(encodedKey + "=" + encodedValue);
-			rec[key] = recSrc[key];
+			rec[key] = val;
 		}
 	}
 	formBody = formBody.join("&");
 
+	let doNotifyUpd = this.props.notifyUpd;
 	fetch('/api/rec/update', {
 		method: "post",
 		headers: {
@@ -67,7 +64,7 @@ handleClick_impl() {
 		return response.text();
 	}).then(function(data) {
 		expectResponse = false;
-		notifyUpdate(rec);
+		doNotifyUpd(rec);
 	}).catch(function(err) {
 		expectResponse = false;
 		console.log(err);

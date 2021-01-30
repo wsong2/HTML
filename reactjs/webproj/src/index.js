@@ -22,7 +22,7 @@ constructor(props) {
 		rowIndex: -1,
 		rows: appGridData.rows(),
 		order: 'origin',
-		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''},			// for FormAdd
+		recA: {simName:'', simDate:'', categ: '', descr:'', dttm:''},			// for FormAdd
 		flags: {simName:true, simDate:true, categ:true, descr:true, dttm:false}	// for FormUpdate
 	}
 	this.expectResponse = false;
@@ -78,14 +78,13 @@ notifyUpd(rec) {
 };
 
 notifyField(key, val) {
-	this.state.rec[key] = val;
+	this.state.recA[key] = val;
 	this.setState({
-		rec: this.state.rec
+		recA: this.state.recA
 	})
 };
 
 notifySortOrder(sortorder) {
-	//console.log('> Orders %s ~ %s', this.state.order, sortorder);
 	if (this.state.order == sortorder) {
 		return;
 	}
@@ -147,7 +146,7 @@ btnAction(btnValue)
 	
 	if (btnValue == 'Delete' && this.state.rowIndex >= 0) {
 		let rec = this.state.rows[this.state.rowIndex];
-		let urlDel = "/api/rec/" + rec['simId'];
+		let urlDel = "/api/rec/" + rec.simId;
 	
 		fetch(urlDel, {method: 'DELETE'}).then(
 			(response) => response.json()
@@ -172,12 +171,12 @@ btnAction(btnValue)
 };
   
 render() {
-	let rec = {};
+	let recU = {};
 	let updateText = "Update";
 	let rIndex = -1;
 	if (this.state.rowIndex >= 0) {
-		rec = this.state.rows[this.state.rowIndex]; 
-		updateText = "Update " + rec['simId'];
+		recU = this.state.rows[this.state.rowIndex]; 
+		updateText = "Update " + recU.simId;
 		rIndex = this.state.rowIndex;
 	}
 	return (<Tabs>
@@ -186,8 +185,8 @@ render() {
 			<ViewGrid caption={appGridData.caption} sortOrder={this.state.order} rows={this.state.rows} rowIndex={rIndex}
 				onRowSelected={this.notifyChange} btnAction={this.btnAction} notifySortOrder={this.notifySortOrder}  />
 		</TabPanel>
-		<TabPanel><FormUpdate rec={rec} flags={this.state.flags} notifyFlag={this.notifyFlag} notifyUpd={this.notifyUpd} /></TabPanel>
-		<TabPanel><FormAdd rec={this.state.rec} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>
+		<TabPanel><FormUpdate rec={recU} flags={this.state.flags} notifyFlag={this.notifyFlag} notifyUpd={this.notifyUpd} /></TabPanel>
+		<TabPanel><FormAdd rec={this.state.recA} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>
 	</Tabs>);
 }
 //
