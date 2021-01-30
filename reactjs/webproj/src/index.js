@@ -10,30 +10,17 @@ import viewdata from './data/viewdata.js';
 
 const appGridData = viewdata();
 
+const sortRows = (rows, cn) => rows.sort((a,b) => appGridData.fieldCmp(a, b, cn));
+
 var warningOnClosing = false;
-
-function sortRows(rows, sortKey) {
-	/*
-	if (sortKey == 'origin') {
-		return rows;
-	}
-	let rows2 = [...rows];
-	appGridData.sortRows(rows2, sortKey);
-	return rows2;
-	*/
-	return rows;
-}
-
 
 class App extends React.Component
 {
- 
 constructor(props) {
 	super(props);    
     this.state = {
 		rowIndex: -1,
 		rows: appGridData.rows(),
-		unsortedrows: appGridData.rows(),
 		rec: {simName:'', simDate:'', categ: '', descr:'', dttm:''},
 		order: 'origin'
 	}
@@ -66,11 +53,11 @@ notifyChange(rIndex) { this.setState({ rowIndex: rIndex }) };
 
 notifyNew(row) {
 	warningOnClosing = true;
-	this.state.unsortedrows.push(row);
-	this.state.rows = this.sortedRows(this.state.unsortedrows, this.state.order);
+	this.state.rows.push(row);
 	this.setState({
 		rowIndex: -1,
-		rows: this.state.rows
+		rows: this.state.rows,
+		order: 'origin'
 	})
 };
 
@@ -92,44 +79,38 @@ notifyField(key, val) {
 };
 
 notifySortOrder(sortorder) {
+	//console.log('> Orders %s ~ %s', this.state.order, sortorder);
 	if (this.state.order == sortorder) {
 		return;
 	}
-	if (sortorder == 'origin') {
-		this.setState({
-			//rowIndex: -1,
-			//rows: this.state.unsortedrows,
-			order: sortorder
-		});
+	if (this.state.rows.length < 3 || sortorder == 'origin') {
+		this.setState({ order: 'origin' });		
 		return;
 	}
-	//this.state.rows = sortRows(this.state.unsortedrows, this.state.order);
+	sortRows(this.state.rows, sortorder);
 	this.setState({
-		//rowIndex: -1,
-		//rows: this.state.rows,
+		rowIndex: -1,
+		rows: this.state.rows,
 		order: sortorder
 	});
 };
 
 btnAction(btnValue)
 {	 
-	if (this.expectResponse) {
+	if (this.expectResponse)
 		return;
-	}
 	this.expectResponse = true;
 	
-	if (btnValue == 'Load')
-	{
+	if (btnValue == 'Load') {
 		fetch("/api/rec/list").then(
 			(response) => response.json()
 		).then(
 			(data) => {
 				this.expectResponse = false;
-				let sortedRows = sortRows(data, this.state.order);
 				this.setState({
 					rowIndex: -1,
-					unsortedrows: data,
-					rows: sortedRows
+					rows: data,
+					order: 'origin'
 				});
 			}
 		).catch(
@@ -140,8 +121,8 @@ btnAction(btnValue)
 		);
 		return;
 	}
-	if (btnValue == 'Save')
-	{
+	
+	if (btnValue == 'Save') {
 		fetch("/api/task/dbexec").then(
 			(response) => response.json()
 		).then(
@@ -157,8 +138,8 @@ btnAction(btnValue)
 		);
 		return;
 	}
-	if (btnValue == 'Delete' && this.state.rowIndex >= 0)
-	{
+	
+	if (btnValue == 'Delete' && this.state.rowIndex >= 0) {
 		let rec = this.state.rows[this.state.rowIndex];
 		let urlDel = "/api/rec/" + rec['simId'];
 	
@@ -167,11 +148,12 @@ btnAction(btnValue)
 		).then(
 			(data) => {
 				warningOnClosing = true;
-				let rowsM1 = this.state.rows.filter(obj => obj.simId != data.rowId);
 				this.expectResponse = false;
+				let rowsM1 = this.state.rows.filter(obj => obj.simId != data.rowId);
 				this.setState({
 					rowIndex: -1,
-					rows: rowsM1
+					rows: rowsM1,
+					order: 'origin'
 				});
 			}
 		).catch(
@@ -183,7 +165,7 @@ btnAction(btnValue)
 	}
 };
   
- render() {
+render() {
 	let rec = {};
 	let updateText = "Update";
 	let rIndex = -1;
@@ -201,7 +183,8 @@ btnAction(btnValue)
 		<TabPanel><FormUpdate rec={rec} notifyUpd={this.notifyUpd} /></TabPanel>
 		<TabPanel><FormAdd rec={this.state.rec} notifyNew={this.notifyNew} notifyField={this.notifyField} /></TabPanel>
 	</Tabs>);
- }
+}
+//
 }
 
 ReactDOM.render(<App/>, document.getElementById('root'));

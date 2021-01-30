@@ -29,19 +29,19 @@ export default function viewdata()
 		return cols[cn]['caption'];
 	}
 	
-	function fieldCmp(a, b) {
-		let aVal = a ? a : '';
-		let bVal = b ? b : '';
-		return aVal.localeCompare(bVal);
+	function fieldCmp(a, b, cn) {
+		let aVal = Reflect.has(a,cn) ? a[cn] : '';
+		let bVal = Reflect.has(b,cn) ? b[cn] : '';
+		let cmp = aVal.localeCompare(bVal);
+		if (cmp == 0) {		
+			cmp = a.simId - b.simId;
+		}
+		return cmp;
 	}
-	
-	function sortRows(rows, col) {
-		rows.sort((a,b) => fieldCmp(a[col], b[col]))
-	}
-	
+
 	return {
 		caption: getCaption,
 		rows: () => gridData.rows,
-		sortRows: sortRows
+		fieldCmp: fieldCmp
 	};
 }
