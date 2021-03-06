@@ -2,15 +2,13 @@ var fs = require("fs");
 var dtFmt = require("dateformat");
 var path = require('path');
 
-const cache = {};
-
 function gridView(req, res)
 {
-	const jfn = "griddata.json";
-	
+	const jfn = "db_prolog_sim_rc.json";	
     fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
       console.log('--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
       console.log('from ' + jfn);
+	  res.set({ 'content-type': 'application/json; charset=utf-8' });
       res.end( data );
    });
 }
@@ -24,6 +22,19 @@ function htmlPost(req, res)
 	}
 	res.sendFile(path.join(__dirname + '/data/response.html'));
 }
+
+function pagePost(req, res)
+{
+	console.log('-- pagePost --');
+    //console.log(req);
+	
+	for (let key in req.body) {
+		console.log("> " + key + ": " + req.body[key]);
+	}
+	let json = '{"id": 101, "details": "None"}';
+	res.end(json);
+}
+
 
 function getPathParam(req, res)
 {
@@ -87,6 +98,7 @@ function attName(att)
 }
 
 module.exports.htmlPost = htmlPost;
+module.exports.pagePost = pagePost;
 module.exports.gridView = gridView;
 
 module.exports.getPathParam = getPathParam;

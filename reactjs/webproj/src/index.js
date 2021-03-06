@@ -43,10 +43,11 @@ componentWillUnmount() { window.removeEventListener('beforeunload', this.handleU
 
 handleUnload(e) {
 	if (warningOnClosing) {
-		//e.preventDefault();
 		let message = "\o/";
 		(e || window.event).returnValue = message;
 		return message;
+	} else {
+		e.preventDefault();
 	}
 }
 	

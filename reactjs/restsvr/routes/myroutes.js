@@ -11,6 +11,7 @@ module.exports = function(app) {
 	
 	//
 	app.post('/form/addnew', mycontroller.htmlPost);
+	app.post('/page/addnew', mycontroller.pagePost);
 
 	app.get('/gridview', mycontroller.gridView);
 
