@@ -43,32 +43,23 @@ function postForm(btn, srcForm)
 	);
 }
 
-function addCell(row, idx, txt)
+function loadGridData(btn)
 {
-	let newCell = row.insertCell(idx);
-	let newText = document.createTextNode(txt);
-	newCell.appendChild(newText);
-}
-
-function addTBodyRows(tb)
-{
-	let newRow = tb.insertRow(-1);
-	
-	let cell0 = newRow.insertCell(0);
-	let radiobox = document.createElement('input');
-	radiobox.type = 'radio';
-	radiobox.name = 'rsel';
-	radiobox.value = '3';
-	cell0.appendChild(radiobox);
-	
-	addCell(newRow, 1, '103');
-	addCell(newRow, 2, 'N3');
-	addCell(newRow, 3, '2021-03-06');
-	addCell(newRow, 4, 'Categ3');
-	addCell(newRow, 5, '1');
-	addCell(newRow, 6, '99.05');
-	addCell(newRow, 7, 'descr3');
-	addCell(newRow, 8, '2021-03-06 10:15:00');
+	btn.disabled = true;
+	fetch("/gridview").then(
+		(response) => response.json()
+	).then(
+		(data) => {
+			console.log(data);
+			document.getElementById("id0").textContent = "" + data.id;
+			btn.disabled = false;
+		}
+	).catch(
+		(err) => {
+			console.log(err);
+			btn.disabled = false;
+		}
+	);
 }
 
 function insertCheckBoxLable(row, idVal, lableName)
@@ -124,32 +115,44 @@ function insertFormTBodyPriceRow(tbody, rowIdx, lableName, inputName1, inputName
 	cell2.appendChild(inp2);
 }
 
-function populateTBody(idTBody)
+function addCell(row, idx, txt)
+{
+	let newCell = row.insertCell(idx);
+	let newText = document.createTextNode(txt);
+	newCell.appendChild(newText);
+}
+
+function addTBodyRows(tb, idRadioGroup)
+{
+	for (let i=0; i<gridRows.length; i++) {
+		let rdata = gridRows[i];
+		let newRow = tb.insertRow(i);
+	
+		let cell0 = newRow.insertCell(0);
+		let radiobox = document.createElement('input');
+		radiobox.type = 'radio';
+		radiobox.name = idRadioGroup;
+		radiobox.value = '' + (i+1);
+		cell0.appendChild(radiobox);
+	
+		addCell(newRow, 1, '' + rdata.simId);
+		addCell(newRow, 2, rdata.simName);
+		addCell(newRow, 3, rdata.simDate);
+		addCell(newRow, 4, rdata.categ);
+		addCell(newRow, 5, '' + rdata.qty);
+		addCell(newRow, 6, '' + rdata.price);
+		addCell(newRow, 7, rdata.descr);
+		addCell(newRow, 8, rdata.dttm);		
+	}
+}
+
+function populateTBody(idTBody, idRadioGroup)
 {
 	var old_tbody = document.getElementById(idTBody);
 	var new_tbody = document.createElement('tbody');
-	addTBodyRows(new_tbody);
+	addTBodyRows(new_tbody, idRadioGroup);
 	old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
 	new_tbody.id = idTBody;
-}
-
-function getGridData(btn)
-{
-	btn.disabled = true;
-	fetch("/gridview").then(
-		(response) => response.json()
-	).then(
-		(data) => {
-			console.log(data);
-			document.getElementById("id0").textContent = "" + data.id;
-			btn.disabled = false;
-		}
-	).catch(
-		(err) => {
-			console.log(err);
-			btn.disabled = false;
-		}
-	);
 }
 
 function showValue(groupName)

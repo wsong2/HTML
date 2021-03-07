@@ -13,29 +13,11 @@ button.footer {
 }
 </style>
 </head>
-<body onload="populateFormTBody('tbForm1')">
+<body onload="populateTBodys('idTbForm', 'idTbGrid')">
 <form>
-<table><tbody id="tbForm1">
+<table><tbody id="idTbForm">
 <tr><td/><td>ID</td><td><span id="id0"></span></td></tr>
-<!--
-<tr>
- <td><input type="checkbox" id="id1"/></td><td><label for="id1">Name</label></td>
- <td><input name="simName" type="text" required="true" /></td></tr>
-<tr>
- <td><input type="checkbox" id="id2"/></td><td><label for="id2">Category</label></td>
- <td><input name="categ" type="text" required="true" /></td></tr>
-<tr>
- <td><input type="checkbox" id="id3" ></td><td><label for="id3">Description</label></td>
- <td><input name="descr" type="text" required="true" /></td></tr>
-<tr>
- <td><input type="checkbox" id="id4" ></td><td><label for="id4">Date</label></td>
- <td><input name="simDate" type="date" required="true" /></td></tr>
-<tr>
- <td><input type="checkbox" id="id5" ></td><td><label for="id5">Price</label></td>
- <td><input name="unity" type="number" value="1" style="width: 2em" /> <input name="price" type="number"/></td></tr>
-<tr>
- <td><input type="checkbox" id="id6" ></td><td><label for="id6">Time stamp</label></td>
- <td><input name="dttm" type="datetime-local"/></td></tr> -->
+<!-- insert here -->
 <tr><td/><td><button onclick="postForm(this, this.form)">Submit</button></td><td/></tr>
 </tbody></table>
 </form>
@@ -44,15 +26,9 @@ button.footer {
 <thead><tr>
  <th/><th>Id</th><th>Name</th><th>Date</th><th>Category</th><th>Unit</th><th>Price</th><th>Description</th><th>Timestamp</th>
 </tr></thead>
-<tbody id="idTB1"><tr>
- <td><input type="radio" name="rsel" value="1"></td><td>101</td><td>N1</td><td>2021-03-06</td><td>Categ1</td>
- <td>1</td><td>1.234</td><td>descr1</td><td>2021-03-06 00:00:00</td>
-</tr><tr>
- <td><input type="radio" name="rsel" value="2"></td><td>102</td><td>N2</td><td>2021-03-06</td><td>Categ2</td>
- <td>1</td><td>1.234</td><td>descr1</td><td>2021-03-06 00:00:00</td>
-</tr></tbody>
+<tbody id="idTbGrid"><!-- insert here --></tbody>
 <tfoot><tr>
- <td/><td colspan="2"><button class="footer" onclick="getGridData(this)">Load</button></td><td colspan="3"/><td>
+ <td/><td colspan="2"><button class="footer" onclick="loadGridData(this)">Load</button></td><td colspan="3"/><td>
  <td><button class="footer" onclick="showValue('rsel')">Prev</button></td>
  <td><button class="footer" onclick="showValue('rsel')">Next</button></td>
 </tr></tfoot>
@@ -60,15 +36,17 @@ button.footer {
 <script src="pagedata.js"></script>
 <script src="onepage.js"></script>
 <script>
-function populateFormTBody(idBody)
+function populateTBodys(idTBodyForm, idTBodyGrid)
 {
-	let tbodyForm = document.getElementById(idBody);
+	let tbodyForm = document.getElementById(idTBodyForm);
 	insertFormTBodyRow(tbodyForm, 1, 'Name', 'simName', 'text');
 	insertFormTBodyRow(tbodyForm, 2, 'Category', 'categ', 'text');
 	insertFormTBodyRow(tbodyForm, 3, 'Description', 'descr', 'text');
 	insertFormTBodyRow(tbodyForm, 4, 'Date', 'simDate', 'date');
 	insertFormTBodyPriceRow(tbodyForm, 5, 'Price', 'unity', 'price')
 	insertFormTBodyRow(tbodyForm, 6, 'Time stamp', 'dttm', 'datetime-local');
+
+	populateTBody(idTBodyGrid, 'rsel');	
 }
 </script>
 </body>
