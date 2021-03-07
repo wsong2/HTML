@@ -1,7 +1,7 @@
-function postForm(btn, srcForm)
+function postForm(btn)
 {
 	btn.disabled = true;
-	//let srcForm = document.getElementById("form1");
+	let srcForm = document.getElementById("form1");
 	
 	const formData = new URLSearchParams();	// new FormData();
 	if (document.getElementById("id1").checked) {
@@ -51,7 +51,7 @@ function loadGridData(btn)
 	).then((data) => {
 		console.log(data);
 		gridRows = data.rows;
-		rePopulateTBody();
+		rePopulateTBody('idTbGrid', 'rsel');
 		btn.disabled = false;
 	}).catch((err) => {
 		console.log(err);
@@ -107,8 +107,8 @@ function insertFormTBodyPriceRow(tbody, rowIdx, lableName, inputName1, inputName
 	cell2.appendChild(txtBlanl);
 	
 	let inp2 = document.createElement('input');
-	inp1.type = 'number';
-	inp1.name = inputName2;
+	inp2.type = 'number';
+	inp2.name = inputName2;
 	cell2.appendChild(inp2);
 }
 
@@ -129,7 +129,8 @@ function addTBodyRows(tb, idRadioGroup)
 		let radiobox = document.createElement('input');
 		radiobox.type = 'radio';
 		radiobox.name = idRadioGroup;
-		radiobox.value = '' + (i+1);
+		radiobox.value = '' + i;
+		radiobox.onChange = addEventListener("change", selectRow);
 		cell0.appendChild(radiobox);
 	
 		addCell(newRow, 1, '' + rdata.simId);
@@ -149,24 +150,44 @@ function populateTBody(idTBody, idRadioGroup)
 	addTBodyRows(tbody, idRadioGroup);
 }
 
-function rePopulateTBody()
+function rePopulateTBody(idTBody, idRadioGroup)
 {
-	var old_tbody = document.getElementById('idTbGrid');
+	var old_tbody = document.getElementById(idTBody);
 	var new_tbody = document.createElement('tbody');
-	addTBodyRows(new_tbody, 'rsel');
+	addTBodyRows(new_tbody, idRadioGroup);
 	old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
 	new_tbody.id = idTBody;
 }
 
-function showValue(groupName)
+function groupValue(groupName)
 {
-	let val = 'none';
 	let radios = document.getElementsByName( groupName );
     for (let i = 0; i < radios.length; i++ ) {
         if( radios[i].checked ) {
-			val = radios[i].value;
-            break;
+			return radios[i].value;
         }
     }
-	alert(val);
+	return 'none';
 }
+
+function showValue(groupName) {
+	alert(groupValue(groupName));
+}
+
+function selectRow()
+{
+	let val = groupValue('rsel');
+	let iRow = parseInt(val);
+	if (!isNaN(iRow)) {
+		let form1 = document.getElementById("form1");
+		let rec = gridRows[iRow];
+		form1.simName.value =rec.simName;
+		form1.categ.value = rec.categ;
+		form1.descr.value = rec.descr;
+		form1.simDate.value = rec.simDate;
+		form1.unity.value = rec.qty;
+		form1.price.value = rec.price;
+		form1.dttm.value = rec.dttm;
+	}
+}
+
