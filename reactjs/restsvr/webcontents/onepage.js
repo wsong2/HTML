@@ -48,18 +48,15 @@ function loadGridData(btn)
 	btn.disabled = true;
 	fetch("/gridview").then(
 		(response) => response.json()
-	).then(
-		(data) => {
-			console.log(data);
-			document.getElementById("id0").textContent = "" + data.id;
-			btn.disabled = false;
-		}
-	).catch(
-		(err) => {
-			console.log(err);
-			btn.disabled = false;
-		}
-	);
+	).then((data) => {
+		console.log(data);
+		gridRows = data.rows;
+		rePopulateTBody();
+		btn.disabled = false;
+	}).catch((err) => {
+		console.log(err);
+		btn.disabled = false;
+	});
 }
 
 function insertCheckBoxLable(row, idVal, lableName)
@@ -148,9 +145,15 @@ function addTBodyRows(tb, idRadioGroup)
 
 function populateTBody(idTBody, idRadioGroup)
 {
-	var old_tbody = document.getElementById(idTBody);
+	var tbody = document.getElementById(idTBody);
+	addTBodyRows(tbody, idRadioGroup);
+}
+
+function rePopulateTBody()
+{
+	var old_tbody = document.getElementById('idTbGrid');
 	var new_tbody = document.createElement('tbody');
-	addTBodyRows(new_tbody, idRadioGroup);
+	addTBodyRows(new_tbody, 'rsel');
 	old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
 	new_tbody.id = idTBody;
 }
