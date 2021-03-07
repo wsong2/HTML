@@ -1,7 +1,7 @@
-function postForm(btn)
+function postForm(btn, srcForm)
 {
 	btn.disabled = true;
-	let srcForm = document.getElementById("form1");
+	//let srcForm = document.getElementById("form1");
 	
 	const formData = new URLSearchParams();	// new FormData();
 	if (document.getElementById("id1").checked) {
@@ -23,8 +23,7 @@ function postForm(btn)
 		let encodedKey = encodeURIComponent(k);
 		let encodedValue = encodeURIComponent(v);
 		formBody.push(encodedKey + "=" + encodedValue);
-	};	
- 	*/
+	};	*/
 	fetch("/page/addnew", {
 		method: 'post',
 		body: formData,
@@ -51,7 +50,7 @@ function addCell(row, idx, txt)
 	newCell.appendChild(newText);
 }
 
-function populate_with_new_rows(tb)
+function addTBodyRows(tb)
 {
 	let newRow = tb.insertRow(-1);
 	
@@ -72,15 +71,70 @@ function populate_with_new_rows(tb)
 	addCell(newRow, 8, '2021-03-06 10:15:00');
 }
 
+function insertCheckBoxLable(row, idVal, lableName)
+{
+	let cell0 = row.insertCell(0);
+	let chkbox = document.createElement('input');
+	chkbox.type = 'checkbox';
+	chkbox.id = idVal;
+	cell0.appendChild(chkbox);
+
+	let cell1 = row.insertCell(1);
+	let lbl = document.createElement('label');
+	lbl.id = idVal;
+	let lableText = document.createTextNode(lableName);
+	lbl.appendChild(lableText);
+	cell1.appendChild(lbl);
+}
+
+function insertFormTBodyRow(tbody, rowIdx, lableName, inputName, inputType)
+{
+	let newRow = tbody.insertRow(rowIdx);
+	
+	insertCheckBoxLable(newRow, 'id' + rowIdx, lableName)
+	
+	let cell2 = newRow.insertCell(2);
+	let inp = document.createElement('input');
+	inp.type = inputType;
+	inp.name = inputName;
+	if (inputType === 'text' || inputType === 'date') {
+		inp.required = true;
+	}
+	cell2.appendChild(inp);
+}
+
+function insertFormTBodyPriceRow(tbody, rowIdx, lableName, inputName1, inputName2)
+{
+	let newRow = tbody.insertRow(rowIdx);
+	
+	insertCheckBoxLable(newRow, 'id' + rowIdx, lableName)
+	
+	let cell2 = newRow.insertCell(2);
+	let inp1 = document.createElement('input');
+	inp1.type = 'number';
+	inp1.name = inputName1;
+	cell2.appendChild(inp1);
+	
+	let txtBlanl = document.createTextNode(' ');
+	cell2.appendChild(txtBlanl);
+	
+	let inp2 = document.createElement('input');
+	inp1.type = 'number';
+	inp1.name = inputName2;
+	cell2.appendChild(inp2);
+}
+
+function populateTBody(idTBody)
+{
+	var old_tbody = document.getElementById(idTBody);
+	var new_tbody = document.createElement('tbody');
+	addTBodyRows(new_tbody);
+	old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+	new_tbody.id = idTBody;
+}
+
 function getGridData(btn)
 {
-	var old_tbody = document.getElementById("idTB1");
-	var new_tbody = document.createElement('tbody');
-	populate_with_new_rows(new_tbody);
-	old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
-	new_tbody.id = "idTB1";
-
-	/*
 	btn.disabled = true;
 	fetch("/gridview").then(
 		(response) => response.json()
@@ -95,7 +149,7 @@ function getGridData(btn)
 			console.log(err);
 			btn.disabled = false;
 		}
-	); */
+	);
 }
 
 function showValue(groupName)

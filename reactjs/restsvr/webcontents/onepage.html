@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html>
-<meta charset="UTF-8">
-<head><title>Form Page</title>
+<html><meta charset="UTF-8">
+<head><title>One Page</title>
 <style>
 button.footer {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
+	background-color: Transparent;
+	background-repeat:no-repeat;
+	border: none;
+	cursor:pointer;
+	overflow: hidden;
+	outline:none;
+	font-weight : bold;
 }
 </style>
 </head>
-<body>
-<form id="form1">
-<table><tbody>
+<body onload="populateFormTBody('tbForm1')">
+<form>
+<table><tbody id="tbForm1">
 <tr><td/><td>ID</td><td><span id="id0"></span></td></tr>
+<!--
 <tr>
  <td><input type="checkbox" id="id1"/></td><td><label for="id1">Name</label></td>
  <td><input name="simName" type="text" required="true" /></td></tr>
@@ -34,8 +35,8 @@ button.footer {
  <td><input name="unity" type="number" value="1" style="width: 2em" /> <input name="price" type="number"/></td></tr>
 <tr>
  <td><input type="checkbox" id="id6" ></td><td><label for="id6">Time stamp</label></td>
- <td><input name="dttm" type="datetime-local" required="true" /></td></tr>
-<tr><td/><td><button onclick="postForm(this)">Submit</button></td><td/></tr>
+ <td><input name="dttm" type="datetime-local"/></td></tr> -->
+<tr><td/><td><button onclick="postForm(this, this.form)">Submit</button></td><td/></tr>
 </tbody></table>
 </form>
 <hr/>
@@ -56,6 +57,19 @@ button.footer {
  <td><button class="footer" onclick="showValue('rsel')">Next</button></td>
 </tr></tfoot>
 </table>
-<script src="page.js" type=text/javascript></script>
+<script src="pagedata.js"></script>
+<script src="onepage.js"></script>
+<script>
+function populateFormTBody(idBody)
+{
+	let tbodyForm = document.getElementById(idBody);
+	insertFormTBodyRow(tbodyForm, 1, 'Name', 'simName', 'text');
+	insertFormTBodyRow(tbodyForm, 2, 'Category', 'categ', 'text');
+	insertFormTBodyRow(tbodyForm, 3, 'Description', 'descr', 'text');
+	insertFormTBodyRow(tbodyForm, 4, 'Date', 'simDate', 'date');
+	insertFormTBodyPriceRow(tbodyForm, 5, 'Price', 'unity', 'price')
+	insertFormTBodyRow(tbodyForm, 6, 'Time stamp', 'dttm', 'datetime-local');
+}
+</script>
 </body>
 </html>
