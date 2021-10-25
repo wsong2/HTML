@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head><title>Container</title>
+<style>
+div.table {
+    display:table;
+}
+div.tr {
+    display:table-row;
+}
+div.tr > span, input, select, label {
+    display:table-cell;
+	margin-bottom: 3px;		
+}
+div.td {
+    display:table-cell;
+}
+div.row {
+    display: flex;
+    flex-direction: row;
+	margin-top: 3px;
+	margin-bottom: 3px;	
+}
+input.setby {
+	border-color: coral;
+}
+select.setby {
+	border-color: coral;
+}
+</style>
+</head>
+<body onload="initDivAndLogger()">
+<div class="row">
+ <button type="button" onClick="doLoad(this)">Load Data</button>
+</div>
+<div id="div0" class="table">
+ <div class="tr"><span>Category&nbsp;</span><div class="td" id="s10000"></div> <!-- s10000 creates s10 (dyn) -->
+	<label for="s11">&nbsp;&nbsp;Level&nbsp;</label><input id="s11" type="number" style="max-width: 4em">
+ </div>
+ <div class="tr" >
+	<span>Att.1&nbsp;</span><input id="s1" type="text" onchange="onAttValueChange(this.id, this.value)">
+	<span>&nbsp;&nbsp;Event Date&nbsp;</span><input id="s4" type="date" onchange="onAttValueChange(this.id, this.value)">
+ </div>
+ <div class="tr"><span>Att.2&nbsp;</span><div class="td" id="s2"></div><span>&nbsp;&nbsp;Att.3&nbsp;</span><div class="td" id="s3"></div></div>
+</div>
+<p><button id="btn01" type="button" onClick="applyChanges(null)" disabled>Execute</button></p>
+<input type="hidden" id="waitRespId" value="F">
+<p><textarea id="msg" rows="8" cols="75"></textarea></p>
+<div id="div1"><!-- clone div0 and replace IDs --></div>
+<script src="dfn.js"><!-- populate combobox --></script>
+<script src="container.js"></script>
+<script src="grid.js"></script>
+<script src="trigger.js"></script>
+<script>
+var logger;
+var mJsonRaw;
+var mExecutor;
+const mUrl = "/data/1";
+
+function initDivAndLogger()
+{
+	function replaceID(tagName) {
+		let eltNodes = divClone.getElementsByTagName(tagName);
+		for (let i = 0; i < eltNodes.length; ++i){
+			let eltNode = eltNodes[i];
+			let eltId = eltNode.id;
+			if (eltId) {
+				eltNode.id = 'e' + eltId.substring(1);
+			}
+		}
+	}
+
+	function onAttValueChange(id, val) {
+		if (mExecutor.hasOwnProperty('constraints') || mExecutor.hasOwnProperty('actions')) {
+			let propId = parseInt(id.substr(1));
+			let setVal= {prop_id: propId, setval: val};
+			let action0  = {actn_id: 0, action: setVal};
+			let recExec = {
+				constraints: mExecutor.constraints,
+				actions: [action0].concat(mExecutor.actions)
+			}
+			applyChanges(recExec);
+		}
+	}
+
+	function addDropDown(vDiv, vID) {
+		const handler = () => {
+			//console.log('SEL2: ' + selectList.id + ' ~ ' + selectList.value);
+			onAttValueChange(selectList.id, selectList.value);
+		};
+		
+		let selectList = htmlChildElt(vID.substr(1));	// dfn.js
+		selectList.id = vID;
+		selectList.addEventListener("change", handler, false);	
+		vDiv.appendChild(selectList);
+	}
+
+	mExecutor = {};	// Init
+	let div0 = document.getElementById("div0");
+	let divClone = div0.cloneNode(true);
+	replaceID('INPUT');
+	replaceID('DIV');
+	document.getElementById("div1").appendChild(divClone);
+	// addDropDown
+	let dv1 = document.getElementById("s10000");
+	addDropDown(dv1, 's10');
+	let dv2 = document.getElementById("e10000");
+	addDropDown(dv2, 'e10');
+	// logger
+	let txtMsg = document.getElementById("msg");	
+	logger = (msg) => {txtMsg.value += msg + '\r\n'}; 
+}
+
+function doLoad(btn)
+{
+	function initAttValues(arrAtts) {
+		for (let att of arrAtts) {
+			let elt = document.getElementById('s' + att.prop_id);	// previously att_id
+			if (att.hasOwnProperty('val')) {
+				elt.value = att.val;
+			} else {
+				let grid_id = att.grid_id;	// previously att_id
+				let htm = '<a href="rg.html?rg=' + grid_id + '" target="_blank">RG.' + grid_id + '</a>';
+				elt.innerHTML = htm;
+			}
+		}
+	}
+
+	function processJson(json) {
+		mJsonRaw = json;
+		mExecutor.constraints = json.constraints;
+		mExecutor.actions = json.actions;
+		initAttValues(json.state.props);		// previously son.state.atts
+	}
+
+	btn.disabled = true;
+	fetch(mUrl).then(
+		(response) => response.json()
+	).then((data) => {
+		processJson(data);
+		btn.disabled = false;
+		document.getElementById('btn01').disabled  = false;
+	}).catch((err) => {
+		console.log(err);
+		btn.disabled = false;
+	});
+}
+
+function applyChanges(executor)
+{
+	var indWait = document.getElementById('waitRespId');
+		
+	function updateProp(prop) {
+		let elt = document.getElementById('e' + prop.prop_id);
+		if (!prop.hasOwnProperty('val')) {
+			let params = '?rg=' +  prop.grid_id + '&st=U';
+			let htm = '<a href="rg.html' + params + '" target="_blank">RG.' + prop.grid_id + '</a>';
+			elt.innerHTML = htm;
+			return;
+		}
+		elt.value = prop.val;
+		if (prop.setby > 0) {
+			elt.title = "Set by " + prop.setby;
+			elt.className = "setby";
+		}
+	}
+
+	function uploadState(recState) {
+		mJsonRaw.state = recState;
+		let jdata = JSON.stringify(mJsonRaw);
+		//console.log('!! ' + jdata); OK
+		indWait.value = 'T';
+		fetch('/update/state', {
+			method: "POST",
+			body: jdata,
+			headers: {"Content-type": "application/json; charset=UTF-8"}
+		}).then(response => response.json()
+		).then(data => {
+			indWait.value = 'F';
+			console.log(data);
+		}).catch(err => {
+			indWait.value = 'F';
+			console.log(err);
+		});
+	}
+
+	if (executor === null) {
+		executor = mExecutor;
+	}
+	document.getElementById("msg").value = '';	
+
+	let newState = Object.assign({}, mJsonRaw.state);
+	let objState = createConstainer(newState);
+	trigger(executor, objState, logger);
+
+	newState.props.forEach(updateProp);
+	
+	if (window.location.protocol !== 'file:' && indWait.value === 'F') {		
+		uploadState(newState);
+	}
+}
+
+</script>
+</body>
+</html>

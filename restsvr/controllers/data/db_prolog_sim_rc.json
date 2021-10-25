@@ -1,0 +1,51 @@
+{
+ "rows" : [ 
+  { "simId": 12,
+    "simName": "Client-2", "simDate": "2019-08-26",
+    "categ": "App", "descr": "Rest client PUT",
+    "qty": 1, "price": 13.6,
+    "dttm": "2019-08-26T00:00:00"
+  },
+  { "simId": 15,
+    "simName": "ClientN3", "simDate": "2020-08-06",
+    "categ": "Test", "descr": "Rest client loader",
+    "qty": 1, "price": 22.56,
+    "dttm": "2020-08-06T00:00:00"
+  },
+  { "simId": 107,
+    "simName": "Asus ZenBook ux315", "simDate": "2020-12-26",
+    "categ": "Device", "descr": "GBP",
+    "qty": 1, "price": 900,
+    "dttm": "2020-12-26T00:00:00"
+  },
+  { "simId": 108,
+    "simName": "Sim00", "simDate": "2021-01-05",
+    "categ": "Sim", "descr": "Through Web Form",
+    "qty": 1, "price": 50,
+    "dttm": "2021-01-05T19:30:41.02"
+  },
+  { "simId": 109,
+    "simName": "Seiko", "simDate": "2020-04-01",
+    "categ": "Product", "descr": "£7.99",
+    "qty": 1, "price": 7.99,
+    "dttm": "2021-01-07T18:46:13.787"
+  },
+  { "simId": 110,
+    "simName": "中文 产品", "simDate": "2020-04-01",
+    "categ": "Product", "descr": "生日18",
+    "qty": 1, "price": 7.99,
+    "dttm": "2021-03-18T18:46:13.787"
+  }
+ ],
+ "columns" : {
+	"simId": {"caption": "ID"},
+	"simName": {"caption": "Name", "sorting": "U"},
+	"simDate": {"caption": "Date", "sorting": "D" },
+	"categ": {"caption": "Category"},
+	"descr": {"caption": "Description"},
+	"qty": {"caption": "Quantity"},
+	"price": {"caption": "Price"},
+	"dttm": {"caption": "Timestamp"}
+ },
+ "keys": ["simId", "simName", "simDate", "categ", "descr", "qty", "price", "dttm"]
+}
