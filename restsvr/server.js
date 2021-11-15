@@ -2,6 +2,8 @@ var express = require('express');
 var app1 = express();
 var app2 = express();
 
+var myroutes = require('./routes/myroutes.js');
+
 // app
 app1.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -28,12 +30,12 @@ var app = express();
 app.use("/form2", app2);
 app.use("/", app1);
 
-var myroutes = require('./routes/myroutes.js')(app);
+myroutes(app);
 
 const port = 3000;
 
 var server = app.listen(port, function () {
-   var host = server.address().address
-   //var port = server.address().port
-   console.log("App listening at http://%s:%s", host, port)
+  let host = server.address().address;
+  // var port = server.address().port
+  console.log("App listening at http://%s:%s", host, port)
 })

@@ -1,6 +1,6 @@
 var fs = require("fs");
-var dtFmt = require("dateformat");
 var path = require('path');
+var dtFmt = require("./dateformat.js");
 
 const contentType = {'content-type': 'application/json; charset=utf-8' };
 
@@ -16,7 +16,7 @@ function rgJsonFile(rgId) {
 function getPathParam(req, res)
 {
 	const rgId = req.params.id;
-	const idMsg = 'Id.' + rgId + ' at ' + dtFmt(Date.now(), 'isoTime');
+	const idMsg = 'Id.' + rgId + ' at ' + dtFmt.toHHMMSS(Date.now());
 
 	if (Reflect.has(mCache, rgId)) {
 		console.log('> get cache: ' + idMsg);
@@ -38,7 +38,7 @@ function getPathParam(req, res)
 function updateState(req, res)
 {
 	const rgId = req.params.id;	
-	const idMsg = 'Id.' + rgId + ' at ' + dtFmt(Date.now(), 'isoTime');
+	const idMsg = 'Id.' + rgId + ' at ' + dtFmt.toHHMMSS(Date.now());
 
 	// containerRaw meant to contain state of RG(rgId) 
 	if (containerRaw != null) {
@@ -57,7 +57,7 @@ function updateState(req, res)
 
 function receiveUpdate(req, res)
 {
-    console.log('> receiveUpdate: at ' + dtFmt(Date.now(), 'isoTime'));	
+    console.log('> receiveUpdate: at ' + dtFmt.toHHMMSS(Date.now()));	
 	containerRaw = JSON.stringify(req.body);
 	// console.log('# ' + containerRaw); // OK
 	// console.dir(req); // diag: show empty body: {}

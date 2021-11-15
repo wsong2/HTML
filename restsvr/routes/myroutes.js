@@ -1,4 +1,5 @@
 module.exports = function(app) {
+//export default function(app) {
 	var apicontroller = require('../controllers/apicontroller.js');
 	var mycontroller = require('../controllers/mycontroller.js');
 	var jsoncontroller = require('../controllers/jsoncontroller.js');

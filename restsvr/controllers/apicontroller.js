@@ -1,5 +1,5 @@
 var fs = require("fs");
-var dtFmt = require("dateformat");
+var dtFmt = require("./dateformat.js");
 
 var mCache = {};
 
@@ -16,13 +16,14 @@ function setNextId()
 
 function newItem(req, res)
 {
-    console.log('\n--- A: ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
+	let dttm = dtFmt.toISODateTime(Date.now()); 
+    console.log('\n--- A: ' + dttm + ' ---' );
 	let item = {};
 	for (let [key,val] of Object.entries(req.body)) {
 		console.log(`+ ${key}: ${val}`);
 		item[key] = val;
 	}
-	item.dttm = dtFmt(Date.now(), 'isoUtcDateTime');
+	item.dttm = dttm;
 	item.simId = nextId++;
 	
 	mCache.rows.push(item);
@@ -34,7 +35,8 @@ function newItem(req, res)
 
 function updateItem(req, res)
 {
-    console.log('\n--- U: ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
+	let dttm = dtFmt.toISODateTime(Date.now()); 
+    console.log('\n--- U: ' + dttm + ' ---' );
 	let item = {op: 'update'};
 	let row = mCache.rows.find(r => r.simId == req.body.simId);
 	if (row === undefined) {
@@ -42,7 +44,7 @@ function updateItem(req, res)
 	} else {
 		item.simId = row.simId;
 	}
-	item.dttm = dtFmt(Date.now(), 'isoUtcDateTime');
+	item.dttm = dttm;
 	for (let [key,val] of Object.entries(req.body)) {
 		console.log(`U ${key}: ${val}`);
 		if (row !== undefined) {
@@ -56,7 +58,7 @@ function updateItem(req, res)
 function allItems(req, res)
 {
 	const contentType = {'content-type': 'application/json; charset=utf-8' };
-    console.log('\n--- ' + dtFmt(Date.now(), 'isoTime') + ' ---' );
+    console.log('\n--- ' + dtFmt.toISODateTime(Date.now()) + ' ---' );
 	if (Reflect.has(mCache, 'rows')) {
 		console.log('cache');
 		let data = JSON.stringify(mCache);
@@ -95,4 +97,3 @@ module.exports.deleteItem = deleteItem;
 module.exports.newItem = newItem;
 module.exports.updateItem = updateItem;
 
- 
