@@ -1,5 +1,5 @@
 var fs = require("fs");
-var dtFmt = require("dateformat");
+var dtFmt = require("./dateformat.js");
 var path = require('path');
 
 var mRecId = 1001;
@@ -27,28 +27,28 @@ function pagePost(req, res)
 		console.log("> %s: %s", key, val);
 	}
 	let recId = (gotId != null) ? gotId : mRecId++;
-	let dttm = dtFmt(Date.now(), 'isoDateTime');
+	let dttm = dtFmt.toISODateTime(Date.now());
 	let json = '{"id": ' + recId + ', "dttm": "' + dttm + '"}';
 	res.end(json);
 }
 
 function getPathParam(req, res)
 {
-    console.log('> getPathParam: ' + req.params.tagId + ' at ' + dtFmt(Date.now(), 'isoTime'));
+    console.log('> getPathParam: ' + req.params.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
 	let json = '{"status": "OK", "details": "' + req.params.tagId + '"}';
 	res.end(json);
 }
 
 function getQryParam(req, res)
 {
-    console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt(Date.now(), 'isoTime'));
+    console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
 	let json = '{"status": "OK", "details": "' + req.query.tagId + '"}';
 	res.end(json);
 }
 
 function postResp(req, res)
 {
-	console.log('> postResp: %s %s at %s', req.method, req.url, dtFmt(Date.now(), 'HH:MM:ss'));
+	console.log('> postResp: %s %s at %s', req.method, req.url, dtFmt.toHHMMSS(Date.now()));
 	//console.log(req);
 	for (const [key, val] of Object.entries(req.body)) {
 		console.log("  %s: %s", key, val);
@@ -61,18 +61,18 @@ function parseMultiPartFormData(bodyText)
 {
 	let cdfd = 'Content-Disposition: form-data; name=';
 	let len = cdfd.length;
-	let att, val;
+	let prop, val;
 	let lines = bodyText.split('\r\n');
 	for (let i=0; i<lines.length; i++) {
 		let line = lines[i];
 		if (line.startsWith('------')) {
-			if (att) {
-				console.log(attName(att) + ': ' + val);
+			if (prop) {
+				console.log(propName(prop) + ': ' + val);
 			}
 			continue;
 		}
 		if (line.startsWith(cdfd)) {
-			att = line.substr(len);
+			prop = line.substr(len);
 		} else if (line == '') {
 			val = '';
 		} else {
@@ -81,10 +81,10 @@ function parseMultiPartFormData(bodyText)
 	}
 }
 
-function attName(att)
+function propName(prop)
 {
-	let arr = /"([^"]+)"/.exec(att);
-	return arr ? arr[1] : att;
+	let arr = /"([^"]+)"/.exec(prop);
+	return arr ? arr[1] : prop;
 }
 
 module.exports.htmlPost = htmlPost;
