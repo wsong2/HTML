@@ -24,9 +24,8 @@ module.exports = function(app) {
 	
 	// container
 	app.get('/data/:id', ctcontroller.getPathParam);
-	app.get('/update/:id', ctcontroller.updateState);
-	
-	app.post('/update/state', ctcontroller.receiveUpdate);
+	app.get('/update/:id', ctcontroller.updateState);	
+	app.post('/upload/state', ctcontroller.receiveUpdate);
 	
 	// app2 routes
 	app.post('/form2/data', jsoncontroller.ackdata);

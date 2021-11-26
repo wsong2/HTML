@@ -1,66 +1,83 @@
+'use strict';
+
 var fs = require("fs");
 var path = require('path');
 var dtFmt = require("./dateformat.js");
 
 const contentType = {'content-type': 'application/json; charset=utf-8' };
 
+const mSharedArrBuffer = new SharedArrayBuffer(4);
+const mA4 = new Uint8Array(mSharedArrBuffer);
+mA4[0] = 2;	// Just use first one
+
 var mCache = {};
 
-var containerRaw = null;
-
-function rgJsonFile(rgId) {
-	// There is only state1.json for the moment	
-	return __dirname + "/data/state1.json";	
+function reponseCachedData(queryId, res) {
+	let data = mCache[queryId];
+	res.set(contentType);
+	res.end(JSON.stringify(data));
 }
 
+function addClientCacheAndRespond(clientId, res) {
+	let data = Object.assign({client_id: clientId}, mCache[1]);	// Currently, all clients share the initial data state1.json
+	mCache[clientId] = data;
+	res.set(contentType);
+	res.end(JSON.stringify(data));
+}
+
+// PATH: /data/:id
 function getPathParam(req, res)
 {
-	const rgId = req.params.id;
-	const idMsg = 'Id.' + rgId + ' at ' + dtFmt.toHHMMSS(Date.now());
-
-	if (Reflect.has(mCache, rgId)) {
-		console.log('> get cache: ' + idMsg);
-		let data = mCache[rgId];
-		res.set(contentType);
-		res.end(data);
+	const queryId = parseInt(req.params.id, 10);
+	
+	let msg;
+	if (queryId !== 1) {
+		msg = 'cache: Id.' + queryId + ' at ' + dtFmt.toHHMMSSNow();
+		console.log('> ' + msg);
+		reponseCachedData(queryId, res);
 		return;
 	}
 	
-    console.log('> getPathParam: ' + idMsg);
-	let filePath = rgJsonFile(rgId)
-	fs.readFile(filePath, 'utf8', (err, data) => {
-		mCache[rgId] = data;
-		res.set(contentType);
-		res.end(data);
-	});
+	let clientId = Atomics.add(mA4, 0, 1);
+	if (Reflect.has(mCache, 1)) {
+		msg = 'cache1: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow();
+		console.log('> ' + msg);
+		addClientCacheAndRespond(clientId, res);
+	} else {
+		msg = 'getPathParam: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow();
+		console.log('> ' + msg);
+		let filePath = __dirname + "/data/state1.json";		// Currently, all clients share the initial data state1.json
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			mCache[1] = JSON.parse(data);
+			addClientCacheAndRespond(clientId, res);
+		});			
+	}		
 }
 
+// PATH: /update/:id
 function updateState(req, res)
 {
-	const rgId = req.params.id;	
-	const idMsg = 'Id.' + rgId + ' at ' + dtFmt.toHHMMSS(Date.now());
+	const clientId = parseInt(req.params.id, 10);	
+	console.log('> updateState cache: ClientId.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
 
-	// containerRaw meant to contain state of RG(rgId) 
-	if (containerRaw != null) {
-		console.log('> get update cache: ' + idMsg);
-		//console.log('! ' +  containerRaw);		
-		res.set(contentType);
-		res.end(containerRaw);
-		return;
+	if (Reflect.has(mCache, clientId)) {
+		reponseCachedData(clientId, res);
+	} else {
+		console.log('> ** Error: No cached data!');
+		let json = '{"status": "Warning", "details": "No cached data!"}';
+		res.end(json);
 	}
-	
-    console.log('> updateState: ' + idMsg);
-    console.log('> ** Error - No cached data!');
-	let json = '{"status": "Warning", "details": "No cached data!"}';
-	res.end(json);
 }
 
+// PATH: /upload/state
 function receiveUpdate(req, res)
 {
-    console.log('> receiveUpdate: at ' + dtFmt.toHHMMSS(Date.now()));	
-	containerRaw = JSON.stringify(req.body);
-	// console.log('# ' + containerRaw); // OK
 	// console.dir(req); // diag: show empty body: {}
+	let rec = req.body;
+	let clientId = rec.client_id;
+    console.log('> receiveUpdate client.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
+	let jsonString = JSON.stringify(rec);	
+	mCache[clientId] = JSON.parse(jsonString);
 	
 	let json = '{"status": "OK", "details": "req.body to constainer raw"}';
 	res.end(json);

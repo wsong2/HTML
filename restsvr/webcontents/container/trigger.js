@@ -1,6 +1,6 @@
-function trigger(vRec, vState, logger)
+function trigger(vExecutor, vState, logger)
 {
-	vRec.actions.forEach(actn => {
+	vExecutor.actions.forEach(actn => {
 		if (actn.hasOwnProperty('grid_id')) {
 			gridAction(actn.actn_id, actn.grid_id, actn.action);
 		} else {
