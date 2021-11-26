@@ -1,5 +1,5 @@
-dist/
 node_modules/
 package-lock.json
-reactjs/restsvr/webcontents/index.js
-reactjs/restsvr/webcontents/tab3.js
+data/converted/
+restsvr/webcontents/tab3.js
+restsvr/controllers/data/state1.json

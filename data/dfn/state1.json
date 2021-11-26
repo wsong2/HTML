@@ -1,0 +1,50 @@
+{ 
+  "state":{
+	"props": [ 
+		{"prop_id": 1,  "val": "Free text"},
+		{"prop_id": 2,  "grid_id": "1"},
+		{"prop_id": 3,  "grid_id": "2"},
+		{"prop_id": 4,  "val": "2021-05-21", "vtype": "D"},
+		{"prop_id": 10, "val": "FR"},
+		{"prop_id": 11, "val": "2", "vtype": "N"}
+	],
+	"grids": [
+		{ "grid_id": "1",
+		  "cols" : ["C.1/N", "C.2"],
+		  "csv_rows" : [
+			"23.4;setcolval",
+			"117.2;(null)"
+		  ]
+		},
+		{ "grid_id": "2",
+		  "cols" : ["C.1/N", "C.2/D", "C.3/Ref"],
+		  "csv_rows": [
+			"23.4;2021-02-13;R/1"
+		  ]
+		},
+		{ "grid_id": "2_1",
+		  "cols" : ["C.1/N", "C.2"],
+		  "csv_rows": [
+			"69;Level2"
+		  ]
+		}
+	]
+  },
+  "constraints": [
+	{"cstn_id": 1, "expect":["if", "$gt:@4:2020-03-01", "$eq:@11:3"]}
+  ],
+  "actions": [
+	{ "actn_id": 11, "action": {"prop_id":1, "setval":"What so ever..."}},
+	{ "actn_id": 12, "grid_id": "1",
+	  "action": [
+			[{"row":"0"}, {"col_idx":0, "setval":75}, {"col_idx":1, "setval":"2021-01-25"}],
+			[{"row":"1"}, {"col_idx":1, "setval":"2020-11-25"}]
+		]
+	},
+	{ "actn_id": 13, "grid_id": "2",
+	  "action": [
+			[{"row":"0"}, {"col_idx":1, "setval":"@4"}]
+		]
+	}
+  ]
+}

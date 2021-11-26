@@ -19,7 +19,7 @@ module.exports = {
     ]
  },
  output: {
-    path: path.join(__dirname, '../restsvr/webcontents'),
+    path: path.join(__dirname, '../../restsvr/webcontents'),
     filename: '[name].js'
  }
 };

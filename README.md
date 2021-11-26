@@ -1,2 +1,5 @@
-1. btntabs.html
-2. reactjs
+## Deployment To-Do
+**tools/**  
+$ node dataconv.js  
+**reactjs/**   
+$ npm run build  
