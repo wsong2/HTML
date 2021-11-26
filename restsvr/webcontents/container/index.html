@@ -36,13 +36,14 @@ select.setby {
 </div>
 <div id="div0" class="table">
  <div class="tr"><span>Category&nbsp;</span><div class="td" id="s10000"></div> <!-- s10000 creates s10 (dyn) -->
-	<label for="s11">&nbsp;&nbsp;Level&nbsp;</label><input id="s11" type="number" style="max-width: 4em">
+	<label for="s11">&nbsp;&nbsp;Level&nbsp;</label>
+	<input id="s11" type="number" style="max-width: 4em" oninput="onInputValueChange(this.id, this.value)">
  </div>
  <div class="tr" >
-	<span>Att.1&nbsp;</span><input id="s1" type="text" onchange="onAttValueChange(this.id, this.value)">
-	<span>&nbsp;&nbsp;Event Date&nbsp;</span><input id="s4" type="date" onchange="onAttValueChange(this.id, this.value)">
+	<span>Label&nbsp;</span><input id="s1" type="text" onchange="onInputValueChange(this.id, this.value)">
+	<span>&nbsp;&nbsp;Event Date&nbsp;</span><input id="s4" type="date" onchange="onInputValueChange(this.id, this.value)">
  </div>
- <div class="tr"><span>Att.2&nbsp;</span><div class="td" id="s2"></div><span>&nbsp;&nbsp;Att.3&nbsp;</span><div class="td" id="s3"></div></div>
+ <div class="tr"><span>Group.A&nbsp;</span><div class="td" id="s2"></div><span>&nbsp;&nbsp;Group.B&nbsp;</span><div class="td" id="s3"></div></div>
 </div>
 <p><button id="btn01" type="button" onClick="applyChanges(null)" disabled>Execute</button></p>
 <input type="hidden" id="waitRespId" value="F">
@@ -58,6 +59,20 @@ var mJsonRaw;
 var mExecutor;
 const mUrl = "/data/1";
 
+
+function onInputValueChange(id, val) {
+	if (mExecutor.hasOwnProperty('constraints') || mExecutor.hasOwnProperty('actions')) {
+		let propId = parseInt(id.substr(1));
+		let setVal= {prop_id: propId, setval: val};
+		let action0  = {actn_id: 0, action: setVal};
+		let recExec = {
+			constraints: mExecutor.constraints,
+			actions: [action0].concat(mExecutor.actions)
+		}
+		applyChanges(recExec);
+	}
+}
+
 function initDivAndLogger()
 {
 	function replaceID(tagName) {
@@ -71,23 +86,10 @@ function initDivAndLogger()
 		}
 	}
 
-	function onAttValueChange(id, val) {
-		if (mExecutor.hasOwnProperty('constraints') || mExecutor.hasOwnProperty('actions')) {
-			let propId = parseInt(id.substr(1));
-			let setVal= {prop_id: propId, setval: val};
-			let action0  = {actn_id: 0, action: setVal};
-			let recExec = {
-				constraints: mExecutor.constraints,
-				actions: [action0].concat(mExecutor.actions)
-			}
-			applyChanges(recExec);
-		}
-	}
-
 	function addDropDown(vDiv, vID) {
 		const handler = () => {
 			//console.log('SEL2: ' + selectList.id + ' ~ ' + selectList.value);
-			onAttValueChange(selectList.id, selectList.value);
+			onInputValueChange(selectList.id, selectList.value);
 		};
 		
 		let selectList = htmlChildElt(vID.substr(1));	// dfn.js
