@@ -4,7 +4,7 @@
 <head>
 <title>Grid</title>
 <style>
-table td.rg {
+table td.grid {
     border: 1px solid cyan;
 }
 td.setby {
@@ -13,16 +13,17 @@ td.setby {
 </style>
 </head>
 <body onload="loadData()">
-<table class="rg">
+<table class="grid">
   <tbody id="idGrid"><!-- insert here --></tbody>
 </table>
 <script>
 const queryString = window.location.search;	
 const urlParams = new URLSearchParams(queryString);
-const gridId =  urlParams.get('rg');
-document.title = 'RG ' + gridId;
-
+const clientId =  urlParams.get('cid');
+const gridId =  urlParams.get('grd');
 const stUpdated = urlParams.get('st');
+
+document.title = 'Grid ' + gridId;
 	
 function processJson(json) {
 	// console.log('> ' + JSON.stringify(json));
@@ -39,7 +40,7 @@ function processJson(json) {
 }
 
 function loadData() {
-	let url = (stUpdated === 'U') ? "/update/1" : "/data/1";	
+	let url = (stUpdated === 'U') ? ('/update/' + clientId) : ('/data/' + clientId);
 	fetch(url).then( response => response.json()
 	).then( data => processJson(data)
 	).catch( err => console.log(err)
@@ -55,9 +56,9 @@ function insertTBodyRow(tbody, vGrid, allGrids)
 			return document.createTextNode('(Undef)');
 		}
 		let anchor = document.createElement('a');                 
-        let link = document.createTextNode('RG.' + recChild.grid_id);
+        let link = document.createTextNode('GV.' + recChild.grid_id);
         anchor.appendChild(link); 
-        anchor.href = "rg.html?rg=" + recChild.grid_id;
+        anchor.href = 'grid.html?cid=' + clientId + '&grd=' + recChild.grid_id;
 		if (rec.setby >= 0) {
 			anchor.href += '&st=U';
 		}
@@ -82,7 +83,7 @@ function insertTBodyRow(tbody, vGrid, allGrids)
 		let arrRow = vGrid.rows[rowIndex];
 		for (let iCol=0; iCol<arrCol.length; iCol++) {
 			let cell = row.insertCell(iCol);
-			cell.className = "rg";
+			cell.className = "grid";
 			let rec = arrRow[iCol];
 			if (vGrid.types[iCol] !== 'Ref') {
 				cell.appendChild( columnCellContent(vGrid, iCol, rowIndex) );
@@ -102,7 +103,7 @@ function insertTBodyRow(tbody, vGrid, allGrids)
 		let arrCol = vGrid.cols;
 		for (let iCol=0, len=arrCol.length; iCol<len; iCol++) {
 			let cell = row.insertCell(iCol);
-			cell.className = "rg";
+			cell.className = "grid";
 			cell.innerHTML = '<b>' + arrCol[iCol] + '</b>';
 		}		
 	}
