@@ -1,32 +1,61 @@
 function trigger(vExecutor, vState, logger)
 {
 	vExecutor.actions.forEach(actn => {
-		if (actn.hasOwnProperty('grid_id')) {
-			gridAction(actn.actn_id, actn.grid_id, actn.action);
-		} else {
-			simpleAction(actn.actn_id, actn.action);
-		}
-	});
-	
-	//
-	function gridAction(actnId, gridId, vAction) {
-		let grid = vState.findGrid(gridId);
+		let grid = vState.findGrid(actn.grid_id);
 		if (grid === undefined) {
-			logger('  Undef gridId: ' + gridId);
+			logger('  Undef gridId: ' + actn.grid_id);
 		} else {
 			let gridview = createGridView(grid, logger);
-			gridview.launch(actnId, vAction, vState);
+			gridview.launch(actn.actn_id, actn.action, vState);
+		}
+	});
+
+	vExecutor.constraints.forEach(cstn => applyConstraint(cstn));
+	
+	//
+	function applyConstraint(vCstn) {
+		let rec = {};		
+		doEval(vCstn.dfn, rec);
+		
+		if (!rec.hasOwnProperty('verbe')) return;
+		if (!rec.hasOwnProperty('val'))	return;
+		
+		let propId = rec.hasOwnProperty('propId') ? rec.propId : vCstn.prop_id;
+		let prop = vState.findProp(propId);
+		if (prop === undefined) {
+			logger('  Undef propId: ' + propId);
+		} else if (!vState.setValueIfNoConflict(prop, rec.val, vCstn.cstn_id)) {
+			logger('  prop. ' + propId + ': value conflict ' + prop.val + ' ~ ' + rec.val);
+		} else {
+			logger('Constraint.' + vCstn.cstn_id + ': OK');
 		}
 	}
 	
-	function simpleAction(actnId, vAction) {
-		let prop = vState.findProp(vAction.prop_id);
-		if (prop === undefined) {
-			logger('  Undef propId: ' + vAction.prop_id);
-		} else if (vAction.hasOwnProperty('setval') && !vState.setValueIfNoConflict(prop, vAction.setval, actnId)) {
-			logger('  prop. ' + vAction.prop_id + ': value conflict ' + prop.val + ' ~ ' + vAction.setval);
-		} else {
-			logger('Action.' + actnId + ': OK');
+	function doEval(arrDfn, vRec) {
+		if (arrDfn[0] !== 'setval') return;	// TMP
+		
+		let ss = arrDfn[1].split(':');	// Example - $eq:@10:ZH
+		if (ss[0] !== '$eq') return // TMP
+		
+		let v1 = getRawValue(ss[1]);
+		let v2 = getRawValue(ss[2]);
+		if (v1 == null || v2 == null)	return;
+
+		vRec.verbe = arrDfn[0];
+		if (v1 === v2) {
+			vRec.val = arrDfn[2];
+		} else if (arrDfn.length > 3) {
+			vRec.val = arrDfn[3];
 		}
+	}
+	
+	function getRawValue(str) {
+		if (!str.startsWith('@')) return str;
+		
+		let propId = parseInt(str.substr(1), 10);
+		if (isNaN(propId))	return null;
+		
+		let prop = vState.findProp(propId);
+		return (prop === undefined) ? null : prop.val;
 	}
 }

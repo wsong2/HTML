@@ -30,21 +30,22 @@
 		}
 	]
   },
-  "constraints": [
-	{"cstn_id": 1, "expect":["if", "$gt:@4:2020-03-01", "$eq:@11:3"]}
-  ],
   "actions": [
-	{ "actn_id": 11, "action": {"prop_id":1, "setval":"What so ever..."}},
-	{ "actn_id": 12, "grid_id": "1",
+	{ "actn_id": 1001,
+	  "grid_id": "1",
 	  "action": [
 			[{"row":"0"}, {"col_idx":0, "setval":75}, {"col_idx":1, "setval":"2021-01-25"}],
 			[{"row":"1"}, {"col_idx":1, "setval":"2020-11-25"}]
 		]
 	},
-	{ "actn_id": 13, "grid_id": "2",
+	{ "actn_id": 1002,
+	  "grid_id": "2",
 	  "action": [
 			[{"row":"0"}, {"col_idx":1, "setval":"@4"}]
 		]
 	}
+  ],
+  "constraints": [
+	{"cstn_id": 10001, "prop_id": 1, "dfn":["setval", "$eq:@10:ZH", "What so ever...", "Fr,En"]}
   ]
 }

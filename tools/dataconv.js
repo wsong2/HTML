@@ -51,7 +51,7 @@ function checkData(vJson)
 	let arrProps = vJson.state.props;
 	let arrGrids = vJson.state.grids;
 	let arrActns = vJson.actions;
-	// vJson.constraints
+
 	let mSetID = new Set();
 	
 	const assertDistinctId = (arr, propn, msg) => {

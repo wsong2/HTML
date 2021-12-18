@@ -1,9 +1,9 @@
 'use strict';
 
 const dfnProp10 = {
-	ZH: "中文",
-	FR: "Français",
-	EN: "English"
+	ZH: "类1 - 中文",
+	FR: "C2 - Français",
+	EN: "C3 - English"
 };
 
 function htmlChildElt(id)
