@@ -1,18 +1,10 @@
 function trigger(vExecutor, vState, logger)
 {
-	vExecutor.actions.forEach(actn => {
-		let grid = vState.findGrid(actn.grid_id);
-		if (grid === undefined) {
-			logger('  Undef gridId: ' + actn.grid_id);
-		} else {
-			let gridview = createGridView(grid, logger);
-			gridview.launch(actn.actn_id, actn.action, vState);
-		}
-	});
+	vExecutor.actions.forEach(actn => launchGridAction(actn, vState, logger));
 
 	vExecutor.constraints.forEach(cstn => applyConstraint(cstn));
 	
-	//
+	//	
 	function applyConstraint(vCstn) {
 		let rec = {};		
 		doEval(vCstn.dfn, rec);

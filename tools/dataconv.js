@@ -6,28 +6,36 @@ const filename = "state1.json"
 const typeTEXT = 'T';
 const typeREF = 'Ref';
 
-function isNullVal(vType, vStr) {
-	return (vType === typeTEXT && vStr === '(null)');
+var data = fs.readFileSync( __dirname + "/../data/dfn/" + filename, 'utf8');
+var	json = JSON.parse(data);
+
+if (checkData(json)) {
+	fs.writeFileSync(__dirname + "/../data/converted/" + filename, JSON.stringify(json, null, 2));
+	fs.writeFileSync(__dirname + "/../restsvr/controllers/data/" + filename, JSON.stringify(json));
 }
 
-function convRow(arrTypes, arrStr) {
-	const strToVal = (i) => {
-		let str = arrStr[i];
-		let typ = arrTypes[i];
-		if (isNullVal(typ, str)) return {isnull: 'Y'};
-		if (typ === typeREF) return {val: str.substr(2)};
-		return {val: str};
+//
+function convRecGrid(rec)
+{
+	function convRow(arrTypes, arrStr) {
+		const isNullVal = (vType, vStr) =>  (vType === typeTEXT && vStr === '(null)');
+		
+		const strToVal = (i) => {
+			let str = arrStr[i];
+			let typ = arrTypes[i];
+			if (isNullVal(typ, str)) return {isnull: 'Y'};
+			if (typ === typeREF) return {val: str.substr(2)};
+			return {val: str};
+		}
+		
+		let cells = [];
+		for (let i=0; i<arrTypes.length; i++) {
+			let val = strToVal(i);
+			cells.push(val);
+		}
+		return cells;
 	}
-	
-	let cells = [];
-	for (let i=0; i<arrTypes.length; i++) {
-		let val = strToVal(i);
-		cells.push(val);
-	}
-	return cells;
-}
 
-function convRecGrid(rec) {
 	rec.rows = [];	
 	rec.types = [];
 	
@@ -80,12 +88,4 @@ function checkData(vJson)
 	
 	arrGrids.forEach((gr) => convRecGrid(gr));
 	return true;
-}
-
-var data = fs.readFileSync( __dirname + "/../data/dfn/" + filename, 'utf8');
-var	json = JSON.parse(data);
-
-if (checkData(json)) {
-	fs.writeFileSync(__dirname + "/../data/converted/" + filename, JSON.stringify(json, null, 2));
-	fs.writeFileSync(__dirname + "/../restsvr/controllers/data/" + filename, JSON.stringify(json));
 }

@@ -1,6 +1,6 @@
 { 
   "state":{
-	"props": [ 
+	"props": [
 		{"prop_id": 1,  "val": "Free text"},
 		{"prop_id": 2,  "grid_id": "1"},
 		{"prop_id": 3,  "grid_id": "2"},
@@ -33,15 +33,17 @@
   "actions": [
 	{ "actn_id": 1001,
 	  "grid_id": "1",
-	  "action": [
-			[{"row":"0"}, {"col_idx":0, "setval":75}, {"col_idx":1, "setval":"2021-01-25"}],
-			[{"row":"1"}, {"col_idx":1, "setval":"2020-11-25"}]
+	  "row_sel": "$list:0,1",
+	  "col_upd": [ 
+			[{"col_idx":0, "setval":75}, {"col_idx":1, "setval":"2021-01-25"}],
+			[{"col_idx":1, "setval":"@4"}]
 		]
 	},
-	{ "actn_id": 1002,
+	{ "actn_id": 1002, 
 	  "grid_id": "2",
-	  "action": [
-			[{"row":"0"}, {"col_idx":1, "setval":"@4"}]
+	  "row_sel": "$plus",
+	  "col_upd": [
+			[{"col_idx":0, "setval":"@11"}, {"col_idx":1, "setval":"@4"}]
 		]
 	}
   ],
