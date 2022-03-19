@@ -46,14 +46,27 @@ function getQryParam(req, res)
 	res.end(json);
 }
 
-function postResp(req, res)
+function postAckJson(req, res)
 {
-	console.log('> postResp: %s %s at %s', req.method, req.url, dtFmt.toHHMMSS(Date.now()));
+	let dttm = dtFmt.toHHMMSS(Date.now());
+	console.log('> postAckJson: %s %s at %s', req.method, req.url, dttm);
 	//console.log(req);
 	for (const [key, val] of Object.entries(req.body)) {
 		console.log("  %s: %s", key, val);
 	}
-	let json = '{"status": "OK", "details": "None"}';
+	let json = '{"status": "OK", "dttm": "' + dttm +'"}';
+	res.end(json);
+}
+
+function postAckForm2(req, res)
+{
+	let dttm = dtFmt.toISODateTime(Date.now());
+    console.log('> ackdata at ' + dttm);
+	console.log('  ' + JSON.stringify(req.body));
+	// for (const [key, val] of Object.entries(req.body)) {
+		// console.log("  %s: %s", key, val);
+	// }
+	let json = '{"status": "OK", "appname": "app2", "endpoint": "ack ' + dttm + '"}';
 	res.end(json);
 }
 
@@ -92,4 +105,5 @@ module.exports.pagePost = pagePost;
 
 module.exports.getPathParam = getPathParam;
 module.exports.getQryParam = getQryParam;
-module.exports.postResp = postResp;
+module.exports.postAckJson = postAckJson;
+module.exports.postAckForm2 = postAckForm2;
