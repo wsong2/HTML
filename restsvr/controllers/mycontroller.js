@@ -14,24 +14,6 @@ function htmlPost(req, res)
 	res.sendFile(path.join(__dirname + '/data/response.html'));
 }
 
-function pagePost(req, res)
-{
-	console.log('\n-- pagePost --');
-    //console.log(req);
-	
-	let gotId = null;
-	for (const [key, val] of Object.entries(req.body)) {
-		if (key == 'simId' && val && val != '') {
-			gotId = val;
-		}
-		console.log("> %s: %s", key, val);
-	}
-	let recId = (gotId != null) ? gotId : mRecId++;
-	let dttm = dtFmt.toISODateTime(Date.now());
-	let json = '{"id": ' + recId + ', "dttm": "' + dttm + '"}';
-	res.end(json);
-}
-
 function getPathParam(req, res)
 {
     console.log('> getPathParam: ' + req.params.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
@@ -101,8 +83,6 @@ function propName(prop)
 }
 
 module.exports.htmlPost = htmlPost;
-module.exports.pagePost = pagePost;
-
 module.exports.getPathParam = getPathParam;
 module.exports.getQryParam = getQryParam;
 module.exports.postAckJson = postAckJson;
