@@ -4,14 +4,29 @@ var path = require('path');
 
 var mRecId = 1001;
 
+var htmP1, htmP2;
+
+function init()
+{
+	htmP1 = fs.readFileSync(__dirname + '/data/template1_Begin.txt', {encoding:'utf8', flag:'r'});
+	htmP2 = fs.readFileSync(__dirname + '/data/template1_End.txt', {encoding:'utf8', flag:'r'});
+}
+
 function htmlPost(req, res)
 {
 	console.log("> HTML post");
-	//console.log(req.body);
+	let txtParams = '';
 	for (let key in req.body) {
-		console.log("> " + key + ": " + req.body[key]);
+		let kv = key + ': ' + req.body[key];
+		console.log("  " + kv);
+		txtParams += kv + '<br>';
 	}
-	res.sendFile(path.join(__dirname + '/data/response.html'));
+	//res.sendFile(path.join(__dirname + '/data/response.html'));
+	if (txtParams.length > 0) {
+		res.send(htmP1 + '<div>' + txtParams + '</div>' + htmP2);
+	} else {
+		res.send(htmP1 + htmP2);
+	}
 }
 
 function getPathParam(req, res)
@@ -82,6 +97,7 @@ function propName(prop)
 	return arr ? arr[1] : prop;
 }
 
+module.exports.init = init;
 module.exports.htmlPost = htmlPost;
 module.exports.getPathParam = getPathParam;
 module.exports.getQryParam = getQryParam;

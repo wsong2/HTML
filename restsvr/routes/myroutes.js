@@ -3,6 +3,8 @@ module.exports = function(app) {
 	var apicontroller = require('../controllers/apicontroller.js');
 	var mycontroller = require('../controllers/mycontroller.js');
 	var ctcontroller = require('../controllers/ctcontroller.js');
+	
+	mycontroller.init();
 
 	app.post('/api/rec/addnew', apicontroller.newItem);
 	app.post('/api/rec/update', apicontroller.updateItem);	// react tab3.js Update (submit button)
