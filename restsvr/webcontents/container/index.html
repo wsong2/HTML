@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Container</title>
-<meta charset="UTF-8">
+<head><title>Container</title><meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="container.css">
 </head>
 <body onload="initDivAndLogger()">
-<p><button type="button" onClick="doInitLoad(this)">Initialization</button></p>
-<div id="div0" class="table">
- <div class="tr"><span>Category&nbsp;</span><div class="td" id="dv331" categSelID="s10"></div>
-	<label for="s11">&nbsp;&nbsp;Level&nbsp;</label>
-	<input id="s11" type="number" style="max-width: 4em" oninput="onInputValueChange(this.id, this.value)">
+<button type="button" onClick="initializationFetch(this)" style="margin-bottom: 5px;">Initialization</button>
+<div class="table">
+ <div class="tr">
+  <span>Label</span><input id="s1" type="text" onchange="onInputValueChange(this.id)" value="Free text">
+  <span>Category</span><div class="td" id="dvCateg" categSelID="sCateg"></div>
  </div>
  <div class="tr" >
-	<span>Label&nbsp;</span><input id="s1" type="text" onchange="onInputValueChange(this.id, this.value)">
-	<span>&nbsp;&nbsp;Event Date&nbsp;</span><input id="s4" type="date" onchange="onInputValueChange(this.id, this.value)">
+  <label for="s11">Level</label><input id="s11" type="number" style="max-width: 4em" oninput="onInputValueChange(this.id)" value="2">	
+  <label for="s12">Delta</label><input id="s12" type="number" style="max-width: 6em" oninput="onInputValueChange(this.id)">	
  </div>
  <div class="tr">
-	<span>Group.A&nbsp;</span><div class="td" id="s2"></div>
-	<span>&nbsp;&nbsp;Group.B&nbsp;</span><div class="td" id="s3"></div>
+  <span>Event Date</span><input id="s4" type="date" onchange="onInputValueChange(this.id)" value="2021-05-21">
+  <span>Date 2</span><input id="s5" type="date" onchange="onInputValueChange(this.id)">
+ </div>
+ <div class="tr">
+  <span>Group.A</span><div class="td" id="s2"></div><span>Group.B</span><div class="td" id="s3"></div>
  </div>
 </div>
-<p><button id="btnExec" type="button" onClick="applyChanges(null)" disabled>Execute</button></p>
+<p><button id="btnExec" type="button" onClick="applyConstraints(0)" disabled>Apply Constraints</button></p>
 <textarea id="msg" rows="8" cols="75"></textarea>
-<script src="dfn.js"><!-- populate combobox --></script>
 <script src="container.js"></script>
 <script src="grid.js"></script>		<!-- required by trigger.js -->
 <script src="trigger.js"></script>
@@ -33,6 +33,49 @@ var flagWait = false;
 var mJsonRaw = {};
 var mExecutor = {};
 
+var mLocalCtxt = {	// Keep existing structure (except actions), to be simplied later
+	clientId: 0,
+	state: { props: [], grids: []},
+	constraints: []
+};
+
+var dfnCateg = {
+	ND: "No Delta",
+	FIX: "Fixed Delta",
+	DR: "Delta Range"
+};
+
+function initLocalCtxt()
+{
+	let props = mLocalCtxt.state.props;
+	
+	function addLocalState(elts) {
+		for (let index = 0; index < elts.length; ++index) {
+			let inputElt = elts[index];
+			let propId = parseInt(inputElt.id.substr(1));
+			if (isNaN(propId)) {
+				console.log('Unexpected Id: ' + nputElt.id);
+			} else {
+				props.push({prop_id:propId, val: inputElt.value});
+			}
+		}	
+	}
+	
+	addLocalState( document.getElementsByTagName('input') );
+	addLocalState( document.getElementsByTagName('select') );
+}
+
+function updateLocalCtxt(json)
+{
+	mLocalCtxt.clientId = json.client_id;
+	for (let prop of json.state.props) {
+		if (prop.hasOwnProperty('grid_id')) {
+			let rec = {prop_id: prop.prop_id, grid_id: prop.grid_id};
+			mLocalCtxt.state.grids.push(rec);
+		}			
+	}		
+}
+
 function gridAnchor(idClient, idGrid, stUpdate) {
 	let url = '<a href="grid.html?cid=' + idClient + '&grd=' + idGrid;
 	if (stUpdate)	{ url += '&st=U'; }
@@ -41,63 +84,63 @@ function gridAnchor(idClient, idGrid, stUpdate) {
 }
 
 function onInputValueChange(id, val) {
-	if (mExecutor.hasOwnProperty('constraints') || mExecutor.hasOwnProperty('actions')) {
-		let propId = parseInt(id.substr(1));
-		let setVal= {prop_id: propId, setval: val};
-		let action0  = {actn_id: 0, action: setVal};
-		let recExec = {
-			constraints: mExecutor.constraints,
-			actions: [action0].concat(mExecutor.actions)
-		}
-		applyChanges(recExec);
-	}
+	applyConstraints(id);
 }
 
 function initDivAndLogger()
 {
-	function addDropDown(mDiv, mID) {
+	let mDivCateg = document.getElementById("dvCateg");
+	
+	function selectBox(vEltId) {
+		let selectList = document.createElement("select");
+		for (const [key, value] of Object.entries(dfnCateg)) {
+			let option = document.createElement("option");
+			option.value = key;
+			option.text = value;
+			selectList.appendChild(option);
+		}	
+		selectList.id = vEltId;
+		return selectList;	
+	}
+
+	function addDropDown(prop) {
 		const handler = () => {
 			onInputValueChange(selectList.id, selectList.value);
 		};
-		let selectList = htmlChildElt(mID);	// include dfn.js
+		let selectList = selectBox('s' + prop.prop_id);
 		selectList.addEventListener("change", handler, false);
-		mDiv.appendChild(selectList);
+		mDivCateg.appendChild(selectList);
+		selectList.value = prop.val;
 	}
 	
-	//
-	let div0 = document.getElementById("div0");	
-	let dv331 = document.getElementById("dv331");
-	let selId = dv331.getAttribute('categSelID');
-	addDropDown(dv331, selId);
+	addDropDown({prop_id: 10, val: 'ND'});	// s10 - categ
+	initLocalCtxt();	
 	
 	// logger
 	let txtMsg = document.getElementById("msg");	// TextArea	
-	logger = (msg) => {txtMsg.value += msg + '\r\n'}; 
+	logger = (msg) => {txtMsg.value += msg + '\r\n'};
 }
 
-function doInitLoad(btn)
+function initializationFetch(btn)
 {
-	function processJson(json) {
+	const processJson = (json) => {
 		mJsonRaw = json;
 		mExecutor.constraints = json.constraints;
 		mExecutor.actions = json.actions;
-		for (let prop of json.state.props) {
-			let elt = document.getElementById('s' + prop.prop_id);	// Prefix-S
-			if (prop.hasOwnProperty('val')) {
-				elt.value = prop.val;
-			} else {
-				elt.innerHTML = gridAnchor(json.client_id, prop.grid_id, false);
-			}			
-		}		
-	}
+		updateLocalCtxt(json);
+
+		for (let grid of mLocalCtxt.state.grids) {
+			let elt = document.getElementById('s' + grid.prop_id);	// Prefix-S
+			elt.innerHTML = gridAnchor(mLocalCtxt.clientId, grid.grid_id, false);
+		}
+	};
 
 	document.getElementById("msg").value = '';	// TextArea	
 	btn.disabled = true;
-	fetch("/data/1").then(	// <<== URL: 
+	fetch("/data/0").then(	// <---- Init
 		(response) => response.json()
 	).then((data) => {
 		processJson(data);
-		btn.disabled = false;
 		document.getElementById('btnExec').disabled  = false;
 	}).catch((err) => {
 		console.log(err);
@@ -105,18 +148,8 @@ function doInitLoad(btn)
 	});
 }
 
-function applyChanges(executor)
+function applyConstraints(id0)
 {
-	function deleteSetBy(obj) {
-		if (obj.hasOwnProperty('val') && obj.hasOwnProperty('setby'))
-			delete obj['setby'];
-	}
-	
-	function clearSetBy(st) {
-		st.props.forEach(deleteSetBy);	
-		st.grids.forEach(gr => gr.rows.forEach(r => r.forEach(deleteSetBy) ) );	
-	}
-	
 	function updateProp(prop) {
 		let elt = document.getElementById('s' + prop.prop_id);	// Prefix-S
 		if (!elt) {
@@ -151,18 +184,12 @@ function applyChanges(executor)
 			console.log(err);
 		});
 	}
-
 	
-	
-	if (executor === null) {
-		executor = mExecutor;
-	}
 	document.getElementById("msg").value = '';	// TextArea	
 
-	let newState = JSON.parse(JSON.stringify(mJsonRaw.state));
-	clearSetBy(newState);	
+	let newState = {state: mLocalCtxt.state, constraints: mLocalCtxt.constraints};	// TODO	
 	let objState = createConstainer(newState);	// include container.js
-	trigger(executor, objState, logger);		// include trigger.js
+	trigger(id0, objState, logger);		// include trigger.js	-- TODO param1 id
 
 	newState.props.forEach(updateProp);
 	

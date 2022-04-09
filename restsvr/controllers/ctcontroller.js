@@ -8,9 +8,10 @@ const contentType = {'content-type': 'application/json; charset=utf-8' };
 
 const mSharedArrBuffer = new SharedArrayBuffer(4);
 const mA4 = new Uint8Array(mSharedArrBuffer);
-mA4[0] = 2;	// Just use first one
+mA4[0] = 2;	// 1 - Just use index 0. 2 - Client ID starts from 2
 
 var mCache = {};
+var mCacheGrid = {};
 
 function reponseCachedData(queryId, res) {
 	let data = mCache[queryId];
@@ -25,33 +26,71 @@ function addClientCacheAndRespond(clientId, res) {
 	res.end(JSON.stringify(data));
 }
 
+function addGridCacheAndRespond(data, rowsKey, res) {
+	res.set(contentType);
+	if (!Reflect.has(data, rowsKey)) {
+		let json = '{"status": "Error", "details": "no rows key"}';
+		res.end(json);
+	} else {
+		let rec = {columns: data.columns, rows: data[rowsKey]};
+		res.end(JSON.stringify(rec));
+	}
+}
+
 // PATH: /data/:id
 function getPathParam(req, res)
 {
 	const queryId = parseInt(req.params.id, 10);
 	
-	let msg;
-	if (queryId !== 1) {
-		msg = 'cache: Id.' + queryId + ' at ' + dtFmt.toHHMMSSNow();
-		console.log('> ' + msg);
+	if (queryId !== 0) {	// Requester has already its client_id and subsequently cached 
+		console.log('> cache: Id.' + queryId + ' at ' + dtFmt.toHHMMSSNow());
 		reponseCachedData(queryId, res);
 		return;
 	}
 	
 	let clientId = Atomics.add(mA4, 0, 1);
-	if (Reflect.has(mCache, 1)) {
-		msg = 'cache1: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow();
-		console.log('> ' + msg);
+	if (Reflect.has(mCache, 1)) {	// Shared state1 already cached
+		console.log('> cache1: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
 		addClientCacheAndRespond(clientId, res);
 	} else {
-		msg = 'getPathParam: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow();
-		console.log('> ' + msg);
+		// One off operation
+		console.log('> getPathParam: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
 		let filePath = __dirname + "/data/state1.json";		// Currently, all clients share the initial data state1.json
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			mCache[1] = JSON.parse(data);
 			addClientCacheAndRespond(clientId, res);
 		});			
 	}		
+}
+
+// PATH: /gridview?cid=CID&gid=GID&rn=RN
+function getQryParam(req, res)
+{
+    //console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
+	//const queryId = parseInt(req.query.cid, 10);
+	const gridId =  req.query.gid;
+	const rowsKey = Reflect.has(req.query, "rn") ? ("rows_" + req.query.rn) : "rows";
+	if (Reflect.has(mCacheGrid, gridId)) {
+		console.log('> cached grid ' + gridId + ' at ' + dtFmt.toHHMMSSNow());
+		addGridCacheAndRespond(mCacheGrid[gridId], rowsKey, res);
+	} else {
+		let filePath = __dirname + "/data/dfn/grid" + gridId + ".json";
+		if (!fs.existsSync(filePath)) {
+			res.set(contentType);
+			res.end('{"status": "Error", "details": "Invalid id ' + gridId + '"}');
+			return;
+		}
+		let params = 'gridId=' + gridId;
+		if (Reflect.has(req.query, "rn")) {
+			params += ', rn=' +  req.query.rn;
+		}
+		console.log('> getQryParam: ' + params + ' at ' + dtFmt.toHHMMSSNow());
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			let json = JSON.parse(data);			
+			mCacheGrid[gridId] = json;
+			addGridCacheAndRespond(json, rowsKey, res);
+		});
+	}
 }
 
 // PATH: /update/:id
@@ -83,6 +122,28 @@ function receiveUpdate(req, res)
 	res.end(json);
 }
 
+// XML
+function getXmlData(req, res)
+{
+  let data = `<?xml version="1.0" encoding="UTF-8"?>`;
+  data += `<products>`;
+
+  for (let i = 0; i < 10; i++) {
+    data += `<item> 
+       <name>Product ${i}</name>
+       <price>${i}</price>
+    </item>`;
+  }
+
+  data += `</products>`;
+
+  res.header("Content-Type", "application/xml");
+  res.status(200).send(data);
+}
+
 module.exports.getPathParam = getPathParam;
+module.exports.getQryParam = getQryParam;
 module.exports.receiveUpdate = receiveUpdate;
 module.exports.updateState = updateState;
+
+module.exports.getXmlData = getXmlData;

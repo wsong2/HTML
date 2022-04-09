@@ -1,0 +1,13 @@
+{
+ "grids": [
+	{"elt": "s2", "grid_id": "1", "info": "Group.A"},
+	{"elt": "s3", "grid_id": "2", "info": "Group.B"}
+ ],
+ "dfn": [
+	{"elt": "s10", "val": "FIX", "descr": "List,Categ", "set_id": "1"},
+	{"elt": "s12", "val": "5", "descr": "Value,Delta", "set_id": "1"}
+ ],
+ "constraints": [
+	{"expr": "$EQ_s5_$ADD_s4_s12"}
+ ]
+}

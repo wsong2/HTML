@@ -24,6 +24,8 @@ module.exports = function(app) {
 	
 	// container
 	app.get('/data/:id', ctcontroller.getPathParam);
+	app.get('/gridview', ctcontroller.getQryParam);
 	app.get('/update/:id', ctcontroller.updateState);	
 	app.post('/upload/state', ctcontroller.receiveUpdate);	
+	app.get('/xmldata/:id', ctcontroller.getXmlData);
 }

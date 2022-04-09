@@ -5,13 +5,13 @@
   "private": true,
   "dependencies": {
     "express": "^4.17.1",
-    "npm": "^8.1.3"
+    "npm": "^8.1.3",
+    "xml": "^1.0.1"
   },
   "scripts": {
     "start": "node server.js"
   },
   "main": "server.js",
-  "devDependencies": {},
   "keywords": [],
   "author": "",
   "description": ""

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
-<head>
-<title>Grid</title>
+<head><title>Grid</title>
 <style>
 table td.grid {
     border: 1px solid cyan;
@@ -19,100 +18,95 @@ td.setby {
 <script>
 const queryString = window.location.search;	
 const urlParams = new URLSearchParams(queryString);
-const clientId =  urlParams.get('cid');
-const gridId =  urlParams.get('grd');
+const clientId = urlParams.get('cid');
+const gridId = urlParams.get('grd');	// e.g. 1, 2_C3
+const rowNo = urlParams.get('rn');
 const stUpdated = urlParams.get('st');
 
 document.title = 'Grid ' + gridId;
-	
+
 function processJson(json) {
-	// console.log('> ' + JSON.stringify(json));
-	let tbody = document.getElementById('idGrid');	
-	let grids = json.state.grids;
-	let recGrid = grids.find(r => r.grid_id === gridId);
-	if (recGrid !== undefined) {
-		insertTBodyRow(tbody, recGrid, grids)
-	} else {
+	let tbody = document.getElementById('idGrid');
+	
+	if (!json.hasOwnProperty('columns')) {
 		let cell = tbody.insertRow().insertCell();
-		let newText = document.createTextNode('(Undef: Id' + gridId + ')');
-		cell.appendChild(newText);
+		let newText = document.createTextNode('(Undef: Id ' + gridId + ')');
+		cell.appendChild(newText);		
+	} else {
+		insertTBodyRow(tbody, json);
 	}
 }
 
 function loadData() {
-	let url = (stUpdated === 'U') ? ('/update/' + clientId) : ('/data/' + clientId);
+	let url = (stUpdated === 'U') ? ('/update/' + clientId) : ('/gridview?cid=' + clientId + '&gid=' + gridId + '&rn=');		// TODO ?cid=&gid=&rn=
 	fetch(url).then( response => response.json()
 	).then( data => processJson(data)
 	).catch( err => console.log(err)
 	);
 }
 
-function insertTBodyRow(tbody, vGrid, allGrids)
+function insertTBodyRow(tbody, json)
 {
-	function cellContent(rec, columnId) {
-		let childGridId = vGrid.grid_id + '_' + rec.val;
-		let recChild = allGrids.find(r => r.grid_id === childGridId);		
-		if (recChild === undefined) {
-			return document.createTextNode('(Undef)');
-		}
+	var vColumns = json.columns;
+	var vRows = json.rows;	// rows_N in URL are for server. Responses is {columns: cols, rows, rows} 
+	
+	function refCellContent(cell, rowno) {
 		let anchor = document.createElement('a');                 
         let link = document.createTextNode('GV.' + recChild.grid_id);
         anchor.appendChild(link); 
-        anchor.href = 'grid.html?cid=' + clientId + '&grd=' + recChild.grid_id;
-		if (rec.setby >= 0) {
+        anchor.href = 'grid.html?cid=' + clientId + '&grd=' + gridId + '_C' + cell.column + '_' + rowno;
+		if (cell.setby >= 0) {
 			anchor.href += '&st=U';
 		}
 		anchor.target = "_blank";
 		return anchor;
 	}
 
-	function columnCellContent(dfnGrid, iCol, iRowIndex) {
-		let cell = dfnGrid.rows[iRowIndex][iCol];
-		if (!cell.hasOwnProperty('val')) {	// "isnull": "Y"
-			return document.createTextNode('');
-		}		
+	function cellContent(cell, coltype) {
 		let inp = document.createElement('input');
-		inp.id = dfnGrid.grid_id + '.C' + iCol + '.R' + iRowIndex;
-		inp.value = dfnGrid.rows[iRowIndex][iCol].val;
-		inp.type = (dfnGrid.types[iCol] === 'D') ? 'date' : 'text';
+		//inp.id = dfnGrid.grid_id + '.C' + iCol + '.R' + iRowIndex;	// TODO
+		inp.value = cell.val;
+		inp.type = (coltype === 'D') ? 'date' : 'text';
 		return inp;
 	}
 	
-	function insertRowCells(row, rowIndex) {
-		let arrCol = vGrid.cols;
-		let arrRow = vGrid.rows[rowIndex];
-		for (let iCol=0; iCol<arrCol.length; iCol++) {
+	function insertRowCells(row, cells, rowNo) {
+		vColumns.forEach((col,iCol) => {
 			let cell = row.insertCell(iCol);
 			cell.className = "grid";
-			let rec = arrRow[iCol];
-			if (vGrid.types[iCol] !== 'Ref') {
-				cell.appendChild( columnCellContent(vGrid, iCol, rowIndex) );
-			} else {
-				cell.appendChild( cellContent(rec, arrCol[iCol]) );
+			
+			let cell = cells.find(c => c.column === (iCol+1));
+			if (cell === undefined) {
+				console.log('Missing column ' + (iCol+1));
+				return;
 			}
-			if (rec.setby >= 0) {
-				cell.title = "Set by " + rec.setby;
+			if (cell.setby >= 0) {
+				cell.title = "Set by " + cell.setby;
 				cell.className = "setby";
-			}		
-		}		
+			}
+			let elt = (!cell.hasOwnProperty('val')) ? document.createTextNode('') : (
+					  (col.coltype === 'Ref') ? refCellContent(cell, rowNo) : cellContent(cell, col.coltype) );
+			cell.appendChild(elt);		
+		});
 	}
 	
 	function insertHeadCells() {
 		let header = tbody.parentElement.createTHead();
-		let row = header.insertRow(0);    
-		let arrCol = vGrid.cols;
-		for (let iCol=0, len=arrCol.length; iCol<len; iCol++) {
+		let row = header.insertRow(0); 
+		vColumns.forEach((col, iCol) => {
 			let cell = row.insertCell(iCol);
 			cell.className = "grid";
-			cell.innerHTML = '<b>' + arrCol[iCol] + '</b>';
-		}		
+			cell.innerHTML = '<b>' + col.colname + '</b>';		
+		});
 	}
 
+	//
 	insertHeadCells();
-	for (let iRow=0, len=vGrid.rows.length; iRow < len; iRow++) {
+	
+	vRows.forEach((row, iRow) => {
 		let newRow = tbody.insertRow(iRow);	
-		insertRowCells(newRow, iRow);
-	}
+		insertRowCells(newRow, row.cells, row.rowno);	// row.rowno = (iRow+1) in practice
+	});
 }
 
 </script>
