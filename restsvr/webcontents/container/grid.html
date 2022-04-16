@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
 <head><title>Grid</title>
 <style>
-table td.grid {
+td.grid {
     border: 1px solid cyan;
 }
 td.setby {
@@ -25,7 +25,24 @@ const stUpdated = urlParams.get('st');
 
 document.title = 'Grid ' + gridId;
 
-function processJson(json) {
+function loadData()
+{
+	let url;
+	if (stUpdated === 'U') {
+		url = '/update/' + clientId;
+	} else {
+		url = '/gridview?cid=' + clientId + '&gid=' + gridId;
+		if (rowNo && rowNo != '')
+			url += '&rn=' + rowNo;
+	}
+	fetch(url).then( response => response.json()
+	).then( data => processJson(data)
+	).catch( err => console.log(err)
+	);
+}
+
+function processJson(json)
+{
 	let tbody = document.getElementById('idGrid');
 	
 	if (!json.hasOwnProperty('columns')) {
@@ -37,24 +54,17 @@ function processJson(json) {
 	}
 }
 
-function loadData() {
-	let url = (stUpdated === 'U') ? ('/update/' + clientId) : ('/gridview?cid=' + clientId + '&gid=' + gridId + '&rn=');		// TODO ?cid=&gid=&rn=
-	fetch(url).then( response => response.json()
-	).then( data => processJson(data)
-	).catch( err => console.log(err)
-	);
-}
-
 function insertTBodyRow(tbody, json)
 {
 	var vColumns = json.columns;
 	var vRows = json.rows;	// rows_N in URL are for server. Responses is {columns: cols, rows, rows} 
 	
 	function refCellContent(cell, rowno) {
-		let anchor = document.createElement('a');                 
-        let link = document.createTextNode('GV.' + recChild.grid_id);
+		const loc = gridId + '_C' + cell.column;
+		let anchor = document.createElement('a');
+        let link = document.createTextNode('GV.' + loc + '_' + rowno);
         anchor.appendChild(link); 
-        anchor.href = 'grid.html?cid=' + clientId + '&grd=' + gridId + '_C' + cell.column + '_' + rowno;
+        anchor.href = 'grid.html?cid=' + clientId + '&grd=' + loc + '&rn=' + rowno;
 		if (cell.setby >= 0) {
 			anchor.href += '&st=U';
 		}
@@ -70,28 +80,29 @@ function insertTBodyRow(tbody, json)
 		return inp;
 	}
 	
-	function insertRowCells(row, cells, rowNo) {
+	function insertRowCells(htmRow, cells, rowNo) {
 		vColumns.forEach((col,iCol) => {
-			let cell = row.insertCell(iCol);
-			cell.className = "grid";
+			let cellTD = htmRow.insertCell(iCol);
+			cellTD.className = "grid";
 			
-			let cell = cells.find(c => c.column === (iCol+1));
-			if (cell === undefined) {
+			let cellRec = cells.find(c => c.column === (iCol+1));
+			if (cellRec === undefined) {
 				console.log('Missing column ' + (iCol+1));
 				return;
 			}
-			if (cell.setby >= 0) {
-				cell.title = "Set by " + cell.setby;
-				cell.className = "setby";
+			if (cellRec.setby >= 0) {
+				cellTD.title = "Set by " + cellRec.setby;
+				cellTD.className = "setby";
 			}
-			let elt = (!cell.hasOwnProperty('val')) ? document.createTextNode('') : (
-					  (col.coltype === 'Ref') ? refCellContent(cell, rowNo) : cellContent(cell, col.coltype) );
-			cell.appendChild(elt);		
+			let elt = (!cellRec.hasOwnProperty('val')) ? document.createTextNode('') : (
+					  (col.coltype === 'Ref') ? refCellContent(cellRec, rowNo) : cellContent(cellRec, col.coltype) );
+			cellTD.appendChild(elt);		
 		});
 	}
 	
 	function insertHeadCells() {
 		let header = tbody.parentElement.createTHead();
+		header.className = "grid";
 		let row = header.insertRow(0); 
 		vColumns.forEach((col, iCol) => {
 			let cell = row.insertCell(iCol);

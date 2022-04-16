@@ -31,11 +31,10 @@
 var logger;
 var flagWait = false;
 var mJsonRaw = {};
-var mExecutor = {};
 
 var mLocalCtxt = {	// Keep existing structure (except actions), to be simplied later
 	clientId: 0,
-	state: { props: [], grids: []},
+	props: [],
 	constraints: []
 };
 
@@ -47,8 +46,6 @@ var dfnCateg = {
 
 function initLocalCtxt()
 {
-	let props = mLocalCtxt.state.props;
-	
 	function addLocalState(elts) {
 		for (let index = 0; index < elts.length; ++index) {
 			let inputElt = elts[index];
@@ -56,24 +53,12 @@ function initLocalCtxt()
 			if (isNaN(propId)) {
 				console.log('Unexpected Id: ' + nputElt.id);
 			} else {
-				props.push({prop_id:propId, val: inputElt.value});
+				mLocalCtxt.props.push({prop_id:propId, val: inputElt.value});
 			}
 		}	
-	}
-	
+	}	
 	addLocalState( document.getElementsByTagName('input') );
 	addLocalState( document.getElementsByTagName('select') );
-}
-
-function updateLocalCtxt(json)
-{
-	mLocalCtxt.clientId = json.client_id;
-	for (let prop of json.state.props) {
-		if (prop.hasOwnProperty('grid_id')) {
-			let rec = {prop_id: prop.prop_id, grid_id: prop.grid_id};
-			mLocalCtxt.state.grids.push(rec);
-		}			
-	}		
 }
 
 function gridAnchor(idClient, idGrid, stUpdate) {
@@ -125,14 +110,11 @@ function initializationFetch(btn)
 {
 	const processJson = (json) => {
 		mJsonRaw = json;
-		mExecutor.constraints = json.constraints;
-		mExecutor.actions = json.actions;
-		updateLocalCtxt(json);
-
-		for (let grid of mLocalCtxt.state.grids) {
-			let elt = document.getElementById('s' + grid.prop_id);	// Prefix-S
+		mLocalCtxt.clientId = json.client_id;
+		for (let grid of json.grids) {
+			let elt = document.getElementById(grid.elt);
 			elt.innerHTML = gridAnchor(mLocalCtxt.clientId, grid.grid_id, false);
-		}
+		}	
 	};
 
 	document.getElementById("msg").value = '';	// TextArea	
@@ -187,7 +169,7 @@ function applyConstraints(id0)
 	
 	document.getElementById("msg").value = '';	// TextArea	
 
-	let newState = {state: mLocalCtxt.state, constraints: mLocalCtxt.constraints};	// TODO	
+	let newState = {state: {}, constraints: mLocalCtxt.constraints};	// TODO	
 	let objState = createConstainer(newState);	// include container.js
 	trigger(id0, objState, logger);		// include trigger.js	-- TODO param1 id
 

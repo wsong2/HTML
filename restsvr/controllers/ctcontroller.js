@@ -20,7 +20,7 @@ function reponseCachedData(queryId, res) {
 }
 
 function addClientCacheAndRespond(clientId, res) {
-	let data = Object.assign({client_id: clientId}, mCache[1]);	// Currently, all clients share the initial data state1.json
+	let data = Object.assign({client_id: clientId}, mCache[1]);	// Currently, all clients share the initial data state2.json (clientId 1)
 	mCache[clientId] = data;
 	res.set(contentType);
 	res.end(JSON.stringify(data));
@@ -49,13 +49,13 @@ function getPathParam(req, res)
 	}
 	
 	let clientId = Atomics.add(mA4, 0, 1);
-	if (Reflect.has(mCache, 1)) {	// Shared state1 already cached
+	if (Reflect.has(mCache, 1)) {	// Shared state2 (with clientId 1) already cached
 		console.log('> cache1: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
 		addClientCacheAndRespond(clientId, res);
 	} else {
 		// One off operation
 		console.log('> getPathParam: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
-		let filePath = __dirname + "/data/state1.json";		// Currently, all clients share the initial data state1.json
+		let filePath = __dirname + "/data/state2.json";
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			mCache[1] = JSON.parse(data);
 			addClientCacheAndRespond(clientId, res);
@@ -74,7 +74,7 @@ function getQryParam(req, res)
 		console.log('> cached grid ' + gridId + ' at ' + dtFmt.toHHMMSSNow());
 		addGridCacheAndRespond(mCacheGrid[gridId], rowsKey, res);
 	} else {
-		let filePath = __dirname + "/data/dfn/grid" + gridId + ".json";
+		let filePath = __dirname + "/data/grid" + gridId + ".json";
 		if (!fs.existsSync(filePath)) {
 			res.set(contentType);
 			res.end('{"status": "Error", "details": "Invalid id ' + gridId + '"}');
@@ -146,4 +146,4 @@ module.exports.getQryParam = getQryParam;
 module.exports.receiveUpdate = receiveUpdate;
 module.exports.updateState = updateState;
 
-module.exports.getXmlData = getXmlData;
+//module.exports.getXmlData = getXmlData;
