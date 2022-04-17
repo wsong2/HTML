@@ -24,19 +24,11 @@
 </div>
 <p><button id="btnExec" type="button" onClick="applyConstraints(0)" disabled>Apply Constraints</button></p>
 <textarea id="msg" rows="8" cols="75"></textarea>
-<script src="container.js"></script>
-<script src="grid.js"></script>		<!-- required by trigger.js -->
 <script src="trigger.js"></script>
 <script>
 var logger;
 var flagWait = false;
-var mJsonRaw = {};
-
-var mLocalCtxt = {	// Keep existing structure (except actions), to be simplied later
-	clientId: 0,
-	props: [],
-	constraints: []
-};
+var mLocalCtxt = {};
 
 var dfnCateg = {
 	ND: "No Delta",
@@ -44,21 +36,25 @@ var dfnCateg = {
 	DR: "Delta Range"
 };
 
-function initLocalCtxt()
+function htmTypeToValueType(tagName, inputType) {
+	if (tagName === 'input') {
+		if (inputType === 'date')	return 'D';
+		if (inputType === 'number')	return 'N';
+	}
+	return 'T';
+}
+
+function addPropValues(tagName, arrProps)
 {
-	function addLocalState(elts) {
-		for (let index = 0; index < elts.length; ++index) {
-			let inputElt = elts[index];
-			let propId = parseInt(inputElt.id.substr(1));
-			if (isNaN(propId)) {
-				console.log('Unexpected Id: ' + nputElt.id);
-			} else {
-				mLocalCtxt.props.push({prop_id:propId, val: inputElt.value});
-			}
-		}	
-	}	
-	addLocalState( document.getElementsByTagName('input') );
-	addLocalState( document.getElementsByTagName('select') );
+	let elts = document.getElementsByTagName(tagName);
+	elts.forEach(e => {
+		let rec = {prop_id: e.id, val: e.value};
+		let typ = htmTypeToValueType(tagName, e.type);
+		if (typ !== 'S') {
+			rec.valType = typ; 
+		}
+		arrProps.push(rec);
+	});
 }
 
 function gridAnchor(idClient, idGrid, stUpdate) {
@@ -92,14 +88,13 @@ function initDivAndLogger()
 		const handler = () => {
 			onInputValueChange(selectList.id, selectList.value);
 		};
-		let selectList = selectBox('s' + prop.prop_id);
+		let selectList = selectBox(prop.eltId);
 		selectList.addEventListener("change", handler, false);
 		mDivCateg.appendChild(selectList);
 		selectList.value = prop.val;
 	}
 	
-	addDropDown({prop_id: 10, val: 'ND'});	// s10 - categ
-	initLocalCtxt();	
+	addDropDown({eltId: 's10', val: 'ND'});	// s10 - categ
 	
 	// logger
 	let txtMsg = document.getElementById("msg");	// TextArea	
@@ -109,8 +104,8 @@ function initDivAndLogger()
 function initializationFetch(btn)
 {
 	const processJson = (json) => {
-		mJsonRaw = json;
 		mLocalCtxt.clientId = json.client_id;
+		mLocalCtxt.constraints = json.constraints;
 		for (let grid of json.grids) {
 			let elt = document.getElementById(grid.elt);
 			elt.innerHTML = gridAnchor(mLocalCtxt.clientId, grid.grid_id, false);
@@ -130,53 +125,34 @@ function initializationFetch(btn)
 	});
 }
 
+function uploadState(data) {
+	flagWait = true;
+	fetch('/upload/state', {
+		method: "POST",
+		body: JSON.stringify(data),
+		headers: {"Content-type": "application/json; charset=UTF-8"}
+	}).then(response => response.json()
+	).then(data => {
+		flagWait = false;
+		console.log(data);
+	}).catch(err => {
+		flagWait = false;
+		console.log(err);
+	});
+}
+	
 function applyConstraints(id0)
 {
-	function updateProp(prop) {
-		let elt = document.getElementById('s' + prop.prop_id);	// Prefix-S
-		if (!elt) {
-			logger('W! No html element for id: ' + prop.prop_id);
-			return;
-		}
-		if (!prop.hasOwnProperty('val')) {
-			elt.innerHTML = gridAnchor(mJsonRaw.client_id, prop.grid_id, true);;
-		} else {
-			elt.value = prop.val;
-			if (prop.setby > 0) {
-				elt.title = "Set by " + prop.setby;
-				elt.className = "setby";
-			}
-		}
-	}
+	document.getElementById("msg").value = '';	// Logger TextArea	
 
-	function uploadState(recState) {
-		mJsonRaw.state = recState;	// ATTN
-		let jdata = JSON.stringify(mJsonRaw);
-		flagWait = true;
-		fetch('/upload/state', {
-			method: "POST",
-			body: jdata,
-			headers: {"Content-type": "application/json; charset=UTF-8"}
-		}).then(response => response.json()
-		).then(data => {
-			flagWait = false;
-			console.log(data);
-		}).catch(err => {
-			flagWait = false;
-			console.log(err);
-		});
-	}
+	let propValues = [];
+	addPropValues('input', propValues);
+	addPropValues('select', propValues);
 	
-	document.getElementById("msg").value = '';	// TextArea	
-
-	let newState = {state: {}, constraints: mLocalCtxt.constraints};	// TODO	
-	let objState = createConstainer(newState);	// include container.js
-	trigger(id0, objState, logger);		// include trigger.js	-- TODO param1 id
-
-	newState.props.forEach(updateProp);
-	
-	if (window.location.protocol !== 'file:' && !flagWait) {		
-		uploadState(newState);
+	let result = trigger(id0, propValues, mLocalCtxt.constraints, logger);		// include trigger.js
+	if (result && window.location.protocol !== 'file:' && !flagWait) {
+		let data = Object.assign({client_id: mLocalCtxt.clientId}, propValues);
+		uploadState(data);
 	}
 }
 </script>

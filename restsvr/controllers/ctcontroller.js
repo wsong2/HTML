@@ -12,6 +12,7 @@ mA4[0] = 2;	// 1 - Just use index 0. 2 - Client ID starts from 2
 
 var mCache = {};
 var mCacheGrid = {};
+var mProps = {};
 
 function reponseCachedData(queryId, res) {
 	let data = mCache[queryId];
@@ -115,8 +116,7 @@ function receiveUpdate(req, res)
 	let rec = req.body;
 	let clientId = rec.client_id;
     console.log('> receiveUpdate client.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
-	let jsonString = JSON.stringify(rec);	
-	mCache[clientId] = JSON.parse(jsonString);
+	mProps[clientId] = rec;
 	
 	let json = '{"status": "OK", "details": "req.body to constainer raw"}';
 	res.end(json);

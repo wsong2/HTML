@@ -86,7 +86,7 @@ function insertTBodyRow(tbody, json)
 			cellTD.className = "grid";
 			
 			let cellRec = cells.find(c => c.column === (iCol+1));
-			if (cellRec === undefined) {
+			if (typeof cellRec === 'undefined') {
 				console.log('Missing column ' + (iCol+1));
 				return;
 			}
