@@ -1,0 +1,13 @@
+{ 
+ "columns": [
+	{"column": 1,  "colname": "C.1", "coltype": "N"},
+	{"column": 2,  "colname": "C.2"}
+ ],
+ "rows_1": [
+	{"rowno": 1,
+	 "cells" : [
+		{"column": 1, "val": "69"},
+		{"column": 2, "val": "Level2"}
+	]}
+ ]
+}
