@@ -8,6 +8,6 @@
 	{"elt": "s12", "val": "5", "descr": "Value,Delta", "set_id": "1"}
  ],
  "constraints": [
-	{"expr": "$EQ_s5_$ADD_s4_s12", "cnstt_id": "1"}
+	{"id": 1, "expr": "$EQ_@s5_$ADD_@s4_@s12", "level": "error"}
  ]
 }

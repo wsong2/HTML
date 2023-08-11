@@ -1,5 +1,7 @@
 'use strict';
 
+import gridData from './data/grid_data_0.json';
+
 const VIEW_SIZE = 10;
 
 const appCategOptions = { 
@@ -8,52 +10,6 @@ const appCategOptions = {
 	Device: "Device",
 	Sim: "Sim",
 	Product: "Product"
-};
-
-const gridData = {
- keys: ["simId", "simName", "simDate", "categ", "descr", "qty", "price", "dttm"],
- columns : {
-	"simId": { "caption": "Id"},
-	"simName": { "caption": "Name", "sorting": "U" },
-	"simDate": { "caption": "Date", "sorting": "D" },
-	"categ": { "caption": "Category"},
-	"descr": { "caption": "Description"},
-	"qty": { "caption": "Quantity"},
-	"price": { "caption": "Price"},
-	"dttm": { "caption": "Timestamp"}
- },
- rows : [
-   {
-    "simId": 1,
-    "simName": "Accessory",
-    "simDate": "2020-04-01",
-    "categ": "Device",
-    "descr": "£7.99",
-    "qty": 1, 
-	"price": 7.99,
-    "dttm": "2021-01-02T18:21:13.787"
-  },
-  {
-    "simId": 2,
-    "simName": "Stool2",
-    "simDate": "2021-03-01",
-    "categ": "Product",
-    "descr": "£23.99",
-    "qty": 1, 
-	"price": 25,
-    "dttm": "2021-01-02T16:46:13.787"
-  },
-   {
-    "simId": 3,
-    "simName": "Accessory",
-    "simDate": "2021-04-01",
-    "categ": "Sim",
-    "descr": "What so ever",
-    "qty": 2, 
-	"price": 19.8,
-    "dttm": "2021-01-13T18:46:45.787"
-  }
- ]
 };
 
 export default function viewdata()

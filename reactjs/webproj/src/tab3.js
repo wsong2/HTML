@@ -5,7 +5,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 import ViewGrid from './components2/viewgrid.js';
 import FormAdd from './components2/formadd.js';
 import PanelHelp from './components2/panelhelp.js';
-import viewdata from './data/viewdata.js';
+import viewdata from './view/viewdata.js';
 
 const FieldSetStyle = {
 	border: '1px solid cyan',

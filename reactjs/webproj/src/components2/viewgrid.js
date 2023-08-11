@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./viewgrid.css";
 
-import viewdata from '../data/viewdata.js';
+import viewdata from '../view/viewdata.js';
 
 const appGridData = viewdata();
 

@@ -27,5 +27,4 @@ module.exports = function(app) {
 	app.get('/gridview', ctcontroller.getQryParam);
 	app.get('/update/:id', ctcontroller.updateState);	
 	app.post('/upload/state', ctcontroller.receiveUpdate);	
-	//app.get('/xmldata/:id', ctcontroller.getXmlData);
 }

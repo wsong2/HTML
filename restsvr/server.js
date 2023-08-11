@@ -1,5 +1,4 @@
 var express = require('express');
-var xml = require("xml");
 var app1 = express();
 var app2 = express();
 

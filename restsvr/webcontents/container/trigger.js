@@ -1,117 +1,166 @@
 function trigger(id0, vProps, constraints, logger)
 {
 	for (let rec of constraints) {
+		let ss = rec.expr.split('_');	// e.g. $EQ_@s5_$ADD_@s4_@s12
 		try {
-			doEval(rec.expr, rec.cnstt_id);
+			if (doEval(ss, rec.id))
+				continue;
+			if (rec.level === 'error') {
+				log('Error - constraint.' + rec.id);
+				return false;
+			}
+			if (rec.level === 'error') {
+				log('Warning - constraint.' + rec.id);
+			}
 		} catch(err) {
 			logger(err);
 			return false;
 		}
 	}
-	return true;
 	
 	//
-	function doEval(vExpr, vCnsttId)
+	function doEval(ss, constraintID)
 	{		
-		let ss = vExpr.split('_');	// e.g. $EQ_s5_$ADD_s4_s12
-		
-		let stackOptr = [];
-		let stackArg = [];
+		let mStackFnc = [];
+		let mStackArg = [];
 		let currOptr = null;
+		let lazyIndex = -1;
 
 		let op = ss.shift();
-		while (typeof(op) !== 'undefined') {
+		while (typeof(op) !== 'undefined')
+		{
 			if (op.startsWith('$')) {
-				if (currOptr != null) stackOptr.push(currOptr);
+				if (currOptr != null) mStackFnc.push(currOptr);
 				currOptr = makeOptr(op);
-				currOptr.cnsttId = vCnsttId
+				if (parentLaziness(mStackArg)) 
+					currOptr.lazy = true;
 			} else {
-				let arg = vProps.find(p => p.prop_id === op);
-				if (typeof arg === 'undefined') throw ('Undefined prop_id: ' + op);
+				let arg = getOpValue(op, vProps);
 				if (currOptr == null) {
-					stackArg.push(arg);
+					mStackArg.push(arg);
 					break;
 				}
-				evalInChain(arg);
+				if ((currOptr.startArgIndex + currOptr.arity) <= (mStackArg.length+1)) {	// arg not in stack yet
+					evalLoop(arg);
+				} else {	// arg list moy completed yet
+					if (lazyIndex < 0 && currOptr.internalName === 'IF' && currOptr.startArgIndex === mStackArg.length)
+						lazyIndex = mStackArg.length + (arg ? 1 : 2);				
+					mStackArg.push(arg);
+				}					
 			}
 			op = ss.shift()
 		}
-		if (stackArg.length !== 1) throw 'Operants Stack length error!';
+		if (mStackArg.length !== 1) throw 'Operants Stack length error!';
+		return mStackArg[0];
 		
-		function evalInChain(arg0) {
-			let operant = arg0;
-			if ((stackArg.length + 1) < currOptr.arity) {
-				stackArg.push(operant);
-				return;
+		//
+		function makeOptr(optr)
+		{
+			let rec = {arity: 2, startArgIndex: mStackArg.length, cttId: constraintId};
+			if (rec.startIndex === lazyIndex) {
+				rec.lazy = true; 
+			}		
+			if (optr === '$IF') {
+				rec.arity = 3;
+				rec.internalName = 'IF';
+				rec.fnc = a => a[0] ? a1[1] : a2[2];
+				return rec;		
 			}
+			if (optr === '$ADD') {
+				rec.fnc = doAdd;
+				return rec;
+			}
+			if (optr === '$EQ')  {
+				rec.fnc = checkEQ;
+				return rec;
+			}
+			throw 'Unimplemented operattor ' + optr;
+		}
+		
+		function evalLoop(operantIn) {
+			let operant = operantIn;
 			while (true) {
 				let arrArgs = [];
 				fillArguments((currOptr.arity-1), operant, arrArgs);
-				operant = currOptr.fnc(arrArgs);
-				if (stackOptr.length === 0) {
-					stackArg.push(operant);
+				if (currOptr.laze) {
+					operant = false;	// false as dummy value
+				} else {
+					operant = currOptr.fnc(arrArgs);
+					if (lazyIndex > currOptr.startArgIndex)	
+						lazyIndex = -1;
+				}
+				if (mStackFnc.length === 0) {
+					mStackArg.push(operant);
 					break;	
 				}
-				currOptr = stackOptr.pop();
-				if ((stackArg.length + 1) < currOptr.arity) break;
+				currOptr = mStackFnc.pop();
+				if ((mStackArg.length + 1) < currOptr.arity)
+					break;
 			}
 		}		
 	
 		function fillArguments(nLen, op, arrArgs) {
-			if (stackOp.length < nLen) {
-				throw 'StackOp size error: length = ' + tackOp.length + ', expected = ' + nLen;
+			if (currOptr.startArgIndex + nLen > mStackArg.length) {
+				throw 'mStackArg size error: length = ' + mStackArg.length + ', expected >= ' + (currOptr.startArgIndex + nLen);
 			}
 			arrArgs.length = nLen + 1;
 			arrArgs[nLen] = op;
 			for (let i=nLen-1; i>=0; i--) {
-				let prevOp = stackOp.pop();
+				let prevOp = mStackArg.pop();
 				arrArgs[i] = prevOp;
 			}
-		}
+		}				
 	}
 }
 
-function makeOptr(optr)
-{
-	if (optr.startsWith('$IF')) {
-		return {
-			arity: (optr === '$IF3') ? 3 : 2,
-			dummyIndex: 0
-		}		
-	}
-	
-	if (optr === '$EQ')  return {arity: 2, fnc: a => (a[0] === a[1])};
-	
-	if (optr === '$ADD') return {arity: 2, fnc: doAdd};
-	
-	throw 'Unimplemented operattor ' + optr;
+//
+function parentLaziness(argStack) {
+	let parentOptr = (argStack.length > 0) ? argStack[argStack.length-1] : null;
+	return (Reflect.has(parentOptr, 'lazy') && parentOptr.lazy);
 }
 
-function doAdd(args)
-{
-	let type0 = Reflect.has(args[0], 'valType') ? args[0].valType : '?';
-	let type1 = Reflect.has(args[1], 'valType') ? args[1].valType : '?';
-	
-	if (type0 === 'D')	return datePlusDays(args[0].val, args[1].val)
-	if (type1 === 'D') 	return datePlusDays(args[1].val, args[0].val)
-	
-	let v0 = parseInt(args[0].val);
-	let v1 = parseInt(args[1].val);
-	if (!isNaN(v0) && !isNaN(v1)) {
-		return (v0 + v1);
-	}
-	throw 'Invalid arguments ' + args; 
+function getOpValue(op, vProps) {
+	if (!op.startsWith('@')) return op;
+	let val = vProps.find(p => p.prop_id === op);
+	if (typeof val === 'undefined') throw 'Undefined prop_id: ' + op;
+	return val;
 }
 
-function datePlusDays(vDateStr, nDays)
+//		
+// vtype: bool, date, dummy, text
+// Reflect.has() or Object.hasOwn()
+//
+function simpleType(arg) {
+	let valType = typeof arg;
+	return (valType === 'boolean' || valType === 'number' || valType === 'string');
+}
+
+function checkEQ(args) {
+	if (simpleType(args[0]) || simpleType(args[1]))	return (args[0] === args[1]);
+	return (args[0].vtype === args[1].vtype && args[0].val === args[1].val);
+}
+
+function doAdd(args) {
+	let v1 = args[0]
+	let v2 = args[1];
+	if ((typeof v1) === 'number' && (typeof v2) === 'number')	return (v1 + v2);
+	return (typeof v1 === 'number') ? datePlusDays(v2, v1)) : datePlusDays(v1, v2);
+}
+
+function datePlusDays(vDate, nDays)
 {
-	let valDate = Date.parse(vDateStr);
-	let valN = parseInt(nDays);
-	if (!isNaN(valDate) && !isNaN(valN)) {
-		valDate.setDate(valDate.getDate() + valN);
-		return valDate;
-	}
-	throw 'datePlusDays - Invalid arguments ' + args; 
+	if (typeof nDays !== 'number')	throw 'datePlusDays - Invalid 2nd argument ' + nDays;
+	
+	let valDate;
+	if (Object.hasOwn(vDate, 'vtype')) {
+		if (vDate.vtype !== 'date') throw 'datePlusDays - Invalid 1st argument type ' + vDate;
+		valDate = vDate.val;	
+	} else {
+		valDate = Date.parse(vDate);
+		if (isNaN(valDate))	throw 'datePlusDays - Invalid 1st argument value ' + vDate; 
+	}	
+	valDate.setDate(valDate.getDate() + nDays);
+	return {vtype: 'date', val: valDate};
 }
 
 /*
