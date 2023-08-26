@@ -6,6 +6,8 @@ import ViewGrid from './components2/viewgrid.js';
 import FormAdd from './components2/formadd.js';
 import PanelHelp from './components2/panelhelp.js';
 import viewdata from './view/viewdata.js';
+import ISimRec from './view/viewdata.d.ts';
+import IGridData0 from './view/viewdata.d.ts';
 
 const FieldSetStyle = {
 	border: '1px solid cyan',
@@ -14,14 +16,19 @@ const FieldSetStyle = {
     borderRadius: '8px',
 	maxWidth: '250px'
 }
-
+ 
 const appGridData = viewdata();
 
 var expectingResponse = false;
 
-class App extends React.Component
+interface MainState {
+	rowIndex: number,
+	rows: () => ISimRec[]
+}
+
+class App extends React.Component<{}, MainState>
 {
-	constructor(props) {
+	constructor(props = {}) {
 		super(props);
 		this.state = {
 			rowIndex: -1,
@@ -33,19 +40,19 @@ class App extends React.Component
 		this.setComponentData = this.setComponentData.bind(this);
 	};
 	
-	setComponentData(rec) {
+	setComponentData(rec: ISimRec) {
 		if (this.state.rowIndex >= 0) {
-			Object.assign(rec, this.state.rows[this.state.rowIndex]);
+			Object.assign(rec, this.state.rows()[this.state.rowIndex]);
 		}
 	}
 
-	handleRowIndexChange(rIndex) {
+	handleRowIndexChange(rIndex: number) {
 		this.setState({ 
 			rowIndex: rIndex
 		});
 	}
 
-	handleServerResponse(data) {
+	handleServerResponse(data: ISimRec) {
 		if (!data.hasOwnProperty('simId')) {
 			console.log('No SimId: ' + JSON.stringify(data));
 			return;
@@ -76,7 +83,7 @@ class App extends React.Component
 		}
 	};
 
-	btnAction(btnValue) {
+	btnAction(btnValue: string) {
 		if (expectingResponse)
 			return;
 		expectingResponse = true;
@@ -106,7 +113,7 @@ class App extends React.Component
 		} 
 		else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 		{
-			let urlDel = "/api/rec/" + this.state.rows[this.state.rowIndex].simId;
+			let urlDel = "/api/rec/" + this.state.rows()[this.state.rowIndex].simId;
 			fetch(urlDel, {method: 'DELETE'}).then( response => {
 				let json = response.json();
 				expectingResponse = false;
@@ -131,7 +138,7 @@ class App extends React.Component
 
 	render() {
 		let rIndex = this.state.rowIndex;
-		let simId = (rIndex >= 0) ? this.state.rows[rIndex].simId : null;
+		let simId = (rIndex >= 0) ? this.state.rows()[rIndex].simId : null;
 		let fileProto = (window.location.protocol === 'file:');
 	
 		return (<Tabs forceRenderTabPanel>
