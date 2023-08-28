@@ -1,5 +1,4 @@
 const path = require('path');
-
 module.exports = {
  entry: {
 	tab3: './src/tab3'
@@ -7,9 +6,9 @@ module.exports = {
  module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: 'babel-loader'
       },
       {
         test: /\.(css)$/,
@@ -18,7 +17,10 @@ module.exports = {
       }
     ]
  },
- output: {
+ resolve: {
+  extensions: ['.tsx', '.ts', '.js'],
+ }, 
+output: {
     path: path.join(__dirname, '../../restsvr/webcontents'),
     filename: '[name].js'
  }

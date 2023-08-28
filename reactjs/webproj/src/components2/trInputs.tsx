@@ -1,16 +1,20 @@
 import React from "react";
-import ReactDOM from "react-dom";
 
-import viewdata from '../view/viewdata.js';
+import {GridData} from '../view/viewdata';
 
-const appFormData = viewdata();
+const appFormData = new GridData();
 
 const SelOptions = () => appFormData.categOptions().map( (opt, idx) => {
 	let displayText = appFormData.categText(opt);
 	return <option value={opt} key={idx} >{displayText}</option>
 });
 
-const TdInput = (props) => {
+interface TdProps {
+    name: string,
+	defaultValue: string
+}
+
+const TdInput = (props: TdProps) => {
 	let propName = props.name;
 	let inputType = appFormData.typeByID(propName);
 	if (inputType === 'select') {
@@ -19,15 +23,20 @@ const TdInput = (props) => {
 	return <td><input type={inputType} name={propName} defaultValue={props.defaultValue} /></td>;		
 }
 
-class TrInputs extends React.Component
+interface TrInputProps {
+    name: string
+	defaultValue: string
+}
+
+class TrInputs extends React.Component<TrInputProps>
 {	
-	constructor(props) {
+	constructor(props: TrInputProps) {
 		super(props);		
 	}
 	render() {		
 		let propName = this.props.name;
 		let caption = appFormData.columnDfn(propName).caption;
-		return (<tr><td>{caption}</td><TdInput name={propName} defaultValue={this.props.value}/></tr>);
+		return (<tr><td>{caption}</td><TdInput name={propName} defaultValue={this.props.defaultValue}/></tr>);
 	}
 }
 
