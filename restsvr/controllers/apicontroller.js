@@ -1,9 +1,30 @@
-var fs = require("fs");
 var dtFmt = require("./dateformat.js");
+var mongo = require("mongodb");
 
 var mCache = {};
 
 var nextId = 601;
+
+const uri = "mongodb://localhost:27017";
+const client = new mongo.MongoClient(uri);
+
+const columns = {
+	simId: {caption: "ID"},
+	simName: {caption: "Name", sorting: "U"},
+	simDate: {caption: "Date", sorting: "D" },
+	categ: {caption: "Category"},
+	descr: {caption: "Description"},
+	qty: {caption: "Quantity"},
+	price: {caption: "Price"},
+	dttm: {caption: "Timestamp"}
+}
+
+const griddata = {
+  rows: [],
+  columns: Object.assign({}, columns),
+  keyss: ["simId", "simName", "simDate", "categ", "descr", "qty", "price", "dttm"]
+}
+
 
 function setNextId()
 {
@@ -66,14 +87,26 @@ function allItems(req, res)
 		res.end(data);
 		return;
 	}
-	const jfn = "db_prolog_sim_rc.json";	
-    fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-      console.log('from ' + jfn);
-	  mCache = JSON.parse(data);
+  
+   async function run() {
+	try {
+	  // Get the database and collection on which to run the operation
+	  const database = client.db("prolog");
+	  const items = database.collection("simItems");
+	  const cursor = items.find({}, {projection: {_id:0}});
+	  for await (const doc of cursor) {
+		griddata.rows.push(doc);
+	  }
+	  //console.log(JSON.stringify(griddata, null, 2));
+	  mCache = Object.assign({}, griddata),
 	  setNextId();
 	  res.set(contentType);
-      res.end(data);
-   });
+      res.end(JSON.stringify(griddata));	  
+	} finally {
+	  await client.close();
+	}
+  }
+  run().catch(console.dir);
 }
 
 function deleteItem(req, res)
