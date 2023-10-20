@@ -1,8 +1,14 @@
 'use strict';
 
-var fs = require("fs");
-var path = require('path');
-var dtFmt = require("./dateformat.js");
+import {readFile, existsSync} from 'fs';
+import * as dtFmt from "./dateformat.js";
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const contentType = {'content-type': 'application/json; charset=utf-8' };
 
@@ -141,9 +147,16 @@ function getXmlData(req, res)
   res.status(200).send(data);
 }
 
-module.exports.getPathParam = getPathParam;
-module.exports.getQryParam = getQryParam;
-module.exports.receiveUpdate = receiveUpdate;
-module.exports.updateState = updateState;
+// module.exports.getPathParam = getPathParam;
+// module.exports.getQryParam = getQryParam;
+// module.exports.receiveUpdate = receiveUpdate;
+// module.exports.updateState = updateState;
+
+export {
+	getPathParam,
+	getQryParam,
+	receiveUpdate,
+	updateState
+}
 
 //module.exports.getXmlData = getXmlData;

@@ -1,5 +1,10 @@
-var fs = require("fs");
-var dtFmt = require("./dateformat.js");
+import { readFile } from "fs";
+import { toISODateTime } from "./dateformat.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 var mCache = {};
 
@@ -16,7 +21,7 @@ function setNextId()
 
 function newItem(req, res)
 {
-	let dttm = dtFmt.toISODateTime(Date.now()); 
+	let dttm = toISODateTime(Date.now()); 
     console.log('\n--- A: ' + dttm + ' ---' );
 	let item = {};
 	for (let [key,val] of Object.entries(req.body)) {
@@ -35,7 +40,7 @@ function newItem(req, res)
 
 function updateItem(req, res)
 {
-	let dttm = dtFmt.toISODateTime(Date.now()); 
+	let dttm = toISODateTime(Date.now()); 
     console.log('\n--- U: ' + dttm + ' ---' );
 	let item = {op: 'update'};
 	let row = mCache.rows.find(r => r.simId == req.body.simId);
@@ -58,7 +63,7 @@ function updateItem(req, res)
 function allItems(req, res)
 {
 	const contentType = {'content-type': 'application/json; charset=utf-8' };
-    console.log('\n--- ' + dtFmt.toISODateTime(Date.now()) + ' ---' );
+    console.log('\n--- ' + toISODateTime(Date.now()) + ' ---' );
 	if (Reflect.has(mCache, 'rows')) {
 		console.log('cache');
 		let data = JSON.stringify(mCache);
@@ -67,7 +72,7 @@ function allItems(req, res)
 		return;
 	}
 	const jfn = "db_prolog_sim_rc.json";	
-    fs.readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
+    readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
       console.log('from ' + jfn);
 	  mCache = JSON.parse(data);
 	  setNextId();
@@ -92,8 +97,12 @@ function deleteItem(req, res)
 	res.status(200).send({simId: id, status: 'OK', details: 'Deleted'});
 }
 
-module.exports.allItems = allItems;
-module.exports.deleteItem = deleteItem;
-module.exports.newItem = newItem;
-module.exports.updateItem = updateItem;
+const _allItems = allItems;
+export { _allItems as allItems };
+const _deleteItem = deleteItem;
+export { _deleteItem as deleteItem };
+const _newItem = newItem;
+export { _newItem as newItem };
+const _updateItem = updateItem;
+export { _updateItem as updateItem };
 

@@ -1,9 +1,8 @@
-module.exports = function(app) {
-//export default function(app) {
-	var apicontroller = require('../controllers/apicontroller.js');
-	var mycontroller = require('../controllers/mycontroller.js');
-	var ctcontroller = require('../controllers/ctcontroller.js');
-	
+import * as apicontroller from '../controllers/apicontroller.js';
+import * as mycontroller from '../controllers/mycontroller.js';
+import * as ctcontroller from '../controllers/ctcontroller.js';
+
+export default function(app) {	
 	mycontroller.init();
 
 	app.post('/api/rec/addnew', apicontroller.newItem);

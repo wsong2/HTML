@@ -12,13 +12,16 @@ function toISODateTime(dtNow) {
 	return strDTTM.substring(0,10) + ' ' +  strDTTM.substring(11);
 }
 
-
 function lpad0(n, width) {	// 0 < width <= 5
 	let str = '00000' + n;
 	let len = str.length;
-	return str.substr(len - width);
+	return str.substring(len - width);
 }
 
-module.exports.toHHMMSS = toHHMMSS;
-module.exports.toHHMMSSNow = toHHMMSSNow;
-module.exports.toISODateTime = toISODateTime;
+
+const _toHHMMSS = toHHMMSS;
+export { _toHHMMSS as toHHMMSS };
+const _toHHMMSSNow = toHHMMSSNow;
+export { _toHHMMSSNow as toHHMMSSNow };
+const _toISODateTime = toISODateTime;
+export { _toISODateTime as toISODateTime };
