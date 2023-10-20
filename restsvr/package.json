@@ -9,6 +9,7 @@
     "npm": "^10.1.0",
     "xml": "^1.0.1"
   },
+  "type":"module",
   "scripts": {
     "start": "node server.js"
   },

@@ -1,8 +1,13 @@
 'use strict';
 
-var fs = require("fs");
-var path = require('path');
-var dtFmt = require("./dateformat.js");
+import { readFile, existsSync } from "fs";
+import path from 'path';
+import { toHHMMSSNow } from "./dateformat.js";
+
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const contentType = {'content-type': 'application/json; charset=utf-8' };
 
@@ -44,20 +49,20 @@ function getPathParam(req, res)
 	const queryId = parseInt(req.params.id, 10);
 	
 	if (queryId !== 0) {	// Requester has already its client_id and subsequently cached 
-		console.log('> cache: Id.' + queryId + ' at ' + dtFmt.toHHMMSSNow());
+		console.log('> cache: Id.' + queryId + ' at ' + toHHMMSSNow());
 		reponseCachedData(queryId, res);
 		return;
 	}
 	
 	let clientId = Atomics.add(mA4, 0, 1);
 	if (Reflect.has(mCache, 1)) {	// Shared state2 (with clientId 1) already cached
-		console.log('> cache1: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
+		console.log('> cache1: Id.' + clientId + ' at ' + toHHMMSSNow());
 		addClientCacheAndRespond(clientId, res);
 	} else {
 		// One off operation
-		console.log('> getPathParam: Id.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
+		console.log('> getPathParam: Id.' + clientId + ' at ' + toHHMMSSNow());
 		let filePath = __dirname + "/data/state2.json";
-		fs.readFile(filePath, 'utf8', (err, data) => {
+		readFile(filePath, 'utf8', (err, data) => {
 			mCache[1] = JSON.parse(data);
 			addClientCacheAndRespond(clientId, res);
 		});			
@@ -72,11 +77,11 @@ function getQryParam(req, res)
 	const gridId =  req.query.gid;
 	const rowsKey = Reflect.has(req.query, "rn") ? ("rows_" + req.query.rn) : "rows";
 	if (Reflect.has(mCacheGrid, gridId)) {
-		console.log('> cached grid ' + gridId + ' at ' + dtFmt.toHHMMSSNow());
+		console.log('> cached grid ' + gridId + ' at ' + toHHMMSSNow());
 		addGridCacheAndRespond(mCacheGrid[gridId], rowsKey, res);
 	} else {
 		let filePath = __dirname + "/data/grid" + gridId + ".json";
-		if (!fs.existsSync(filePath)) {
+		if (!existsSync(filePath)) {
 			res.set(contentType);
 			res.end('{"status": "Error", "details": "Invalid id ' + gridId + '"}');
 			return;
@@ -85,8 +90,8 @@ function getQryParam(req, res)
 		if (Reflect.has(req.query, "rn")) {
 			params += ', rn=' +  req.query.rn;
 		}
-		console.log('> getQryParam: ' + params + ' at ' + dtFmt.toHHMMSSNow());
-		fs.readFile(filePath, 'utf8', (err, data) => {
+		console.log('> getQryParam: ' + params + ' at ' + toHHMMSSNow());
+		readFile(filePath, 'utf8', (err, data) => {
 			let json = JSON.parse(data);			
 			mCacheGrid[gridId] = json;
 			addGridCacheAndRespond(json, rowsKey, res);
@@ -98,7 +103,7 @@ function getQryParam(req, res)
 function updateState(req, res)
 {
 	const clientId = parseInt(req.params.id, 10);	
-	console.log('> updateState cache: ClientId.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
+	console.log('> updateState cache: ClientId.' + clientId + ' at ' + toHHMMSSNow());
 
 	if (Reflect.has(mCache, clientId)) {
 		reponseCachedData(clientId, res);
@@ -115,7 +120,7 @@ function receiveUpdate(req, res)
 	// console.dir(req); // diag: show empty body: {}
 	let rec = req.body;
 	let clientId = rec.client_id;
-    console.log('> receiveUpdate client.' + clientId + ' at ' + dtFmt.toHHMMSSNow());
+    console.log('> receiveUpdate client.' + clientId + ' at ' + toHHMMSSNow());
 	mProps[clientId] = rec;
 	
 	let json = '{"status": "OK", "details": "req.body to constainer raw"}';
@@ -141,9 +146,11 @@ function getXmlData(req, res)
   res.status(200).send(data);
 }
 
-module.exports.getPathParam = getPathParam;
-module.exports.getQryParam = getQryParam;
-module.exports.receiveUpdate = receiveUpdate;
-module.exports.updateState = updateState;
-
-//module.exports.getXmlData = getXmlData;
+const _getPathParam = getPathParam;
+export { _getPathParam as getPathParam };
+const _getQryParam = getQryParam;
+export { _getQryParam as getQryParam };
+const _receiveUpdate = receiveUpdate;
+export { _receiveUpdate as receiveUpdate };
+const _updateState = updateState;
+export { _updateState as updateState };

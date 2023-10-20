@@ -1,6 +1,10 @@
-var fs = require("fs");
-var dtFmt = require("./dateformat.js");
-var path = require('path');
+import { readFileSync } from "fs";
+import { toHHMMSS, toISODateTime } from "./dateformat.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 var mRecId = 1001;
 
@@ -8,8 +12,8 @@ var htmP1, htmP2;
 
 function init()
 {
-	htmP1 = fs.readFileSync(__dirname + '/data/template1_Begin.txt', {encoding:'utf8', flag:'r'});
-	htmP2 = fs.readFileSync(__dirname + '/data/template1_End.txt', {encoding:'utf8', flag:'r'});
+	htmP1 = readFileSync(__dirname + '/data/template1_Begin.txt', {encoding:'utf8', flag:'r'});
+	htmP2 = readFileSync(__dirname + '/data/template1_End.txt', {encoding:'utf8', flag:'r'});
 }
 
 function htmlPost(req, res)
@@ -31,21 +35,21 @@ function htmlPost(req, res)
 
 function getPathParam(req, res)
 {
-    console.log('> getPathParam: ' + req.params.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
+    console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSS(Date.now()));
 	let json = '{"status": "OK", "details": "' + req.params.tagId + '"}';
 	res.end(json);
 }
 
 function getQryParam(req, res)
 {
-    console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
+    console.log('> getQryParam: ' + req.query.tagId + ' at ' + toHHMMSS(Date.now()));
 	let json = '{"status": "OK", "details": "' + req.query.tagId + '"}';
 	res.end(json);
 }
 
 function postAckJson(req, res)
 {
-	let dttm = dtFmt.toHHMMSS(Date.now());
+	let dttm = toHHMMSS(Date.now());
 	console.log('> postAckJson: %s %s at %s', req.method, req.url, dttm);
 	//console.log(req);
 	for (const [key, val] of Object.entries(req.body)) {
@@ -57,7 +61,7 @@ function postAckJson(req, res)
 
 function postAckForm2(req, res)
 {
-	let dttm = dtFmt.toISODateTime(Date.now());
+	let dttm = toISODateTime(Date.now());
     console.log('> ackdata at ' + dttm);
 	console.log('  ' + JSON.stringify(req.body));
 	// for (const [key, val] of Object.entries(req.body)) {
@@ -97,9 +101,15 @@ function propName(prop)
 	return arr ? arr[1] : prop;
 }
 
-module.exports.init = init;
-module.exports.htmlPost = htmlPost;
-module.exports.getPathParam = getPathParam;
-module.exports.getQryParam = getQryParam;
-module.exports.postAckJson = postAckJson;
-module.exports.postAckForm2 = postAckForm2;
+const _init = init;
+export { _init as init };
+const _htmlPost = htmlPost;
+export { _htmlPost as htmlPost };
+const _getPathParam = getPathParam;
+export { _getPathParam as getPathParam };
+const _getQryParam = getQryParam;
+export { _getQryParam as getQryParam };
+const _postAckJson = postAckJson;
+export { _postAckJson as postAckJson };
+const _postAckForm2 = postAckForm2;
+export { _postAckForm2 as postAckForm2 };

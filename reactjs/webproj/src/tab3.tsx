@@ -6,8 +6,6 @@ import ViewGrid from './components2/viewgrid.js';
 import FormAdd from './components2/formadd.js';
 import PanelHelp from './components2/panelhelp.js';
 import viewdata from './view/viewdata.js';
-import ISimRec from './view/viewdata.d.ts';
-import IGridData0 from './view/viewdata.d.ts';
 
 const FieldSetStyle = {
 	border: '1px solid cyan',

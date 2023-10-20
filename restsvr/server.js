@@ -1,8 +1,8 @@
-var express = require('express');
+import express, { urlencoded, json } from 'express';
 var app1 = express();
 var app2 = express();
 
-var myroutes = require('./routes/myroutes.js');
+import myroutes from './routes/myroutes.js';
 
 // app
 app1.use(function(req, res, next) {
@@ -12,8 +12,8 @@ app1.use(function(req, res, next) {
   next();
 });
 
-app1.use(express.urlencoded({ extended: true }));
-app1.use(express.json());
+app1.use(urlencoded({ extended: true }));
+app1.use(json());
 app1.use(express.static('webcontents'));
 
 // app2
@@ -23,7 +23,7 @@ app2.use( (req, res, next) => {
   next();
 });
 
-app2.use(express.json());
+app2.use(json());
 
 var app = express();
 
