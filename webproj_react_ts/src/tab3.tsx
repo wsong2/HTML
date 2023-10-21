@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 
-import ViewGrid from './components2/viewgrid.js';
-import FormAdd from './components2/formadd.js';
-import PanelHelp from './components2/panelhelp.js';
-import viewdata from './view/viewdata.js';
+import ViewGrid from './components2/viewgrid';
+import FormAdd from './components2/formadd';
+import PanelHelp from './components2/panelhelp';
+import {ISimRec, GridData} from './view/viewdata';
 
 const FieldSetStyle = {
 	border: '1px solid cyan',
@@ -15,13 +15,13 @@ const FieldSetStyle = {
 	maxWidth: '250px'
 }
  
-const appGridData = viewdata();
+const appGridData = new GridData();
 
 var expectingResponse = false;
 
 interface MainState {
 	rowIndex: number,
-	rows: () => ISimRec[]
+	rows: ISimRec[]
 }
 
 class App extends React.Component<{}, MainState>
@@ -40,7 +40,7 @@ class App extends React.Component<{}, MainState>
 	
 	setComponentData(rec: ISimRec) {
 		if (this.state.rowIndex >= 0) {
-			Object.assign(rec, this.state.rows()[this.state.rowIndex]);
+			Object.assign(rec, this.state.rows[this.state.rowIndex]);
 		}
 	}
 
@@ -59,7 +59,7 @@ class App extends React.Component<{}, MainState>
 
 		if (data.op === 'new')
 		{
-			appGridData.add(data);
+			appGridData.addRec(data);
 			this.setState({
 				rowIndex: -1,
 				rows: appGridData.rows()
@@ -68,7 +68,7 @@ class App extends React.Component<{}, MainState>
 		else if (data.op === 'update')
 		{
 			if (this.state.rowIndex >= 0) {
-				appGridData.update(this.state.rowIndex, data);
+				appGridData.updateRow(this.state.rowIndex, data);
 				this.setState({
 					rows: appGridData.rows()
 				});
@@ -104,21 +104,22 @@ class App extends React.Component<{}, MainState>
 		else if (btnValue === 'Prev' || btnValue === 'Next')
 		{
 			let fwd = (btnValue === 'Next');
-			if (appGridData.shiftView(fwd)) {
+			// TODO
+			//if (appGridData.shiftView(fwd)) {
 				// TODO
-			}
+			//}
 			expectingResponse = false;
 		} 
 		else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 		{
-			let urlDel = "/api/rec/" + this.state.rows()[this.state.rowIndex].simId;
+			let urlDel = "/api/rec/" + this.state.rows[this.state.rowIndex].simId;
 			fetch(urlDel, {method: 'DELETE'}).then( response => {
 				let json = response.json();
 				expectingResponse = false;
 				return json;
 			}).then( data => {
 				if (this.state.rowIndex >= 0 && data.simId && data.status === 'OK') {
-					appGridData.remove(this.state.rowIndex);
+					appGridData.removeRow(this.state.rowIndex);
 					this.setState({
 						rowIndex: -1,
 						rows: appGridData.rows()
@@ -136,7 +137,7 @@ class App extends React.Component<{}, MainState>
 
 	render() {
 		let rIndex = this.state.rowIndex;
-		let simId = (rIndex >= 0) ? this.state.rows()[rIndex].simId : null;
+		let simId = (rIndex >= 0) ? this.state.rows[rIndex].simId : null;
 		let fileProto = (window.location.protocol === 'file:');
 	
 		return (<Tabs forceRenderTabPanel>

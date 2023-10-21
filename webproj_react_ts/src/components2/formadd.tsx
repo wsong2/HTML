@@ -1,7 +1,7 @@
 import React from "react";
-import ReactDOM from "react-dom";
 
-import TrInputs from './trInputs.js';
+import TrInputs from './trInputs';
+import {ISimRec} from '../view/viewdata';
 
 var expectingResponse = false;
 
@@ -10,9 +10,42 @@ const BtnStyle = {
 	border: 'none', cursor: 'pointer', overflow: 'hidden', outline: 'none'
 }
 
-class FormAdd extends React.Component
-{	
-	constructor(props) {
+interface IFormRec {
+    simId: string,
+    simName: string,
+    simDate: string,
+    categ: string,
+    descr: string,
+    qty: string,
+    price: string,
+	[key:string] : string
+}
+
+export interface FormAddProps {
+	simId: number | null,
+	notifyServerResponse: (data: ISimRec) => void,
+	pullRecForm: (data: ISimRec) => void
+}
+
+interface FormAddState {
+	simId: string
+	recForm: IFormRec
+}
+
+interface InputRowsProps {
+	//rec: string[]
+	rec: IFormRec,
+	notifyChange: (evt: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+
+class FormAdd extends React.Component<FormAddProps, FormAddState> {	
+	toggleID: (evt: React.MouseEvent<HTMLButtonElement>) => void;
+	notifyChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
+	handleSubmit: (evt: React.FormEvent<HTMLElement>) => void;
+	pullGridRow: (evt: React.MouseEvent<HTMLInputElement>) => void;
+
+	constructor(props:FormAddProps) {
 		super(props);
 		this.state = {
 			simId: '',
@@ -24,33 +57,37 @@ class FormAdd extends React.Component
 		this.pullGridRow = this.pullGridRow_impl.bind(this);
 	}
 
-	toggleID_impl(event) {
+	toggleID_impl(event: React.MouseEvent<HTMLElement>) {
 		//console.log(this.state.simId + ' ~ ' + this.state.recForm.simId);
 		let toggledSimId = (this.state.simId === '') ? this.state.recForm.simId : '';
 		this.setState({
 			simId: toggledSimId
 		});		
 	}
-	notifyChange_impl(event) {
-		this.state.recForm[event.target.name] = event.target.value;
+	notifyChange_impl(event: React.ChangeEvent<HTMLElement>) {
+		const { target } = event;
+		if (target) {
+			let elt = target as HTMLInputElement;
+			this.state.recForm[elt.name] = elt.value;			
+		}
 		this.setState({
 			recForm: this.state.recForm
 		});
 	}
-	handleSubmit_impl(event) {
+	handleSubmit_impl(event: React.FormEvent<HTMLElement>) {
 		if (expectingResponse)
 			return;
 		expectingResponse = true;
 		
-		event.preventDefault();
+		//event.preventDefault();	TODO
 		
 		const encodes = [];
-		const rec = {};
-		const formData = new FormData(event.target);
+		//const rec = {};
+		const formData = new FormData(event.target as HTMLFormElement);
 		for (let [key,value] of formData.entries()) {
-			rec[key] = value;
+			//rec[key] = value;
 			let encodedKey = encodeURIComponent(key);
-			let encodedValue = encodeURIComponent(value);
+			let encodedValue = encodeURIComponent(value.toString());
 			encodes.push(encodedKey + "=" + encodedValue);			
 		}
 		let url = (this.state.simId === '') ? '/api/rec/addnew' : '/api/rec/update';
@@ -63,13 +100,13 @@ class FormAdd extends React.Component
 			return response.json();
 		}).then( data => {
 			//console.log('** R2: ' + JSON.stringify(rec));
-			let resp = Object.assign({}, rec, data);
-			this.props.notifyServerResponse(resp);
+			//let resp = Object.assign({}, rec, data); 	TODO
+			//this.props.notifyServerResponse(resp);	TODO
 		}).catch( err => console.log(err) ); 
 		
 	}
-	pullGridRow_impl(event) {
-		this.props.pullRecForm(this.state.recForm);
+	pullGridRow_impl(event: React.MouseEvent<HTMLElement>) {
+		//this.props.pullRecForm(this.state.recForm);	TODO
 		this.setState({
 			simId: this.state.recForm.simId,
 			recForm: this.state.recForm
@@ -77,13 +114,14 @@ class FormAdd extends React.Component
 	}
 
 	render() {
-		const InputRows = (props) => ['simName', 'simDate', 'categ', 'descr'].map( (nm, idx) => {
-				let val = props.rec[nm];
-				return <TrInputs key={idx} name={nm} value={val} onChange={props.notifyChange} />
+		const InputRows = (props: InputRowsProps) => ['simName', 'simDate', 'categ', 'descr'].map( (nm:string, idx:number) => {
+				let val = props.rec[+nm];	// TODO
+				//return <TrInputs key={idx} name={nm} defaultValue={val} onChange={props.notifyChange} />	TODO notifyChange
+				return <TrInputs key={idx} name={nm} defaultValue={val} />
 			});
 		let recForm = this.state.recForm;
 		return (<form onSubmit={this.handleSubmit}><table className="noborder"><tbody>
-			<tr><td>Id</td><td><input type="text" name="simId" value={this.state.simId} readOnly={true} size="5" />
+			<tr><td>Id</td><td><input type="text" name="simId" value={this.state.simId} readOnly={true} size={5} />
 				<button type="button" onClick={this.toggleID} style={BtnStyle}>&#8646;</button></td></tr>
 			<InputRows rec={recForm} notifyChange={this.notifyChange} />
 			<tr><td>Price</td><td>
