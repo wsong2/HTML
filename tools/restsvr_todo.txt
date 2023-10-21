@@ -1,0 +1,5 @@
+#https://stackoverflow.com/questions/70574880/unable-to-install-express-graphql
+
+> npm un express graphql
+
+> npm i express-graphql graphql express 

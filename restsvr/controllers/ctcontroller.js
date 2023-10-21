@@ -147,16 +147,9 @@ function getXmlData(req, res)
   res.status(200).send(data);
 }
 
-// module.exports.getPathParam = getPathParam;
-// module.exports.getQryParam = getQryParam;
-// module.exports.receiveUpdate = receiveUpdate;
-// module.exports.updateState = updateState;
-
 export {
 	getPathParam,
 	getQryParam,
 	receiveUpdate,
 	updateState
 }
-
-//module.exports.getXmlData = getXmlData;
