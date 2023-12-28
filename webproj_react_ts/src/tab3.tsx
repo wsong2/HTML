@@ -35,14 +35,7 @@ class App extends React.Component<{}, MainState>
 		this.handleRowIndexChange = this.handleRowIndexChange.bind(this);
 		this.handleServerResponse = this.handleServerResponse.bind(this);
 		this.btnAction = this.btnAction.bind(this);
-		this.setComponentData = this.setComponentData.bind(this);
 	};
-	
-	setComponentData(rec: ISimRec) {
-		if (this.state.rowIndex >= 0) {
-			Object.assign(rec, this.state.rows[this.state.rowIndex]);
-		}
-	}
 
 	handleRowIndexChange(rIndex: number) {
 		this.setState({ 
@@ -57,16 +50,16 @@ class App extends React.Component<{}, MainState>
 		}			
 		//console.log('** fetchUpdate: ' + JSON.stringify(data));
 
-		if (data.op === 'new')
-		{
+		if (data.op === 'new') {
 			appGridData.addRec(data);
 			this.setState({
 				rowIndex: -1,
 				rows: appGridData.rows()
 			});
+			return;
 		}
-		else if (data.op === 'update')
-		{
+		
+		if (data.op === 'update') {
 			if (this.state.rowIndex >= 0) {
 				appGridData.updateRow(this.state.rowIndex, data);
 				this.setState({
@@ -75,10 +68,10 @@ class App extends React.Component<{}, MainState>
 			} else {
 				console.log('** update for rowIndex -1');
 			}
+			return;
 		}
-		else {
-			console.log('** unexpected Op:', data.op);
-		}
+		
+		console.log('** unexpected Op:', data.op);
 	};
 
 	btnAction(btnValue: string) {
@@ -139,11 +132,16 @@ class App extends React.Component<{}, MainState>
 		let rIndex = this.state.rowIndex;
 		let simId = (rIndex >= 0) ? this.state.rows[rIndex].simId : null;
 		let fileProto = (window.location.protocol === 'file:');
+
+		const rec: ISimRec = {simId: simId, simName: '', simDate: '', categ: '', descr: '', qty: 0, price: -1, dttm: ''};
+		if (rIndex >= 0) {
+			Object.assign(rec, this.state.rows[rIndex]);
+		}
 	
 		return (<Tabs forceRenderTabPanel>
 			<TabList><Tab>Grid</Tab><Tab>Settings</Tab><Tab>Help</Tab></TabList>
 			<TabPanel>
-				<FormAdd simId={simId} notifyServerResponse={this.handleServerResponse} pullRecForm={this.setComponentData} />
+				<FormAdd simId={simId} notifyServerResponse={this.handleServerResponse} pullRecForm={rec} />
 				<hr/>
 				<ViewGrid rowIndex={rIndex} rows={this.state.rows} onRowSelected={this.handleRowIndexChange} btnAction={this.btnAction} />
 			</TabPanel>

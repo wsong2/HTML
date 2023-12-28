@@ -12,6 +12,10 @@ function toISODateTime(dtNow) {
 	return strDTTM.substring(0,10) + ' ' +  strDTTM.substring(11);
 }
 
+function toISOTimeStamp(dtNow) {
+	return new Date(dtNow).toISOString().substring(0,23);	// 2015-12-02T21:45:22.000
+}
+
 function lpad0(n, width) {	// 0 < width <= 5
 	let str = '00000' + n;
 	let len = str.length;
@@ -24,3 +28,6 @@ const _toHHMMSSNow = toHHMMSSNow;
 export { _toHHMMSSNow as toHHMMSSNow };
 const _toISODateTime = toISODateTime;
 export { _toISODateTime as toISODateTime };
+
+const _toISOTimeStamp = toISOTimeStamp;
+export { _toISOTimeStamp as toISOTimeStamp };

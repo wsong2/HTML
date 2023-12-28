@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "express": "^4.17.1",
-    "mongodb": "6.0",
+    "mongodb": "^6.3.0",
     "npm": "^10.1.0",
     "xml": "^1.0.1"
   },

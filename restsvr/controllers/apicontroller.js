@@ -1,4 +1,4 @@
-import { toISODateTime } from "./dateformat.js";
+import { toISODateTime, toISOTimeStamp } from "./dateformat.js";
 import { MongoClient } from "mongodb";
 
 var mCache = {};
@@ -25,11 +25,9 @@ const griddata = {
   keyss: ["simId", "simName", "simDate", "categ", "descr", "qty", "price", "dttm"]
 }
 
-
-function setNextId()
-{
+function setNextId() {
 	if (Reflect.has(mCache, 'rows')) {
-		nextId = mCache.rows.reduce((currId, row) => (row.simId > currId ? row.simId : currId), 100);
+		nextId = mCache.rows.reduce((currId, row) => (row.simId > currId ? row.simId : currId), 5);
 		nextId++;
 		console.log('NextId: ', nextId);
 	}
@@ -37,28 +35,43 @@ function setNextId()
 
 function newItem(req, res)
 {
-	let dttm = toISODateTime(Date.now()); 
-    console.log('\n--- A: ' + dttm + ' ---' );
+    console.log('\n--- A: ' + toISODateTime(Date.now()) + ' ---' );
 	let item = {};
 	for (let [key,val] of Object.entries(req.body)) {
 		console.log(`+ ${key}: ${val}`);
 		item[key] = val;
 	}
-	item.dttm = dttm;
+	item.dttm = toISOTimeStamp(Date.now());
 	item.simId = nextId++;
-	
-	mCache.rows.push(item);
-	
-	let itemResponse = {op: 'new', simId: item.simId, dttm: item.dttm};
-	let json = JSON.stringify(itemResponse);
-	res.end(json);
+
+	if (Reflect.has(mCache, 'rows')) {
+		mCache.rows.push(item);
+	} else {
+		console.log('\n--- Warning: Unintialised cahce!' );
+	}
+
+	async function run() {
+		try {
+		  const database = client.db("prolog");
+		  const items = database.collection("simItems");
+		  await items.insertOne(item);
+
+		  let itemResponse = {op: 'new', simId: item.simId, dttm: item.dttm};
+		  let json = JSON.stringify(itemResponse);
+		  res.end(json);
+		} finally {
+		  //await client.close();
+		}
+	}
+	run().catch(console.dir);
+
 }
 
 function updateItem(req, res)
 {
 	let dttm = toISODateTime(Date.now()); 
     console.log('\n--- U: ' + dttm + ' ---' );
-	let item = {op: 'update'};
+	let item = {}; //{op: 'update'};
 	let row = mCache.rows.find(r => r.simId == req.body.simId);
 	if (row === undefined) {
 		console.log('** Not found: ' + req.body.simId);
@@ -72,8 +85,25 @@ function updateItem(req, res)
 			row[key] = val;
 		}
 	}
-	let json = JSON.stringify(item);
-	res.end(json);
+
+	async function run() {
+		try {
+		  const database = client.db("prolog");
+		  const items = database.collection("simItems");
+		  const filter = { simId: row.simId };
+
+		  const options = { upsert: false };
+		  await items.replaceOne(filter, item, options);
+
+		  item.op = 'update';
+		  let json = JSON.stringify(item);
+		  console.log('** API: ' + json);
+		  res.end(json);
+		} finally {
+		  //await client.close();
+		}
+	}
+	run().catch(console.dir);	
 }
 
 function allItems(req, res)
@@ -88,7 +118,7 @@ function allItems(req, res)
 		return;
 	}
   
-   async function run() {
+	async function run() {
 	try {
 	  // Get the database and collection on which to run the operation
 	  const database = client.db("prolog");
@@ -103,7 +133,7 @@ function allItems(req, res)
 	  res.set(contentType);
       res.end(JSON.stringify(griddata));	  
 	} finally {
-	  await client.close();
+	  //await client.close();
 	}
   }
   run().catch(console.dir);
@@ -133,4 +163,3 @@ const _newItem = newItem;
 export { _newItem as newItem };
 const _updateItem = updateItem;
 export { _updateItem as updateItem };
-
