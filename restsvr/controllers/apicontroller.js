@@ -39,7 +39,13 @@ function newItem(req, res)
 	let item = {};
 	for (let [key,val] of Object.entries(req.body)) {
 		console.log(`+ ${key}: ${val}`);
-		item[key] = val;
+		if (key === 'qty' && val) {
+			item[key] = parseInt(val);
+		} else if (key === 'price' && val) {
+			item[key] = parseFloat(val);
+		} else {
+			item[key] = val;
+		}
 	}
 	item.dttm = toISOTimeStamp(Date.now());
 	item.simId = nextId++;
@@ -56,8 +62,8 @@ function newItem(req, res)
 		  const items = database.collection("simItems");
 		  await items.insertOne(item);
 
-		  let itemResponse = {op: 'new', simId: item.simId, dttm: item.dttm};
-		  let json = JSON.stringify(itemResponse);
+		  item.op = 'new';
+		  let json = JSON.stringify(item);
 		  res.end(json);
 		} finally {
 		  //await client.close();

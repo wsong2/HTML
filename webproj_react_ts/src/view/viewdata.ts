@@ -9,7 +9,6 @@ export interface IColumnInfoSorting {
     sorting: string
 }
 
-
 export interface IColumnRec {
     [simId:string]: IColumnInfo,
     simName: IColumnInfoSorting,

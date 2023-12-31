@@ -13,7 +13,7 @@ function toISODateTime(dtNow) {
 }
 
 function toISOTimeStamp(dtNow) {
-	return new Date(dtNow).toISOString().substring(0,23);	// 2015-12-02T21:45:22.000
+	return new Date(dtNow).toISOString().substring(0,19);	// 2015-12-02T21:45
 }
 
 function lpad0(n, width) {	// 0 < width <= 5
