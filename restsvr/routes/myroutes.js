@@ -4,6 +4,7 @@ import * as ctcontroller from '../controllers/ctcontroller.js';
 
 export default function(app) {	
 	mycontroller.init();
+	apicontroller.init();
 
 	app.post('/api/rec/addnew', apicontroller.newItem);
 	app.post('/api/rec/update', apicontroller.updateItem);	// react tab3.js Update (submit button)

@@ -30,7 +30,6 @@ app2.use(json());
 
 // app3
 
-
 var app = express();
 
 app.use("/", app1);
@@ -40,7 +39,6 @@ app.use("/graphql", app3);
 myroutes(app);
 
 const port = 3000;
-
 var server = app.listen(port, function () {
   let host = server.address().address;
   // var port = server.address().port

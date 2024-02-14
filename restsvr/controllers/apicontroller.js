@@ -3,10 +3,14 @@ import { toISODateTime } from "./dateformat.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import sql from 'mssql';
+import config from '../mssql_config.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 var mCache = {};
+var mTemplate = {}
 
 var nextId = 601;
 
@@ -17,6 +21,18 @@ function setNextId()
 		nextId++;
 		console.log('NextId: ', nextId);
 	}
+}
+
+function init() {
+	const jfn = "db_prolog_sim_rc.json";	
+    readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
+		mTemplate = JSON.parse(data);
+    });
+
+	sql.connect(config, (err) => {
+		if (err) return console.error(err);
+		  console.log("SQL DATABASE CONNECTED");
+		});
 }
 
 function newItem(req, res)
@@ -60,8 +76,7 @@ function updateItem(req, res)
 	res.end(json);
 }
 
-function allItems(req, res)
-{
+function allItems(req, res) {
 	const contentType = {'content-type': 'application/json; charset=utf-8' };
     console.log('\n--- ' + toISODateTime(Date.now()) + ' ---' );
 	if (Reflect.has(mCache, 'rows')) {
@@ -71,14 +86,23 @@ function allItems(req, res)
 		res.end(data);
 		return;
 	}
-	const jfn = "db_prolog_sim_rc.json";	
-    readFile( __dirname + "/data/" + jfn, 'utf8', function (err, data) {
-      console.log('from ' + jfn);
-	  mCache = JSON.parse(data);
-	  setNextId();
-	  res.set(contentType);
-      res.end(data);
-   });
+
+	const request = new sql.Request();
+	const stmt = 'SELECT [wrk_id] simId, [wrk_name] simName, [wrk_date] simDate, [categ], [descr], [value_n1] qty, [value_d1] price, [dttm] ' +
+				 'FROM [wsp].[dbo].[WorkDev] where wrk_name is not null';
+	request.query(stmt, function (err, recordset) {      
+		if (err) {
+			console.log(err)
+			return;
+		}
+		mCache = Object.assign({}, mTemplate);
+		mCache.rows = recordset.recordset;
+		setNextId();
+		let data = JSON.stringify(mCache);
+		res.set(contentType);
+		res.send(data);					
+	});
+
 }
 
 function deleteItem(req, res)
@@ -106,3 +130,5 @@ export { _newItem as newItem };
 const _updateItem = updateItem;
 export { _updateItem as updateItem };
 
+const _init = init;
+export { _init as init };
