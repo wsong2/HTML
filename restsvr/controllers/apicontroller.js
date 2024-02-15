@@ -93,11 +93,14 @@ function allItems(req, res) {
 	request.query(stmt, function (err, recordset) {      
 		if (err) {
 			console.log(err)
-			return;
+		} else {
+			mCache = Object.assign({}, mTemplate);
+			mCache.rows = recordset.recordset;
+            for (let rec of mCache.rows) {
+                rec.simDate = rec.simDate.toISOString().substring(0,10);
+            }
+			setNextId();	
 		}
-		mCache = Object.assign({}, mTemplate);
-		mCache.rows = recordset.recordset;
-		setNextId();
 		let data = JSON.stringify(mCache);
 		res.set(contentType);
 		res.send(data);					
