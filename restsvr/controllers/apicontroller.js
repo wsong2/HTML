@@ -9,19 +9,7 @@ import config from '../mssql_config.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-var mCache = {};
 var mTemplate = {}
-
-var nextId = 601;
-
-function setNextId()
-{
-	if (Reflect.has(mCache, 'rows')) {
-		nextId = mCache.rows.reduce((currId, row) => (row.simId > currId ? row.simId : currId), 100);
-		nextId++;
-		console.log('NextId: ', nextId);
-	}
-}
 
 function init() {
 	const jfn = "db_prolog_sim_rc.json";	
@@ -35,8 +23,7 @@ function init() {
 		});
 }
 
-function newItem(req, res)
-{
+function newItem(req, res) {
 	let dttm = toISODateTime(Date.now()); 
     console.log('\n--- A: ' + dttm + ' ---' );
 	let item = {};
@@ -45,83 +32,115 @@ function newItem(req, res)
 		item[key] = val;
 	}
 	item.dttm = dttm;
-	item.simId = nextId++;
 	
-	mCache.rows.push(item);
-	
-	let itemResponse = {op: 'new', simId: item.simId, dttm: item.dttm};
-	let json = JSON.stringify(itemResponse);
-	res.end(json);
+	const request = new sql.Request();
+	request
+		.input('SimName', sql.Text, item.simName)
+		.input('SimDate', sql.Date, item.simDate)
+		.input('Categ', sql.Text, item.categ)
+		.input('Descr', sql.Text, item.descr)
+		.input('Qty', sql.Int, item.qty)
+		.input('Price', sql.Decimal, item.price)
+		.execute('[dbo].[AddSimItem]').then(function (result) {
+			let simId = result .returnValue;
+			console.log("** simId " + simId);
+			let itemResponse = {op: 'new', simId: simId, dttm: item.dttm};
+			let json = JSON.stringify(itemResponse);
+			res.end(json);
+		}).catch(function(error) {
+   			console.log(error)
+			let itemResponse = {op: 'new', simId: -1, dttm: item.dttm};
+			let json = JSON.stringify(itemResponse);
+			res.end(json);
+			res.end(json); 
+		});
 }
 
-function updateItem(req, res)
-{
+function updateItem(req, res) {
+	const stmt = 'UPDATE WorkDev set ' + 
+		'wrk_name = @simName, wrk_date = @simDate, categ = @categ, descr = @descr, value_n1 = @qty, value_d1 = @price, dttm = @dttm ' + 
+		'where wrk_id = @simId';
+
 	let dttm = toISODateTime(Date.now()); 
     console.log('\n--- U: ' + dttm + ' ---' );
+
+	let row = req.body;
 	let item = {op: 'update'};
-	let row = mCache.rows.find(r => r.simId == req.body.simId);
-	if (row === undefined) {
-		console.log('** Not found: ' + req.body.simId);
-	} else {
-		item.simId = row.simId;
-	}
+	item.simId = row.simId;
 	item.dttm = dttm;
-	for (let [key,val] of Object.entries(req.body)) {
+
+	for (let [key,val] of Object.entries(row)) {
 		console.log(`U ${key}: ${val}`);
-		if (row !== undefined) {
-			row[key] = val;
-		}
 	}
-	let json = JSON.stringify(item);
-	res.end(json);
+
+	const request = new sql.Request();
+	request
+		.input('simName', sql.Text, row.simName)
+		.input('simDate', sql.Date, row.simDate)
+		.input('categ', sql.Text, row.categ)
+		.input('descr', sql.Text, row.descr)
+		.input('qty', sql.Int, row.qty)
+		.input('price', sql.Decimal(12,4), row.price)
+		.input('dttm', sql.DateTime, row.dttm)
+		.input('simId', sql.Int, row.simId)
+		.query(stmt).then(function (result) {
+			let count = result .rowsAffected;
+			if (count < 1) {
+				console.log('** Not found: ' + row.simId);				
+			}
+			console.log("** " + count);
+			let json = JSON.stringify(item);
+			res.end(json); 
+		}).catch(function(error) {
+   			console.log(error)
+			let json = JSON.stringify(item);
+			res.end(json); 
+		});
+}
+
+function deleteItem(req, res) {
+	let id = req.params.id;	// :id
+	console.log('\n> To delete ' + id);
+	
+	const stmt = 'DELETE from WorkDev where wrk_id = @psimId';
+	const request = new sql.Request();
+	request.input('simId', sql.DateTime, id)
+		.query(stmt).then(function (result) {
+			let count = result .rowsAffected;
+			if (count == 0) {
+				console.log('** Not found: ' + id);				
+				res.status(202).send({simId: id, status: 'WARNING', details: 'Not found'});	// Accepted
+			} else {
+				res.status(200).send({simId: id, status: 'OK', details: 'Deleted'});
+			}
+		}).catch(function(error) {
+   			console.log(error)
+			res.status(202).send({simId: id, status: 'ERR', details: 'Query Error'});	
+		});	
 }
 
 function allItems(req, res) {
 	const contentType = {'content-type': 'application/json; charset=utf-8' };
     console.log('\n--- ' + toISODateTime(Date.now()) + ' ---' );
-	if (Reflect.has(mCache, 'rows')) {
-		console.log('cache');
-		let data = JSON.stringify(mCache);
-		res.set(contentType);
-		res.end(data);
-		return;
-	}
 
-	const request = new sql.Request();
 	const stmt = 'SELECT [wrk_id] simId, [wrk_name] simName, [wrk_date] simDate, [categ], [descr], [value_n1] qty, [value_d1] price, [dttm] ' +
 				 'FROM [wsp].[dbo].[WorkDev] where wrk_name is not null';
+	const request = new sql.Request();
 	request.query(stmt, function (err, recordset) {      
+		let rowsData = Object.assign({}, mTemplate);
 		if (err) {
 			console.log(err)
 		} else {
-			mCache = Object.assign({}, mTemplate);
-			mCache.rows = recordset.recordset;
-            for (let rec of mCache.rows) {
+			rowsData.rows = recordset.recordset;
+            for (let rec of rowsData.rows) {
+				// mssql date colume gives rise of datatime format, so needs to be truncated to date
                 rec.simDate = rec.simDate.toISOString().substring(0,10);
             }
-			setNextId();	
 		}
-		let data = JSON.stringify(mCache);
+		let data = JSON.stringify(rowsData);
 		res.set(contentType);
 		res.send(data);					
 	});
-
-}
-
-function deleteItem(req, res)
-{
-	let id = req.params.id;	// :id
-	console.log('\n> Deleted ' + id);
-	
-	let rowIndex = mCache.rows.findIndex(r => r.simId == id);
-	if (rowIndex === -1) {
-		console.log('** Not found: ' + req.body.simId);
-		res.status(202).send({simId: id, status: 'ERR', details: 'Not found'});	// Accepted
-		return;
-	}
-	mCache.rows.splice(rowIndex, 1);
-	console.log('** Deleted row #' + rowIndex);
-	res.status(200).send({simId: id, status: 'OK', details: 'Deleted'});
 }
 
 const _allItems = allItems;
