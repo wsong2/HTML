@@ -32,7 +32,7 @@ export interface ISimRec {
     op?: string
 }
 
-const VIEW_SIZE = 10;
+const VIEW_SIZE:number = 10;
 
 type CategOption = {
     [App: string]: string,
