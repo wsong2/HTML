@@ -66,6 +66,16 @@ function updateItem(req, res)
     console.log('\n--- U: ' + dttm + ' ---' );
 
 	let row = req.body;
+	let currentId = row.simId;
+	if (typeof row.simId === 'string') {
+		row.simId = parseInt(row.simId);
+	}
+	if (typeof row.qty === 'string') {
+		row.qty = parseInt(row.qty);
+	}
+	if (typeof row.price === 'string') {
+		row.price = parseFloat(row.price);
+	}
 	let item = {op: 'update'};
 	item.simId = row.simId;
 	item.dttm = dttm;
@@ -79,8 +89,12 @@ function updateItem(req, res)
 			const database = client.db("prolog");
 			const items = database.collection("simItems");
 
-			const result = await items.replaceOne( {simId: parseInt(row.simId)}, row);
+			const result = await items.replaceOne( {simId: currentId}, row);
 		  	console.log(result);
+			if (result.result === 0) {
+				result = await items.replaceOne( {simId: row.simId}, row);
+				console.log(result);
+			}
 
 		  	let json = JSON.stringify(item);
 		  	console.log('** API: ' + json);
