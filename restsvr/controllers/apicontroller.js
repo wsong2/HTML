@@ -65,8 +65,7 @@ function updateItem(req, res) {
     console.log('\n--- U: ' + dttm + ' ---' );
 
 	let row = req.body;
-	let item = {op: 'update'};
-	item.simId = row.simId;
+	let item = Object.assign({op: 'update'}, row);
 	item.dttm = dttm;
 
 	for (let [key,val] of Object.entries(row)) {
