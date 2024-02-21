@@ -93,13 +93,14 @@ export class GridData {
 	
     public reload = (rows: ISimRec[]) => {this.mGridRows = [...rows]};
 
-	public removeRow(rIndex:number):void {
-		this.mGridRows.splice(this.mStart + rIndex, 1);
+	public updateRow(rIndex:number, rec: ISimRec):void {
+		let actualIndex = this.mStart + rIndex;
+		console.log('** updateRow Price: #' + rIndex + ' ' + JSON.stringify(rec));
+        Object.assign(this.mGridRows[actualIndex], rec);
 	}
 
-	public updateRow(rIndex:number, rec: ISimRec):void {
-        let row: ISimRec = this.mGridRows[this.mStart + rIndex];
-		row = {...rec};
+	public removeRow(rIndex:number):void {
+		this.mGridRows.splice(this.mStart + rIndex, 1);
 	}
 
     public categOptions = () => Object.keys(appCategOptions);

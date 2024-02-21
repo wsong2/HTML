@@ -76,8 +76,7 @@ function updateItem(req, res)
 	if (typeof row.price === 'string') {
 		row.price = parseFloat(row.price);
 	}
-	let item = {op: 'update'};
-	item.simId = row.simId;
+	let item = Object.assign({op: 'update'}, row);
 	item.dttm = dttm;
 
 	for (let [key,val] of Object.entries(row)) {
