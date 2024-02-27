@@ -3,7 +3,7 @@ var app1 = express();
 var app2 = express();
 
 import graphql from './app_graphql.js';
-var app3 = graphql();
+var appGraphQL = graphql();
 
 import myroutes from './routes/myroutes.js';
 
@@ -28,13 +28,13 @@ app2.use( (req, res, next) => {
 
 app2.use(json());
 
-// app3
+// app GraphQL
 
 var app = express();
 
 app.use("/", app1);
 app.use("/form2", app2);
-app.use("/graphql", app3);
+app.use("/graphql", appGraphQL);
 
 myroutes(app);
 

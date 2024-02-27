@@ -1,6 +1,7 @@
 'use strict';
+//import * as fs from 'node:fs/promises';
+import * as fs from 'node:fs';
 
-import {readFile, existsSync} from 'fs';
 import * as dtFmt from "./dateformat.js";
 
 import path from 'path';
@@ -8,7 +9,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 const contentType = {'content-type': 'application/json; charset=utf-8' };
 
@@ -82,6 +82,7 @@ function getQryParam(req, res)
 		addGridCacheAndRespond(mCacheGrid[gridId], rowsKey, res);
 	} else {
 		let filePath = __dirname + "/data/grid" + gridId + ".json";
+   		console.log(': ' + filePath);
 		if (!fs.existsSync(filePath)) {
 			res.set(contentType);
 			res.end('{"status": "Error", "details": "Invalid id ' + gridId + '"}');

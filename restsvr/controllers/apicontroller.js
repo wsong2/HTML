@@ -32,6 +32,7 @@ function newItem(req, res) {
 		item[key] = val;
 	}
 	item.dttm = dttm;
+	item.op = 'new';
 	
 	const request = new sql.Request();
 	request
@@ -42,10 +43,9 @@ function newItem(req, res) {
 		.input('Qty', sql.Int, item.qty)
 		.input('Price', sql.Decimal, item.price)
 		.execute('[dbo].[AddSimItem]').then(function (result) {
-			let simId = result .returnValue;
-			console.log("** simId " + simId);
-			let itemResponse = {op: 'new', simId: simId, dttm: item.dttm};
-			let json = JSON.stringify(itemResponse);
+			item.simId = result .returnValue;
+			console.log("** simId " + item.simId);
+			let json = JSON.stringify(item);
 			res.end(json);
 		}).catch(function(error) {
    			console.log(error)

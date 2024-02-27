@@ -12,6 +12,22 @@ var schema = buildSchema(`
   }
 `)
 
+/*
+e.g.
+
+{
+  quoteOfTheDay
+}
+
+{
+  random
+}
+
+{
+  rollThreeDice
+}
+*/
+
 // The root provides a resolver function for each API endpoint
 var root = {
   quoteOfTheDay: () => {
@@ -25,8 +41,8 @@ var root = {
   },
 }
 
-var app3 = express();
-app3.use(
+var appGQ = express();
+appGQ.use(
   graphqlHTTP({
     schema: schema,
     rootValue: root,
@@ -35,5 +51,5 @@ app3.use(
 )
 
 export default function() {
-	return app3;
+	return appGQ;
 }
