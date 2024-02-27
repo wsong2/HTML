@@ -18,11 +18,10 @@ if (chrOp === 'I') {
             console.log(`Result: ${result.insertedId}`);    // 65cfc6b2dda06584f03c536a
         } finally {
             await client.close();
+            process.exit();
         }
     }
     run().catch(console.dir);
-
-    process.exit();
 }
 
 if (chrOp === 'D') {
@@ -37,34 +36,29 @@ if (chrOp === 'D') {
             console.log(`Result: ${result.deletedCount}`);
         } finally {
             await client.close();
+            process.exit(); 
         }
     }
     run().catch(console.dir);
-
-
-    //process.exit(); 
 }
 
-// process.exit();
+async function run() {
+    try {
+        const database = client.db("prolog");
+        const simCounter = database.collection("simCounter");
+        // const updateDoc = {
+        //     { $set : { title: "SIM next Id"} },
+        //     { $inc : { count: 1} }
+        // };
+        //.const result = await simCounter.updateOne(updateDoc, options);
+        const filter = { title: "SIM next Id" };
+        const options = { upsert: false };
+        const result = await simCounter.findOneAndUpdate(filter, {$inc : { count: 1}}, options);
+        console.log(result); 
 
-
-// async function run() {
-//     try {
-//         const database = client.db("prolog");
-//         const simCounter = database.collection("simCounter");
-//         // const updateDoc = {
-//         //     { $set : { title: "SIM next Id"} },
-//         //     { $inc : { count: 1} }
-//         // };
-//         //.const result = await simCounter.updateOne(updateDoc, options);
-//         const filter = { title: "SIM next Id" };
-//         const options = { upsert: false };
-//         const result = await simCounter.findOneAndUpdate(filter, {$inc : { count: 1}}, options);
-//         console.log(result); 
-
-//         simCounter.find();
-//     } finally {
-//         await client.close();
-//     }
-// }
-// run().catch(console.dir);
+        simCounter.find();
+    } finally {
+        await client.close();
+    }
+}
+run().catch(console.dir);
