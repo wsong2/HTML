@@ -7,9 +7,14 @@
   </columns>
   <rows>
     <row rownum="1">
-	  <cell colnum="1">23.4</cell>
-	  <cell colnum="2">2021-02-13</cell>
-	  <cell colnum="3">_</cell>
-	</row>
+	    <cell colnum="1">23.4</cell>
+	    <cell colnum="2">2021-02-13</cell>
+	    <cell colnum="3">_</cell>
+	  </row>
+    <row rownum="2">
+	    <cell colnum="1">117.2</cell>
+	    <cell colnum="2">2024-03-01</cell>
+	    <cell colnum="3">_</cell>
+	  </row>
   </rows>
 </grid>

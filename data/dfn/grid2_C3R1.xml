@@ -2,9 +2,9 @@
 <grid>
   <columns>
 	<column colnum="1" type="N">C.1</column>
-	<column colnum="2">C.2</column>
+	<column colnum="2" type="T">C.2</column>
   </columns>
-  <rows parentrow="1">
+  <rows>
 	<row rownum="1">
 	  <cell colnum="1">69</cell>
 	  <cell colnum="2">Level2</cell>
