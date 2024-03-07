@@ -35,16 +35,26 @@ function htmlPost(req, res)
 
 function getPathParam(req, res)
 {
-    console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSS(Date.now()));
-	let json = '{"status": "OK", "details": "' + req.params.tagId + '"}';
+	console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSS(Date.now()));
+ 	let json = '{"status": "OK", "detail": "' + req.params.tagId + '"}';
 	res.end(json);
 }
 
 function getQryParam(req, res)
 {
-    console.log('> getQryParam: ' + req.query.tagId + ' at ' + toHHMMSS(Date.now()));
-	let json = '{"status": "OK", "details": "' + req.query.tagId + '"}';
-	res.end(json);
+    console.log('> getQryParam at ' + toHHMMSS(Date.now()));
+    console.log('  tagId: ' + req.query.tagId);
+
+	let rec = {status: "OK", tagId: req.query.tagId};
+	if (Object.hasOwn(req.query, 'optId2')) {
+		rec.optId2 = req.query.optId2;
+   		console.log('  optId2: ' + rec.optId2);
+	}
+	if (Object.hasOwn(req.query, 'optId3')) {
+		rec.optId3 = req.query.optId3;
+   		console.log('  optId3: ' + rec.optId3);
+	}
+	res.end(JSON.stringify(rec));
 }
 
 function postAckJson(req, res)
@@ -71,7 +81,7 @@ function postAckForm2(req, res)
 	res.end(json);
 }
 
-function parseMultiPartFormData(bodyText)
+/* function parseMultiPartFormData(bodyText)
 {
 	let cdfd = 'Content-Disposition: form-data; name=';
 	let len = cdfd.length;
@@ -100,7 +110,7 @@ function propName(prop)
 	let arr = /"([^"]+)"/.exec(prop);
 	return arr ? arr[1] : prop;
 }
-
+ */
 const _init = init;
 export { _init as init };
 const _htmlPost = htmlPost;

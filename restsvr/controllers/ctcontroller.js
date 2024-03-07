@@ -1,6 +1,6 @@
 'use strict';
 
-import { readFile, existsSync } from "fs";
+import { readFile } from "fs";
 import path from 'path';
 import { toHHMMSSNow } from "./dateformat.js";
 
@@ -16,7 +16,6 @@ const mA4 = new Uint8Array(mSharedArrBuffer);
 mA4[0] = 2;	// 1 - Just use index 0. 2 - Client ID starts from 2
 
 var mCache = {};
-var mCacheGrid = {};
 var mProps = {};
 
 function reponseCachedData(queryId, res) {
@@ -30,17 +29,6 @@ function addClientCacheAndRespond(clientId, res) {
 	mCache[clientId] = data;
 	res.set(contentType);
 	res.end(JSON.stringify(data));
-}
-
-function addGridCacheAndRespond(data, rowsKey, res) {
-	res.set(contentType);
-	if (!Reflect.has(data, rowsKey)) {
-		let json = '{"status": "Error", "details": "no rows key"}';
-		res.end(json);
-	} else {
-		let rec = {columns: data.columns, rows: data[rowsKey]};
-		res.end(JSON.stringify(rec));
-	}
 }
 
 // PATH: /data/:id
@@ -67,36 +55,6 @@ function getPathParam(req, res)
 			addClientCacheAndRespond(clientId, res);
 		});			
 	}		
-}
-
-// PATH: /gridview?cid=CID&gid=GID&rn=RN
-function getQryParam(req, res)
-{
-    //console.log('> getQryParam: ' + req.query.tagId + ' at ' + dtFmt.toHHMMSS(Date.now()));
-	//const queryId = parseInt(req.query.cid, 10);
-	const gridId =  req.query.gid;
-	const rowsKey = Reflect.has(req.query, "rn") ? ("rows_" + req.query.rn) : "rows";
-	if (Reflect.has(mCacheGrid, gridId)) {
-		console.log('> cached grid ' + gridId + ' at ' + toHHMMSSNow());
-		addGridCacheAndRespond(mCacheGrid[gridId], rowsKey, res);
-	} else {
-		let filePath = __dirname + "/data/grid" + gridId + ".json";
-		if (!existsSync(filePath)) {
-			res.set(contentType);
-			res.end('{"status": "Error", "details": "Invalid id ' + gridId + '"}');
-			return;
-		}
-		let params = 'gridId=' + gridId;
-		if (Reflect.has(req.query, "rn")) {
-			params += ', rn=' +  req.query.rn;
-		}
-		console.log('> getQryParam: ' + params + ' at ' + toHHMMSSNow());
-		readFile(filePath, 'utf8', (err, data) => {
-			let json = JSON.parse(data);			
-			mCacheGrid[gridId] = json;
-			addGridCacheAndRespond(json, rowsKey, res);
-		});
-	}
 }
 
 // PATH: /update/:id
@@ -128,7 +86,7 @@ function receiveUpdate(req, res)
 }
 
 // XML
-function getXmlData(req, res)
+/* function getXmlData(req, res)
 {
   let data = `<?xml version="1.0" encoding="UTF-8"?>`;
   data += `<products>`;
@@ -145,11 +103,10 @@ function getXmlData(req, res)
   res.header("Content-Type", "application/xml");
   res.status(200).send(data);
 }
+ */
 
 const _getPathParam = getPathParam;
 export { _getPathParam as getPathParam };
-const _getQryParam = getQryParam;
-export { _getQryParam as getQryParam };
 const _receiveUpdate = receiveUpdate;
 export { _receiveUpdate as receiveUpdate };
 const _updateState = updateState;
