@@ -22,8 +22,7 @@ export default function(app) {
 	app.post('/form2/ack', mycontroller.postAckForm2);
 	//
 	
-	// container
-	app.get('/data/:id', ctcontroller.getPathParam);
-	app.get('/update/:id', ctcontroller.updateState);	
-	app.post('/upload/state', ctcontroller.receiveUpdate);	
+	// ctcontroller
+	// btntabs.html DOXML tab
+	app.get('/xmldata', ctcontroller.getXmlData);	
 }
