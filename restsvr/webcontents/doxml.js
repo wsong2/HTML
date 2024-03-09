@@ -5,10 +5,11 @@ function processXML(vXmlString)
 	var mNodesL1 = [];
 	
 	function addLines(vNode) {
-		mNodesL1.push(vNode.nodeName);		
+		mNodesL1.push(vNode.nodeName);
+		mNodesL1.push('T: ' + vNode.textContent);	
 		vNode.getAttributeNames().forEach(n => {
 			let val = vNode.getAttribute(n);
-			mNodesL1.push('  ' + n + ': ' + val);
+			mNodesL1.push('A: ' + n + ': ' + val);
 		})
 	}
 
@@ -22,8 +23,6 @@ function processXML(vXmlString)
 			if (node.nodeType === 1)
 				addLines(node);
 		}
-		//console.log('COLS: ' + JSON.stringify(mNodesL1));
-		//console.log('DATA: ' + JSON.stringify(mdataRows));
 		return {
 			rootName: mRootName, 
 			dataRows: mNodesL1
@@ -35,3 +34,4 @@ function processXML(vXmlString)
 		return processDOM(xmlDoc);
 	})(vXmlString);
 }
+
