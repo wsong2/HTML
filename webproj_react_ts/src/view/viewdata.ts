@@ -32,8 +32,6 @@ export interface ISimRec {
     op?: string
 }
 
-const VIEW_SIZE:number = 10;
-
 type CategOption = {
     [App: string]: string,
     Test: string
@@ -63,28 +61,6 @@ export class GridData {
 
     public rows = () => this.mGridRows;
 
-	public shiftView(bFwd:boolean, setViewRows: () => void): boolean
-	{
-		let iStart, changed;
-		
-		if (bFwd) {
-			iStart = this.mStart + VIEW_SIZE - 1;
-			changed = (iStart + VIEW_SIZE <= this.mGridRows.length);
-		} else {
-			iStart = this.mStart - (VIEW_SIZE - 1);
-			changed = (iStart >= 0);
-		}	
-		if (!changed && this.mGridRows.length >= VIEW_SIZE) {
-			iStart = this.mGridRows.length - VIEW_SIZE;
-			changed = bFwd ? (iStart > this.mStart) : (iStart < this.mStart);
-		}
-		if (!changed)	return false;
-		
-		this.mStart = iStart;
-		setViewRows();
-		return true;
-	}
-
 	public addRec(rec: ISimRec):ISimRec {
 		let row : ISimRec = {...rec};
 		this.mGridRows.push(row);
@@ -106,12 +82,5 @@ export class GridData {
     public categOptions = () => Object.keys(appCategOptions);
 
     public categText = (opt: string) => appCategOptions[opt];
-
-	public typeByID(nm:string):string {
-		if (nm === 'dttm')		return 'datetime-local';
-		if (nm === 'simDate')	return 'date';
-		if (nm === 'categ')		return 'select';
-		return 'text';
-	};
 	
 }

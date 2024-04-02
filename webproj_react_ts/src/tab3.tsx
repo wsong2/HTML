@@ -94,15 +94,6 @@ class App extends React.Component<{}, MainState>
 				console.log(err);
 			});
 		}
-		else if (btnValue === 'Prev' || btnValue === 'Next')
-		{
-			let fwd = (btnValue === 'Next');
-			// TODO
-			//if (appGridData.shiftView(fwd)) {
-				// TODO
-			//}
-			expectingResponse = false;
-		} 
 		else if (btnValue == 'Delete' && this.state.rowIndex >= 0)
 		{
 			let urlDel = "/api/rec/" + this.state.rows[this.state.rowIndex].simId;
