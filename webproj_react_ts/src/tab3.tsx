@@ -95,16 +95,6 @@ class App extends React.Component<{}, MainState>
 			return;
 		}
 
-		if (btnValue === 'Prev' || btnValue === 'Next') {
-			let fwd = (btnValue === 'Next');
-			// TODO
-			//if (appGridData.shiftView(fwd)) {
-				// TODO
-			//}
-			expectingResponse = false;
-			return;
-		}
-
 		if (btnValue == 'Delete' && this.state.rowIndex >= 0) {
 			let urlDel = "/api/rec/" + this.state.rows[this.state.rowIndex].simId;
 			fetch(urlDel, {method: 'DELETE'}).then( response => {

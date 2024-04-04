@@ -30,9 +30,7 @@ class TdList extends React.Component<TdListProps>
 
 	render() {
 		const {op, ...rest} = this.props.row;
-		//const filtered = Object.keys(rest).filter(key => key != '_id').reduce((obj, key) => {obj[key] = rest[key]; return obj;}, {})
 		const simRec:ISimRec = {simId:rest.simId, simName:rest.simName, simDate:rest.simDate, categ:rest.categ, descr:rest.descr, qty:rest.qty, price:rest.price, dttm: rest.dttm};
-		//const Values = () => Object.values(this.props.row).map( (v,i) => {		
 		const Values = () => Object.values(simRec).map( (v,i) => {
 			return <td key={i}>{v}</td>;
 		});
@@ -101,8 +99,6 @@ class ViewGrid extends React.Component<ViewGridProps, ViewGridStateState>
 		const HeaderRow = () => appGridData.keys().map( (k, idx) => {
 			let dfn = appGridData.columnDfn(k);
 			if (dfn === undefined)	return <th key={idx} />;
-			//if (dfn.sorting === 'U') return <th key={idx}>{dfn.caption}  &#8593;</th>;
-			//if (dfn.sorting === 'D') return <th key={idx}>{dfn.caption}  &#8595;</th>;
 			return <th key={idx}>{dfn.caption}</th>;
 		});
 		const GridRows = (props: GridRowsProps) => props.rows.map( (r, idx) => {
@@ -119,8 +115,8 @@ class ViewGrid extends React.Component<ViewGridProps, ViewGridStateState>
 					<input type="button" value="Delete" onClick={this.btnClick} /></td>
 					<td colSpan={3}/>
 					<td style={tdStyle} colSpan={2}>
-						<button style={BtnStyle} value="Prev" onClick={this.btnClick}>&#10229;</button>&nbsp;
-						<button style={BtnStyle} value="Next" onClick={this.btnClick}>&#10230;</button>
+						<button style={BtnStyle} value="Prev" disabled>&#10229;</button>&nbsp;
+						<button style={BtnStyle} value="Next" disabled>&#10230;</button>
 					</td>
 				</tr>
 			</tbody></table></div>);

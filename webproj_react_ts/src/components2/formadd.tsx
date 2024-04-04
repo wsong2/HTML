@@ -30,6 +30,23 @@ interface FormAddSate {
 	recForm: IFormRec
 }
 
+// enum CategEnum {
+// 	App = "0",
+// 	Device = "1",
+// 	Product = "2",
+// 	Sim = "3",
+// 	Test = "4"
+// }
+
+enum CategEnum {
+	App = 0,
+	Device,
+	Product,
+	Sim,
+	Test
+}
+
+
 class FormAdd extends React.Component<FormAddProps, FormAddSate> {	
 	toggleID: (evt: React.MouseEvent<HTMLButtonElement>) => void;
 	OnChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
@@ -120,23 +137,30 @@ class FormAdd extends React.Component<FormAddProps, FormAddSate> {
 
 	render() {
 		let recForm: IFormRec = this.state.recForm;
+
+		const TdInputAndBtn = () => {
+			return <td>
+				<input type="text" name="simId" value={this.state.simId} readOnly={true} size={5} />
+				<button type="button" onClick={this.toggleID} style={BtnStyle}>&#8646;</button></td>;
+		}
+
+		const SelectOptions = () => ["App", "Device", "Product", "Sim", "Test"].map( (v, i) => {
+			return <option value={v} key={i.toString()}>{v}</option>;
+		});
+
+		const TdInputsQtyPrice = () => {
+			return <td>
+				<input name="qty" type="number" step="1" min="1" max="999" value={+recForm.qty} onChange={this.OnChange} />
+				<input name="price" type="number" step="0.01" min="0.01" value={+recForm.price} onChange={this.OnChange}/></td>;
+		}
+
 		return (<form><table className="noborder"><tbody>
-		<tr><td>Id</td><td><input type="text" name="simId" value={this.state.simId} readOnly={true} size={5} />
-			<button type="button" onClick={this.toggleID} style={BtnStyle}>&#8646;</button></td></tr>
+		<tr><td>Id</td><TdInputAndBtn /></tr>
 		<tr><td>Name</td><td><input name="simName" type="text" value={recForm.simName} onChange={this.OnChange} /></td></tr>
 		<tr><td>Date</td><td><input name="simDate" type="date" value={recForm.simDate} onChange={this.OnChange} /></td></tr>
-		<tr><td>Category</td><td>
-			<select name="categ" value={recForm.categ} onChange={this.OnSelectChange}>
-				<option value="App" key="0">App</option>
-				<option value="Device" key="1">Device</option>
-				<option value="Product" key="2">Product</option>
-				<option value="Sim" key="3">Sim</option>
-				<option value="Test" key="4">Test</option>
-			</select></td></tr>
+		<tr><td>Category</td><td><select name="categ" value={recForm.categ} onChange={this.OnSelectChange}><SelectOptions /></select></td></tr>
 		<tr><td>Description</td><td><input name="descr" type="text" value={recForm.descr} onChange={this.OnChange} /></td></tr>
-		<tr><td>Price</td><td>
-			<input name="qty" type="number" step="1" min="1" max="999" value={+recForm.qty} onChange={this.OnChange} /> 
-			<input name="price" type="number" step="0.01" min="0.01" value={+recForm.price} onChange={this.OnChange}/></td></tr>
+		<tr><td>Price</td><TdInputsQtyPrice /></tr>
 		<tr><td><input type="button" value="update" onClick={this.doUpate}/></td><td><input type="button" value="Pull &#8607;" onClick={this.pullGridRow} /></td></tr>
 	</tbody></table></form>);
 }
