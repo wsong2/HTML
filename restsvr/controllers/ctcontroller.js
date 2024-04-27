@@ -1,6 +1,6 @@
 'use strict';
 
-import { toHHMMSSNow } from "./dateformat.js";
+import { toHHMMSSNow } from "../util/dateformat.js";
 
 // const mSharedArrBuffer = new SharedArrayBuffer(4);
 // const mA4 = new Uint8Array(mSharedArrBuffer);

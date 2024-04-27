@@ -1,4 +1,4 @@
-import { toISODateTime, toISOTimeStamp } from "./dateformat.js";
+import { toISODateTime, toISOTimeStamp } from "../util/dateformat.js";
 import { MongoClient } from "mongodb";
 
 const uri = "mongodb://localhost:27017";

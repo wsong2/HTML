@@ -1,10 +1,9 @@
-function toHHMMSS(dtNow) {
-	let strDTTM = new Date(dtNow).toISOString();
-	return strDTTM.substring(11,19);
+function toHHMMSS(dttm) {
+	return dttm.toLocaleTimeString();
 }
 
 function toHHMMSSNow() {
-	return toHHMMSS(Date.now());
+	return toHHMMSS(new Date());
 }
 
 function toISODateTime(dtNow) {

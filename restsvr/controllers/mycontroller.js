@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import { toHHMMSS, toISODateTime } from "./dateformat.js";
+import { toISODateTime, toHHMMSSNow } from "../util/dateformat.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -33,43 +33,58 @@ function htmlPost(req, res)
 
 function getPathParam(req, res)
 {
-    console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSS(Date.now()));
-	let json = '{"status": "OK", "details": "' + req.params.tagId + '"}';
+	console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSSNow());
+ 	let json = '{"status": "OK", "detail": "' + req.params.tagId + '"}';
 	res.end(json);
 }
 
 function getQryParam(req, res)
 {
-    console.log('> getQryParam: ' + req.query.tagId + ' at ' + toHHMMSS(Date.now()));
-	let json = '{"status": "OK", "details": "' + req.query.tagId + '"}';
-	res.end(json);
+    console.log('> getQryParam at ' + toHHMMSSNow());
+    console.log('  tagId: ' + req.query.tagId);
+
+	let rec = {status: "OK", tagId: req.query.tagId};
+	if (Object.hasOwn(req.query, 'optId2')) {
+		rec.optId2 = req.query.optId2;
+   		console.log('  optId2: ' + rec.optId2);
+	}
+	if (Object.hasOwn(req.query, 'optId3')) {
+		rec.optId3 = req.query.optId3;
+   		console.log('  optId3: ' + rec.optId3);
+	}
+	res.end(JSON.stringify(rec));
 }
 
 function postAckJson(req, res)
 {
-	let dttm = toHHMMSS(Date.now());
+	let dttm = toHHMMSSNow();
+	let rec = {status: "OK"};
+
 	console.log('> postAckJson: %s %s at %s', req.method, req.url, dttm);
-	//console.log(req);
 	for (const [key, val] of Object.entries(req.body)) {
+		if (key === 'Note') {
+			rec.hasNote = true;
+		}
 		console.log("  %s: %s", key, val);
 	}
-	let json = '{"status": "OK", "dttm": "' + dttm +'"}';
-	res.end(json);
+	rec.dttm = dttm;
+
+	res.end(JSON.stringify(rec));
 }
 
 function postAckForm2(req, res)
 {
 	let dttm = toISODateTime(Date.now());
+	let rec = {status: "OK", app2: "endpoint"};
+	if (Object.hasOwn(req.body, 'Note')) {
+		rec.hasNote = true;
+	}
     console.log('> ackdata at ' + dttm);
-	console.log('  ' + JSON.stringify(req.body));
-	// for (const [key, val] of Object.entries(req.body)) {
-		// console.log("  %s: %s", key, val);
-	// }
-	let json = '{"status": "OK", "appname": "app2", "endpoint": "ack ' + dttm + '"}';
-	res.end(json);
+	rec.ack = dttm;
+	res.end(JSON.stringify(rec));
 }
 
-function parseMultiPartFormData(bodyText)
+/* function parseMultiPartFormData(bodyText)
 {
 	let cdfd = 'Content-Disposition: form-data; name=';
 	let len = cdfd.length;
@@ -98,7 +113,7 @@ function propName(prop)
 	let arr = /"([^"]+)"/.exec(prop);
 	return arr ? arr[1] : prop;
 }
-
+ */
 const _init = init;
 export { _init as init };
 const _htmlPost = htmlPost;
