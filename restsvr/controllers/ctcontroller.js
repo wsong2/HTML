@@ -1,6 +1,6 @@
 'use strict';
 
-import { toHHMMSSNow } from "./dateformat.js";
+import { toHHMMSSNow } from "../util/dateformat.js";
 
 // const mSharedArrBuffer = new SharedArrayBuffer(4);
 // const mA4 = new Uint8Array(mSharedArrBuffer);
@@ -23,7 +23,6 @@ function getXmlData(req, res)
 	res.header("Content-Type", "application/xml");
 	res.status(200).send(data);
 }
-
 
 const _getXmlData = getXmlData;
 export { _getXmlData as getXmlData };

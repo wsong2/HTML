@@ -1,12 +1,10 @@
 import { readFileSync } from "fs";
-import { toHHMMSS, toISODateTime } from "./dateformat.js";
+import { toISODateTime, toHHMMSSNow } from "../util/dateformat.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-var mRecId = 1001;
 
 var htmP1, htmP2;
 
@@ -35,14 +33,14 @@ function htmlPost(req, res)
 
 function getPathParam(req, res)
 {
-	console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSS(Date.now()));
+	console.log('> getPathParam: ' + req.params.tagId + ' at ' + toHHMMSSNow());
  	let json = '{"status": "OK", "detail": "' + req.params.tagId + '"}';
 	res.end(json);
 }
 
 function getQryParam(req, res)
 {
-    console.log('> getQryParam at ' + toHHMMSS(Date.now()));
+    console.log('> getQryParam at ' + toHHMMSSNow());
     console.log('  tagId: ' + req.query.tagId);
 
 	let rec = {status: "OK", tagId: req.query.tagId};
@@ -59,26 +57,31 @@ function getQryParam(req, res)
 
 function postAckJson(req, res)
 {
-	let dttm = toHHMMSS(Date.now());
+	let dttm = toHHMMSSNow();
+	let rec = {status: "OK"};
+
 	console.log('> postAckJson: %s %s at %s', req.method, req.url, dttm);
-	//console.log(req);
 	for (const [key, val] of Object.entries(req.body)) {
+		if (key === 'Note') {
+			rec.hasNote = true;
+		}
 		console.log("  %s: %s", key, val);
 	}
-	let json = '{"status": "OK", "dttm": "' + dttm +'"}';
-	res.end(json);
+	rec.dttm = dttm;
+
+	res.end(JSON.stringify(rec));
 }
 
 function postAckForm2(req, res)
 {
 	let dttm = toISODateTime(Date.now());
+	let rec = {status: "OK", app2: "endpoint"};
+	if (Object.hasOwn(req.body, 'Note')) {
+		rec.hasNote = true;
+	}
     console.log('> ackdata at ' + dttm);
-	console.log('  ' + JSON.stringify(req.body));
-	// for (const [key, val] of Object.entries(req.body)) {
-		// console.log("  %s: %s", key, val);
-	// }
-	let json = '{"status": "OK", "appname": "app2", "endpoint": "ack ' + dttm + '"}';
-	res.end(json);
+	rec.ack = dttm;
+	res.end(JSON.stringify(rec));
 }
 
 /* function parseMultiPartFormData(bodyText)

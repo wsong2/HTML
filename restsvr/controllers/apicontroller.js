@@ -1,5 +1,5 @@
 import { readFile } from "fs";
-import { toISODateTime } from "./dateformat.js";
+import { toISODateTime } from "../util/dateformat.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 

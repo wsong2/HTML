@@ -30,23 +30,6 @@ interface FormAddSate {
 	recForm: IFormRec
 }
 
-// enum CategEnum {
-// 	App = "0",
-// 	Device = "1",
-// 	Product = "2",
-// 	Sim = "3",
-// 	Test = "4"
-// }
-
-enum CategEnum {
-	App = 0,
-	Device,
-	Product,
-	Sim,
-	Test
-}
-
-
 class FormAdd extends React.Component<FormAddProps, FormAddSate> {	
 	toggleID: (evt: React.MouseEvent<HTMLButtonElement>) => void;
 	OnChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
