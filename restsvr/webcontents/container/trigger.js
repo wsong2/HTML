@@ -144,7 +144,7 @@ function doAdd(args) {
 	let v1 = args[0]
 	let v2 = args[1];
 	if ((typeof v1) === 'number' && (typeof v2) === 'number')	return (v1 + v2);
-	return (typeof v1 === 'number') ? datePlusDays(v2, v1)) : datePlusDays(v1, v2);
+	return (typeof v1 === 'number') ? datePlusDays(v2, v1) : datePlusDays(v1, v2);
 }
 
 function datePlusDays(vDate, nDays)

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Container</title></head>
+<body>
+<div id="root"></div>
+<script>
+var opener = window.opener;	
+if (opener) {
+	let oDom = opener.document;
+	let eltDiv = oDom.getElementById("hidenD1");
+	if (eltDiv) {
+		let clonedDiv = eltDiv.cloneNode(true);
+		clonedDiv.style.visibility = "visible";
+		document.body.appendChild(clonedDiv);
+	}
+}
+</script>
+</body>
+</html>
