@@ -4,7 +4,6 @@
 <link rel="stylesheet" type="text/css" href="container.css">
 </head>
 <body onload="initDivAndLogger()">
-<button type="button" onClick="initializationFetch(this)" style="margin-bottom: 5px;">Initialization</button>
 <div class="table">
  <div class="tr">
   <span>Label</span><input id="s1" type="text" onchange="onInputValueChange(this.id)" value="Free text">
@@ -21,14 +20,20 @@
  <div class="tr">
   <span>Group.A</span><div class="td" id="s2"></div><span>Group.B</span><div class="td" id="s3"></div>
  </div>
+ <div class="tr">
+	<a href="#" onClick="MyWindow=window.open('popup.html','MyWindow','width=800,height=300'); return false;">Click Here</a>
+ </div>
 </div>
-<p><button id="btnExec" type="button" onClick="applyConstraints(0)" disabled>Apply Constraints</button></p>
-<textarea id="msg" rows="8" cols="75"></textarea>
+<p><textarea id="msg" rows="8" cols="75"></textarea></p>
+<div id="hidenD1" class="hidden-for-win">
+	<table class="grid">
+		<tbody id="idGrid"><!-- insert here --></tbody>
+	</table>	  
+</div>
 <script src="trigger.js"></script>
+<script src="grid.js"></script>
 <script>
 var logger;
-var flagWait = false;
-var mLocalCtxt = {};
 
 var dfnCateg = {
 	ND: "No Delta",
@@ -47,14 +52,14 @@ function htmTypeToValueType(tagName, inputType) {
 function addPropValues(tagName, arrProps)
 {
 	let elts = document.getElementsByTagName(tagName);
-	elts.forEach(e => {
+	for (let e of elts) {
 		let rec = {prop_id: e.id, val: e.value};
 		let typ = htmTypeToValueType(tagName, e.type);
 		if (typ !== 'S') {
 			rec.valType = typ; 
 		}
 		arrProps.push(rec);
-	});
+	}
 }
 
 function gridAnchor(idClient, idGrid, stUpdate) {
@@ -64,7 +69,7 @@ function gridAnchor(idClient, idGrid, stUpdate) {
 	return url;
 }
 
-function onInputValueChange(id, val) {
+function onInputValueChange(id) {
 	applyConstraints(id);
 }
 
@@ -95,52 +100,14 @@ function initDivAndLogger()
 	}
 	
 	addDropDown({eltId: 's10', val: 'ND'});	// s10 - categ
+
+	processGridData();	// in grid.js
 	
 	// logger
 	let txtMsg = document.getElementById("msg");	// TextArea	
 	logger = (msg) => {txtMsg.value += msg + '\r\n'};
 }
 
-function initializationFetch(btn)
-{
-	const processJson = (json) => {
-		mLocalCtxt.clientId = json.client_id;
-		mLocalCtxt.constraints = json.constraints;
-		for (let grid of json.grids) {
-			let elt = document.getElementById(grid.elt);
-			elt.innerHTML = gridAnchor(mLocalCtxt.clientId, grid.grid_id, false);
-		}	
-	};
-
-	document.getElementById("msg").value = '';	// TextArea	
-	btn.disabled = true;
-	fetch("/data/0").then(	// <---- Init
-		(response) => response.json()
-	).then((data) => {
-		processJson(data);
-		document.getElementById('btnExec').disabled  = false;
-	}).catch((err) => {
-		console.log(err);
-		btn.disabled = false;
-	});
-}
-
-function uploadState(data) {
-	flagWait = true;
-	fetch('/upload/state', {
-		method: "POST",
-		body: JSON.stringify(data),
-		headers: {"Content-type": "application/json; charset=UTF-8"}
-	}).then(response => response.json()
-	).then(data => {
-		flagWait = false;
-		console.log(data);
-	}).catch(err => {
-		flagWait = false;
-		console.log(err);
-	});
-}
-	
 function applyConstraints(id0)
 {
 	document.getElementById("msg").value = '';	// Logger TextArea	
@@ -149,11 +116,7 @@ function applyConstraints(id0)
 	addPropValues('input', propValues);
 	addPropValues('select', propValues);
 	
-	let result = trigger(id0, propValues, mLocalCtxt.constraints, logger);		// include trigger.js
-	if (result && window.location.protocol !== 'file:' && !flagWait) {
-		let data = Object.assign({client_id: mLocalCtxt.clientId}, propValues);
-		uploadState(data);
-	}
+	trigger(id0, propValues, [], logger);		// include trigger.js
 }
 </script>
 </body>
