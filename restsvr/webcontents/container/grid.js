@@ -40,47 +40,6 @@ var mDataGrid = {
 	]
 };
 
-// mDataGrid section
-function processGridData() {
-	let tbody = document.getElementById('idGrid');
-	insertTBodyRow(tbody);
-}
-
-function insertTBodyRow(tbody) {
-	var vColumns = mDataGrid.columns;
-	var vRows = mDataGrid.rows;
-
-	function insertRowCells(htmRow, rowCellRec) {
-		vColumns.forEach((col,iCol) => {
-			let cellTD = htmRow.insertCell(iCol);
-			cellTD.className = "grid";
-			let textValue = rowCellRec[col.name];
-			let elt = document.createTextNode(textValue);
-			cellTD.appendChild(elt);		
-		});
-	}
-	
-	function insertHeadCells() {
-		let header = tbody.parentElement.createTHead();
-		header.className = "grid";
-		let row = header.insertRow(0); 
-		vColumns.forEach((col, iCol) => {
-			let cell = row.insertCell(iCol);
-			cell.className = "grid";
-			cell.innerHTML = '<b>' + col.caption + '</b>';		
-		});
-	}
-
-	//
-	insertHeadCells();
-	
-	vRows.forEach((row, iRow) => {
-		let newRow = tbody.insertRow(iRow);	
-		insertRowCells(newRow, row);
-	});
-}
-//
-
 function addBlankRow(vGrid) {
 	let blankRow = [];
 	for (let n=vGrid.cols.length; n>0; n--) {

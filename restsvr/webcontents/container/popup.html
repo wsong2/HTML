@@ -4,10 +4,12 @@
 <body>
 <div id="root"></div>
 <script>
+const searchParams = new URLSearchParams(window.location.search);
 var opener = window.opener;	
 if (opener) {
 	let oDom = opener.document;
-	let eltDiv = oDom.getElementById("hidenD1");
+	let divId = searchParams.get('divId');
+	let eltDiv = oDom.getElementById(divId);
 	if (eltDiv) {
 		let clonedDiv = eltDiv.cloneNode(true);
 		clonedDiv.style.visibility = "visible";
