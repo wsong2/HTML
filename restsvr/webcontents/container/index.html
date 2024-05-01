@@ -5,23 +5,26 @@
 </head>
 <body onload="initDivAndLogger()">
 <div class="table">
+ <form id="form1" action="javascript:void(0)">
  <div class="tr">
-  <span>Label</span><input id="txtLabel" type="text" onchange="onInputValueChange(this.id)" value="Free text">
+  <span>Label</span><input name="txtLabel" type="text" onchange="onInputValueChange(this.form, this.name)" value="Free text">
   <span>Category</span><div class="td" id="dvCateg"><!-- dynamic populated SELECT s10 here --></div>
  </div>
  <div class="tr" >
-  <label for="vLevel">Level</label><input id="vLevel" type="number" style="max-width: 4em" oninput="onInputValueChange(this.id)" value="2">	
-  <label for="vDelta">Delta</label><input id="vDelta" type="number" style="max-width: 6em" oninput="onInputValueChange(this.id)">	
+  <label for="idLevel">Level</label><input id="idLevel" name="vLevel" type="number" style="max-width: 4em" oninput="onInputValueChange(this.form, this.name)" value="2">	
+  <label for="idDelta">Delta</label><input id="idDelta" name="vDelta" type="number" style="max-width: 6em" oninput="onInputValueChange(this.form, this.name)">	
  </div>
  <div class="tr">
-  <span>Event Date</span><input id="dtEvent" type="date" onchange="onInputValueChange(this.id)" value="2021-05-21">
-  <span>Date 2</span><input id="dt2" type="date" onchange="onInputValueChange(this.id)">
+  <span>Event Date</span><input name="dtEvent" type="date" onchange="onInputValueChange(this.form, this.name)" value="2021-05-21">
+  <span>Date 2</span><input name="dt2" type="date" onchange="onInputValueChange(this.form, this.name)">
  </div>
  <div class="tr">
 	<a href="#" onClick="MyWindow=window.open('popup.html?divId=hidenD1','MyWindow','width=800,height=300'); return false;">Click Here</a>
  </div>
+ <p><input type="reset"></p>
+ </form>
 </div>
-<p><textarea id="msg" rows="8" cols="75"></textarea></p>
+<textarea id="msg" rows="8" cols="75"></textarea>
 <div id="hidenD1" class="hidden-for-win">
 	<table class="grid">
 		<tbody id="idGrid"><!-- insert here --></tbody>
@@ -32,19 +35,22 @@
 <script>
 var logger;
 
-var dfnCateg = {
-	ND: "No Delta",
-	FIX: "Fixed Delta",
-	DR: "Delta Range"
-};
-
-function onInputValueChange(id) {
-	applyConstraints(id);
+function onInputValueChange(form, inputName) {
+	//console.log('> ' + inputName);
+	applyConstraints(form, inputName);
 }
 
 function initDivAndLogger()
 {
-	function selectBox(vEltId) {
+	let dfnCateg = {
+		ND: "No Delta",
+		FIX: "Fixed Delta",
+		DR: "Delta Range"
+	};
+
+	function selectBox(eltName)
+	{
+		let form1 = document.getElementById("form1");
 		let selectList = document.createElement("select");
 		for (const [key, value] of Object.entries(dfnCateg)) {
 			let option = document.createElement("option");
@@ -52,25 +58,24 @@ function initDivAndLogger()
 			option.text = value;
 			selectList.appendChild(option);
 		}	
-		selectList.id = vEltId;
+		selectList.name = eltName;
+		selectList.addEventListener("change", 
+			() => onInputValueChange(form1, selectList.name), 
+			false);
+		form1.appendChild(selectList);
 		return selectList;	
 	}
 
-	function addDropDown(prop) {
-		const handler = () => {
-			onInputValueChange(selectList.id, selectList.value);
-		};
-		let selectList = selectBox(prop.eltId);
-		selectList.addEventListener("change", handler, false);
-
+	function addDropDown(eltName, eltValue) {
+		let selectList = selectBox(eltName);
 		let divCateg = document.getElementById("dvCateg");
 		if (divCateg) {
 			divCateg.appendChild(selectList);
 		}
-		selectList.value = prop.val;
+		selectList.value = eltValue;
 	}
 	
-	addDropDown({eltId: 's10', val: 'ND'});	// s10 - categ
+	addDropDown('sCateg', 'ND');
 
 	let tbody = document.getElementById('idGrid');
 	insertTBodyRow(tbody);
@@ -80,22 +85,10 @@ function initDivAndLogger()
 	logger = (msg) => {txtMsg.value += msg + '\r\n'};
 }
 
-function applyConstraints(id0)
+function applyConstraints(form, name0)
 {
-	document.getElementById("msg").value = '';	// Logger TextArea	
-
-	let ctxtValues = {};
-	let elts = document.getElementsByTagName('input');
-	for (let e of elts) {
-		ctxtValues[e.id] = e.value;
-	}
-	elts = document.getElementsByTagName('select');
-	for (let e of elts) {
-		ctxtValues[e.id] = e.value;
-	}
-	
-	// trigger(id0, propValues, logger);		// include trigger.js
-	trigger(ctxtValues, logger);
+	document.getElementById("msg").value = '';	// Logger TextArea
+	trigger(form, name0, logger);
 }
 </script>
 </body>
