@@ -25,8 +25,16 @@ const action1 = (form) => {
 	}
 };
 
+const action2 = (form) => {
+    if (form.sCateg.value !== 'FIX')	return;
+	let elt = document.getElementById(10001);
+	elt.value = form.dtEvent.value;
+	elt.title = 'Set by action 2';	
+};
+
 var mActions = [
-	(form) => action1(form)
+	(form) => action1(form),
+	(form) => action2(form)
 ]
 
 //

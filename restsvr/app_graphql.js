@@ -1,5 +1,5 @@
 import express from 'express';
-import { graphqlHTTP } from "express-graphql";
+import { createHandler  } from "graphql-http/lib/use/express";
 import { buildSchema } from "graphql";
 import { promises as fs } from 'fs';
 
@@ -87,13 +87,15 @@ var root = {
 }
 
 var appGQ = express();
+
 appGQ.use(
-  graphqlHTTP({
+  createHandler({
     schema: schema,
     rootValue: root,
     graphiql: true,
   })
 )
+
 
 export default function() {
 	return appGQ;
