@@ -3,28 +3,25 @@ var mDataGrid = {
 	   	{	simId: 12,
 		   	simName: "Client-2", 
 			simDate: "2019-08-26",
-		   	categ: "App", 
-			descr: "Rest client PUT",
-		   	qty: 1, 
-			price: 13.6,
+		   	caterory: "App", 
+			desc: "Rest client PUT",
+			rate: 13.6,
 		   	dttm: "2019-08-26T00:00:00"
 	   	},
 		{ 	simId: 15,
 		   	simName: "ClientN3", 
-			simDate: "2020-08-06",
-		   	categ: "Test", 
-			descr: "Rest client loader",
-		   	qty: 1, 
-			price: 22.56,
+			simDate: {eltId: 10001, val: "2020-08-06"},
+		   	caterory: "Test", 
+			desc: "Rest client loader",
+			rate: 22.56,
 		   	dttm: "2020-08-06T00:00:00"
 	   	},
 		{ 	simId: 110,
 		   	simName: "中文 产品", 
 			simDate: "2020-04-01",
-		   	categ: "Product", 
-			descr: "生日18",
-		   	qty: 1, 
-			price: 7.99,
+		   	caterory: "Product", 
+			desc: "生日18",
+			rate: 7.99,
 		   	dttm: "2021-03-18T18:46:13.787"
 	   }
 	],
@@ -32,10 +29,9 @@ var mDataGrid = {
 		{name: "simId", caption: "ID"},
 		{name: "simName", caption: "Name"},
 		{name: "simDate", caption: "Date"},
-		{name: "categ", caption: "Category"},
-		{name: "descr", caption: "Description"},
-		{name: "qty", caption: "Qty"},
-		{name: "price", caption: "Price"},
+		{name: "caterory", caption: "Category"},
+		{name: "desc", caption: "Description"},
+		{name: "rate", caption: "Rate"},
 		{name: "dttm", caption: "DateTime"}
 	]
 };
@@ -44,12 +40,24 @@ function insertTBodyRow(tbody) {
 	var vColumns = mDataGrid.columns;
 	var vRows = mDataGrid.rows;
 
+	function getCellElt(cellValue) {
+		if (typeof cellValue !== 'object') {
+			return document.createTextNode(cellValue);
+		}
+		let inp = document.createElement('input');
+		inp.type = 'date';
+		inp.value = cellValue.val;
+		inp.id = cellValue.eltId;
+		inp.readOnly = true;
+		return inp;
+	}
+
 	function insertRowCells(htmRow, rowCellRec) {
 		vColumns.forEach((col,iCol) => {
 			let cellTD = htmRow.insertCell(iCol);
 			cellTD.className = "grid";
-			let textValue = rowCellRec[col.name];
-			let elt = document.createTextNode(textValue);
+			let cellValue = rowCellRec[col.name];
+			let elt = getCellElt(cellValue);
 			cellTD.appendChild(elt);		
 		});
 	}

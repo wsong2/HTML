@@ -30,7 +30,7 @@ class TdList extends React.Component<TdListProps>
 
 	render() {
 		const {op, ...rest} = this.props.row;
-		const simRec:ISimRec = {simId:rest.simId, simName:rest.simName, simDate:rest.simDate, categ:rest.categ, descr:rest.descr, qty:rest.qty, price:rest.price, dttm: rest.dttm};
+		const simRec:ISimRec = {simId:rest.simId, simName:rest.simName, simDate:rest.simDate, caterory:rest.caterory, desc:rest.desc, qty:rest.qty, price:rest.price, dttm: rest.dttm};
 		const Values = () => Object.values(simRec).map( (v,i) => {
 			return <td key={i}>{v}</td>;
 		});

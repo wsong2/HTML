@@ -2,6 +2,9 @@ import express, { urlencoded, json } from 'express';
 var app1 = express();
 var app2 = express();
 
+import graphql from './app_graphql.js';
+var appGraphQL = graphql();
+
 import myroutes from './routes/myroutes.js';
 
 // app
@@ -29,6 +32,7 @@ var app = express();
 
 app.use("/form2", app2);
 app.use("/", app1);
+app.use("/graphql", appGraphQL);
 
 myroutes(app);
 

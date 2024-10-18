@@ -1,0 +1,19 @@
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"query": "{ quoteOfTheDay }"}' \
+http://localhost:3000/graphql
+
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"query": "{ random }"}' \
+http://localhost:3000/graphql
+
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"query": "{ rollDice(numDice: 3, numSides: 6) }"}' \
+http://localhost:3000/graphql
+
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"query": "{ getFile(fileName: \"grid1.json\") }"}' \
+http://localhost:3000/graphql

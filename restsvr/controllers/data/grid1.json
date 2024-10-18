@@ -1,0 +1,45 @@
+{
+ "keys": ["simId", "simName", "simDate", "caterory", "desc", "qty", "price", "dttm"],
+ "columns" : {
+	"simId": { "caption": "Id"},
+	"simName": { "caption": "Name", "sorting": "U" },
+	"simDate": { "caption": "Date", "sorting": "D" },
+	"caterory": { "caption": "Category"},
+	"desc": { "caption": "Description"},
+	"qty": { "caption": "Quantity"},
+	"price": { "caption": "Price"},
+	"dttm": { "caption": "Timestamp"}
+ },
+ "rows" : [
+   {
+    "simId": 1,
+    "simName": "Accessory",
+    "simDate": "2020-04-01",
+    "caterory": "Device",
+    "desc": "£7.99",
+    "qty": 1, 
+	  "price": 7.99,
+    "dttm": "2021-01-02T18:21:13.787"
+  },
+  {
+    "simId": 2,
+    "simName": "Stool2",
+    "simDate": "2021-03-01",
+    "caterory": "Product",
+    "desc": "£23.99",
+    "qty": 1, 
+	  "price": 25,
+    "dttm": "2021-01-02T16:46:13.787"
+  },
+   {
+    "simId": 3,
+    "simName": "Accessory",
+    "simDate": "2021-04-01",
+    "caterory": "Sim",
+    "desc": "What so ever",
+    "qty": 2, 
+	  "price": 19.8,
+    "dttm": "2021-01-13T18:46:45.787"
+  }
+ ]
+}

@@ -124,7 +124,7 @@ class App extends React.Component<{}, MainState>
 		let simId = (rIndex >= 0) ? this.state.rows[rIndex].simId : null;
 		let fileProto = (window.location.protocol === 'file:');
 
-		const rec: ISimRec = {simId: simId, simName: '', simDate: '', categ: '', descr: '', qty: 0, price: -1, dttm: ''};
+		const rec: ISimRec = {simId: simId, simName: '', simDate: '', caterory: '', desc: '', qty: 0, price: -1, dttm: ''};
 		if (rIndex >= 0) {
 			Object.assign(rec, this.state.rows[rIndex]);
 		}

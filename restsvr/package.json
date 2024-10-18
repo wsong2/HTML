@@ -5,11 +5,13 @@
   "private": true,
   "dependencies": {
     "express": "^4.17.1",
+    "graphql": "^16.9.0",
+    "graphql-http": "^1.22.1",
     "mongodb": "^6.3.0",
     "npm": "^10.1.0",
     "xml": "^1.0.1"
   },
-  "type":"module",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },

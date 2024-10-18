@@ -19,8 +19,8 @@ interface IFormRec {
     simId: string,
     simName: string,
     simDate: string,
-    categ: string,
-    descr: string,
+    caterory: string,
+    desc: string,
     qty: string,
     price: string,
 	[key:string] : string
@@ -41,7 +41,7 @@ class FormAdd extends React.Component<FormAddProps, FormAddSate> {
 		super(props);
 		this.state = {
 			simId: '',
-			recForm: {simId:'', simName:'', simDate:'', categ:'', descr:'', qty:'', price:'', dttm: ''}
+			recForm: {simId:'', simName:'', simDate:'', caterory:'', desc:'', qty:'', price:'', dttm: ''}
 		}		
 		this.toggleID = this.toggleID_impl.bind(this);
 		this.OnChange = this.OnChange_impl.bind(this);
@@ -113,7 +113,7 @@ class FormAdd extends React.Component<FormAddProps, FormAddSate> {
 		let rec: ISimRec = this.props.pullRecForm;
 		this.setState({
 			simId: rec.simId.toString(),
-			recForm: {simId:rec.simId.toString(), simName:rec.simName, simDate:rec.simDate, categ:rec.categ, descr:rec.descr, 
+			recForm: {simId:rec.simId.toString(), simName:rec.simName, simDate:rec.simDate, caterory:rec.caterory, desc:rec.desc, 
 						qty:rec.qty.toString(), price:rec.price.toString(), dttm: rec.dttm}
 		});
 	}
@@ -141,8 +141,8 @@ class FormAdd extends React.Component<FormAddProps, FormAddSate> {
 		<tr><td>Id</td><TdInputAndBtn /></tr>
 		<tr><td>Name</td><td><input name="simName" type="text" value={recForm.simName} onChange={this.OnChange} /></td></tr>
 		<tr><td>Date</td><td><input name="simDate" type="date" value={recForm.simDate} onChange={this.OnChange} /></td></tr>
-		<tr><td>Category</td><td><select name="categ" value={recForm.categ} onChange={this.OnSelectChange}><SelectOptions /></select></td></tr>
-		<tr><td>Description</td><td><input name="descr" type="text" value={recForm.descr} onChange={this.OnChange} /></td></tr>
+		<tr><td>Category</td><td><select name="caterory" value={recForm.caterory} onChange={this.OnSelectChange}><SelectOptions /></select></td></tr>
+		<tr><td>Description</td><td><input name="desc" type="text" value={recForm.desc} onChange={this.OnChange} /></td></tr>
 		<tr><td>Price</td><TdInputsQtyPrice /></tr>
 		<tr><td><input type="button" value="update" onClick={this.doUpate}/></td><td><input type="button" value="Pull &#8607;" onClick={this.pullGridRow} /></td></tr>
 	</tbody></table></form>);
