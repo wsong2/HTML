@@ -3,7 +3,7 @@ var mDataGrid = {
 	   	{	simId: 12,
 		   	simName: "Client-2", 
 			simDate: "2019-08-26",
-		   	caterory: "App", 
+		   	category: "App", 
 			desc: "Rest client PUT",
 			rate: 13.6,
 		   	dttm: "2019-08-26T00:00:00"
@@ -11,7 +11,7 @@ var mDataGrid = {
 		{ 	simId: 15,
 		   	simName: "ClientN3", 
 			simDate: {eltId: 10001, val: "2020-08-06"},
-		   	caterory: "Test", 
+		   	category: "Test", 
 			desc: "Rest client loader",
 			rate: 22.56,
 		   	dttm: "2020-08-06T00:00:00"
@@ -19,7 +19,7 @@ var mDataGrid = {
 		{ 	simId: 110,
 		   	simName: "中文 产品", 
 			simDate: "2020-04-01",
-		   	caterory: "Product", 
+		   	category: "Product", 
 			desc: "生日18",
 			rate: 7.99,
 		   	dttm: "2021-03-18T18:46:13.787"
@@ -29,7 +29,7 @@ var mDataGrid = {
 		{name: "simId", caption: "ID"},
 		{name: "simName", caption: "Name"},
 		{name: "simDate", caption: "Date"},
-		{name: "caterory", caption: "Category"},
+		{name: "category", caption: "Category"},
 		{name: "desc", caption: "Description"},
 		{name: "rate", caption: "Rate"},
 		{name: "dttm", caption: "DateTime"}

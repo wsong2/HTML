@@ -8,7 +8,7 @@ const columns = {
 	simId: {caption: "ID"},
 	simName: {caption: "Name", sorting: "U"},
 	simDate: {caption: "Date", sorting: "D" },
-	caterory: {caption: "Category"},
+	category: {caption: "Category"},
 	desc: {caption: "Description"},
 	qty: {caption: "Quantity"},
 	price: {caption: "Price"},
@@ -18,7 +18,7 @@ const columns = {
 const griddata = {
 	rows: [],
 	columns: Object.assign({}, columns),
-	keys: ["simId", "simName", "simDate", "caterory", "desc", "qty", "price", "dttm"]
+	keys: ["simId", "simName", "simDate", "category", "desc", "qty", "price", "dttm"]
 }
 
 function newItem(req, res) {
