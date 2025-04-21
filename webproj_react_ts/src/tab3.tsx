@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {Tabs, TabList, Tab, TabPanel} from 'react-tabs';
 
@@ -6,6 +6,8 @@ import ViewGrid from './components2/viewgrid';
 import FormAdd from './components2/formadd';
 import PanelHelp from './components2/panelhelp';
 import {ISimRec, GridData} from './view/viewdata';
+
+import GridComponent from './components2/agGrid'
 
 const FieldSetStyle = {
 	border: '1px solid cyan',
@@ -129,12 +131,13 @@ class App extends React.Component<{}, MainState>
 		}
 	
 		return (<Tabs forceRenderTabPanel>
-			<TabList><Tab>Grid</Tab><Tab>Settings</Tab><Tab>Help</Tab></TabList>
+			<TabList><Tab>Grid</Tab><Tab>Ag Grid</Tab><Tab>Settings</Tab><Tab>Help</Tab></TabList>
 			<TabPanel>
 				<FormAdd simId={simId} notifyServerResponse={this.handleServerResponse} pullRecForm={rec} />
 				<hr/>
 				<ViewGrid rowIndex={rIndex} rows={this.state.rows} onRowSelected={this.handleRowIndexChange} btnAction={this.btnAction} />
 			</TabPanel>
+			<TabPanel><GridComponent/></TabPanel>
 			<TabPanel><fieldset style={FieldSetStyle}><legend>Data Mode:</legend>
 				<input type="radio" value="Off" id="ra1" name="mode" defaultChecked={fileProto} disabled={!fileProto} /><label htmlFor="ra1">Built-in</label><br/>
 				<input type="radio" value="On"  id="ra2" name="mode" defaultChecked={!fileProto} disabled={fileProto} /><label htmlFor="ra2">Online</label>
@@ -147,5 +150,5 @@ class App extends React.Component<{}, MainState>
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
-root.render(<App/>);
+root.render(<StrictMode><App/></StrictMode>);
  
